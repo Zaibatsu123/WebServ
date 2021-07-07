@@ -10,7 +10,7 @@ FLAGS			= -Wall -Wextra -Werror -std=c++98
 CC				= clang++
 VPATH			= src
 OBJPATH			= obj/
-INC				= .
+INC				= inc
 HEADER			=
 SRC				:=	main.cpp	\
 
