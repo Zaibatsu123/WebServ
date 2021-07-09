@@ -8,6 +8,8 @@
 #ifndef OUTPUT_HPP
 #define OUTPUT_HPP
 
+#include <map>
+
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"
 #define COLOR_GREEN "\e[32m"
