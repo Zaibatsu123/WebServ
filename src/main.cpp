@@ -5,13 +5,16 @@
 //              7/07/21              //
 //                                   //
 
-#include <iostream>
 #include "../inc/output.hpp"
+#include "Response.hpp"
+
+#include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
+#include <unistd.h>
 #include <stdio.h>
 #include <sstream>
 
@@ -55,37 +58,54 @@ int create_socket() //создаём сокет и прикрепляем к н�
     return (listen_socket);
 }
 
-int	main(int argc, char **argv, char **env){
-    char read_buffer[1024];
-    std::string buffer;
-    int created_socket;
-    int client_socket;
-    int result;
+int master_process(){
+	char read_buffer[1024];
+	std::string buffer;
+	int created_socket;
+	int client_socket;
+	int result;
+	Response response;
 
-    if (argc > 1 && argv && env)
-	    std::cout << "Loading parameters..." << std::endl;
+	if ((created_socket = create_socket()) == 1)
+		return (-1);
+	if (listen(created_socket, 5) == 1)
+	{
+		std::cout << "Error when listen the socket" << std::endl;
+		return (-1);
+	}
+	while (true)
+	{
+		if ((client_socket = accept(created_socket, NULL, NULL)) == -1)
+		{
+			std::cout << "Error when accept connection to the socket" << std::endl;
+			return (-1);
+		}
+		if ((result = recv(client_socket, read_buffer, 1024, 0)) == -1)
+			std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
+		std::cout << "Received request" << std::endl;
+		buffer = read_buffer;
+		result = send(client_socket,response.getResponse().c_str(), response.getResponse().length(), 0);
+		if (result == -1) {
+			// произошла ошибка при отправле данных
+			std::cerr << "send failed: " << strerror(errno) << "\n";
+		}
+		close(client_socket);
+	}
+}
+
+void console_promt(int argc, char **argv, char **env){
+	if (argc > 1 && argv && env)
+		std::cout << "Loading parameters..." << std::endl;
 	std::cout << COLOR_GREY << "Loading complete." << COLOR_DEFAULT << std::endl;
 	std::cout << COLOR_GREEN << "Welcome to Equal Rights WebServer." << COLOR_DEFAULT << std::endl;
 	std::cout << COLOR_RED << "WARNING: This is development server. Do not use it in a production deployment." << COLOR_DEFAULT << std::endl;
 	std::cout << "Use a production WSGI server instead." << COLOR_DEFAULT << std::endl;
 	std::cout << "Running on http://127.0.0.1:9909/ (Press CTRL+C to quit)" << std::endl;
-    
-    if ((created_socket = create_socket()) == 1)
-        return (-1);
-    if (listen(created_socket, 5) == 1)
-    {
-        std::cout << "Error when listen the socket" << std::endl;
-        return (-1);
-    }
-    if ((client_socket = accept(created_socket, NULL, NULL)) == -1)
-    {
-        std::cout << "Error when accept connection to the socket" << std::endl;
-        return (-1);
-    }
-    if ((result = recv(client_socket, read_buffer, 1024, 0)) == -1)
-        std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
-    std::cout << "Received request" << std::endl;
-    buffer = read_buffer;
-    std::cout << buffer << std::endl;
+}
+
+int	main(int argc, char **argv, char **env){
+	console_promt(argc, argv, env);
+	if (master_process() < 0)
+		return 1;
 	return 0;
 }
