@@ -8,16 +8,6 @@
 #include "../inc/output.hpp"
 #include "Response.hpp"
 
-#include <iostream>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <cstring>
-#include <unistd.h>
-#include <stdio.h>
-#include <sstream>
-
 int rebind(int listen_socket) //устраняем залипание сокета после некорректного завершения работы сервака
 {
 	int opt = 1;
@@ -64,7 +54,6 @@ int master_process(){
 	int created_socket;
 	int client_socket;
 	int result;
-	Response response;
 
 	if ((created_socket = create_socket()) == 1)
 		return (-1);
@@ -84,7 +73,7 @@ int master_process(){
 			std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
 		std::cout << "Received request" << std::endl;
 		buffer = read_buffer;
-		result = send(client_socket,response.getResponse().c_str(), response.getResponse().length(), 0);
+		result = response(client_socket);
 		if (result == -1) {
 			// произошла ошибка при отправле данных
 			std::cerr << "send failed: " << strerror(errno) << "\n";
