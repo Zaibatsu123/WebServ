@@ -1,0 +1,16 @@
+body {
+    background-image: url('./bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: sans-serif;
+}
+
+h1 {
+    font-size: 400%;
+    color: rgb(128, 0, 0);
+    text-decoration: underline;
+}
+
+h2 {
+    color: darkmagenta;
+}
