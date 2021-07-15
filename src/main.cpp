@@ -73,7 +73,7 @@ int master_process(){
 			std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
 		std::cout << "Received request" << std::endl;
 		buffer = read_buffer;
-		result = response(client_socket);
+		result = response(client_socket, buffer);
 		if (result == -1) {
 			// произошла ошибка при отправле данных
 			std::cerr << "send failed: " << strerror(errno) << "\n";

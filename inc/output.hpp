@@ -26,6 +26,6 @@
 #define COLOR_GREEN "\e[32m"
 #define COLOR_GREY "\e[37m"
 
-int response(int clientSocket);
+int response(const int clientSocket, const std::string & request);
 
 #endif //OUTPUT_HPP
