@@ -13,7 +13,7 @@ OBJPATH			= obj/
 INC				= inc
 HEADER			=
 SRC				:=	main.cpp	\
-					response.cpp \
+					createResponse.cpp \
 					Response.cpp
 
 OBJ				:= $(addprefix $(OBJPATH), $(SRC:.cpp=.o))
