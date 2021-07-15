@@ -22,7 +22,7 @@ int response(const int clientSocket, const std::string & request){
 		fileName = root + "bg.jpg";
 	else if (request.find("style.css") != std::string::npos)
 		fileName = root + "style.css";
-	else if (request.find("index.html") != std::string::npos)
+	else
 		fileName = root + "index.html";
 	Response* response = new Response;
 
