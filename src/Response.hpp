@@ -22,6 +22,7 @@ public:
 
 	void display() const;
 
+	const std::string getHeader() const;
 	const std::string &	getResponse() const;
 	void				setResponse(const std::string &response);
 	void 				expandResponse(const std::string & string);

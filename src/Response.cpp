@@ -63,6 +63,15 @@ void Response::setResponse(const std::string &response){
 	_response = response;
 }
 
+const std::string Response::getHeader() const {
+	std::stringstream str;
+	str << "HTTP/1.1 200 OK\n";
+//	str << "Content-Type: text/html; charset=UTF-8\n";
+	str << "Connection: close\n";
+	str << "\n";
+	return str.str();
+}
+
 const std::string &Response::getResponse() const{
 	return _response;
 }
