@@ -11,12 +11,12 @@
 #include <sstream>
 
 int response(const int clientSocket, const std::string & request){
-	int result;
-	std::string uri;
+	int			result;
+	std::string	fileName;
+	Response* 	response = new Response;
+	std::string	root = "./";
 	//TODO: getfromparce
-	std::string root = "./";
-//	TODO: validate uri
-	std::string fileName = "";
+
 	std::cout << request << std::endl;
 	if (request.find("bg.jpg") != std::string::npos)
 		fileName = root + "bg.jpg";
@@ -24,20 +24,13 @@ int response(const int clientSocket, const std::string & request){
 		fileName = root + "style.css";
 	else
 		fileName = root + "index.html";
-	Response* response = new Response;
-
+//	fileName = "test";
 	//TODO: validate ifstream
-	std::ifstream srcFile(fileName.c_str());
-	std::stringstream resBuffer;
-	std::string buffer;
-	resBuffer << response->getHeader();
-	while (std::getline(srcFile, buffer)){
-		resBuffer << buffer;
-		resBuffer << "\n";
-	}
-	response->setResponse(resBuffer.str());
-	result = send(clientSocket,response->getResponse().c_str(), response->getResponse().length(), 0);
-//	std::cout << response->getResponse();
+	std::string			buffer;
+//	response->display(fileName);
+	std::cout << "---\n" << response->generateHeader(200) << "---\n";
+	buffer = response->generateResponse(fileName);
+	result = send(clientSocket, buffer.c_str(), buffer.length(), 0);
 	delete response;
 	return result;
 }
