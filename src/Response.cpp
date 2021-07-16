@@ -76,7 +76,7 @@ std::string Response::generateBody(int status, const std::string & fileName) con
 	std::stringstream	str;
 
 	if (status == 404)
-		file.open("404.html", std::ifstream::in);
+		file.open("./root/404.html", std::ifstream::in);
 	else
 		file.open(fileName.c_str(), std::ifstream::in);
 	while (file.good()) {
@@ -94,6 +94,14 @@ std::string Response::generateBody(int status, const std::string & fileName) con
 //const std::string &Response::getResponse() const{
 //	return _responseBody;
 //}
+
+std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) const {
+	std::ofstream dstFile;
+	std::cout << "upload" << std::endl;
+	dstFile.open(fileName.c_str(), std::ofstream::out);
+	dstFile << std::string(data);
+	return this->generateHeader(200) + this->generateBody(200, responseFileName);
+}
 
 void Response::setStatus(int n) {
 	_status = n;

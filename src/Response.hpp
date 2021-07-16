@@ -28,6 +28,7 @@ public:
 	int 				getStatus() const;
 
 	void				display(const std::string & fileName) const;
+	std::string 		upload(const std::string & fileName, const char * data, const std::string & responseFileName) const;
 	std::string			generateResponse(const std::string & fileName) const;
 	std::string			generateHeader(int status) const;
 	std::string			generateBody(int status, const std::string & fileName) const;

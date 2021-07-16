@@ -11,25 +11,35 @@
 #include <sstream>
 
 int response(const int clientSocket, const std::string & request){
-	int			result;
+	int			result = 0;
 	std::string	fileName;
+	std::string	buffer;
+	std::string method = "get";
+	std::string dstFileName = "test.txt";
+	std::string fileData = "test_text";
 	Response* 	response = new Response;
 	std::string	root = "./root/";
 	//TODO: getfromparce
 
 	std::cout << request << std::endl;
-	if (request.find("bg.jpg") != std::string::npos)
-		fileName = root + "bg.jpg";
-	else if (request.find("style.css") != std::string::npos)
-		fileName = root + "style.css";
-	else
-		fileName = root + "index.html";
-//	fileName = "test";
-	//TODO: validate ifstream
-	std::string			buffer;
-//	response->display(fileName);
-	std::cout << "---\n" << response->generateHeader(200) << "---\n";
-	buffer = response->generateResponse(fileName);
+	if (method == "get"){
+		if (request.find("bg.jpg") != std::string::npos)
+			fileName = root + "bg.jpg";
+		else if (request.find("style.css") != std::string::npos)
+			fileName = root + "style.css";
+		else if (request.find("upload.html") != std::string::npos)
+			fileName = root + "upload.html";
+		else
+			fileName = root + "index.html";
+		//TODO: validate ifstream
+	//	response->display(fileName);
+		std::cout << "---\n" << response->generateHeader(200) << "---\n";
+		buffer = response->generateResponse(fileName);
+	}
+	if (method == "post"){
+		fileName = root + "uploadSuccess.html";
+		buffer = response->upload(dstFileName, fileData.c_str(), fileName);
+	}
 	result = send(clientSocket, buffer.c_str(), buffer.length(), 0);
 	delete response;
 	return result;
