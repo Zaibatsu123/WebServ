@@ -14,7 +14,7 @@ int response(const int clientSocket, const std::string & request){
 	int			result;
 	std::string	fileName;
 	Response* 	response = new Response;
-	std::string	root = "./";
+	std::string	root = "./root/";
 	//TODO: getfromparce
 
 	std::cout << request << std::endl;
