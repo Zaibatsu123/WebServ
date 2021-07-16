@@ -75,8 +75,8 @@ int master_process(){
     fcntl(configuration.socket, F_SETFL, O_NONBLOCK);
 	while (true)
 	{
-        std::cout << "Cycle started" << std::endl;
         max_fd = configuration.socket;
+        std::cout << "Cycle started" << max_fd << std::endl;
         FD_ZERO(&read_fds);
         FD_ZERO(&write_fds);
         FD_SET(configuration.socket, &read_fds);
@@ -86,28 +86,29 @@ int master_process(){
             std::cout << "Adding to read/write sets fd:" << (*i).socket << std::endl;
             FD_SET((*i).socket, &read_fds);
             FD_SET((*i).socket, &write_fds);
+            if (new_client_socket > max_fd)
+                max_fd = new_client_socket;
         }
-        result = select(max_fd + 1, &read_fds, &write_fds, NULL, NULL);
+        if ((result = select(max_fd + 1, &read_fds, NULL, NULL, NULL)) == -1)
+            std::cout << "Select error: " << strerror(errno) << std::endl;
         std::cout << "After select:" << result << std::endl;
         if (FD_ISSET(configuration.socket, &read_fds))
         {
             if ((new_client_socket = accept(configuration.socket, NULL, NULL)) == -1)
             {
-                std::cout << "Error when accept connection to the socket" << std::endl;
+                std::cout << "Error when accept connection to the socket. " << strerror(errno) << std::endl;
                 return (EXIT_FAILURE);
             }
             new_client = new t_client;
             new_client->socket = new_client_socket;
             fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
-            if (new_client_socket > max_fd)
-                max_fd = new_client_socket;
             configuration.clients.push_back(*new_client);
             std::cout << "Connected new client" << std::endl;
             new_client = NULL;
         }
         for (std::list<t_client>::iterator i = configuration.clients.begin(); i != configuration.clients.end(); i++)
         {
-            std::cout << "Check for request fd:" << (*i).socket << FD_ISSET((*i).socket, &read_fds) << std::endl;
+            std::cout << "Check for request fd:" << (*i).socket << " status: " << FD_ISSET((*i).socket, &read_fds) << std::endl;
             if (FD_ISSET((*i).socket, &read_fds))
             {
                 if ((result = recv((*i).socket, read_buffer, 1024, 0)) == -1)
@@ -116,18 +117,23 @@ int master_process(){
                 std::cout << read_buffer << std::endl;
                 std::cout << "End request________________________" << std::endl;
                 (*i).buffer = read_buffer;
+                (*i).status = 1;
             }
         }
         for (std::list<t_client>::iterator i = configuration.clients.begin(); i != configuration.clients.end(); i++)
         {
             std::cout << "Check ready for responce fd:" << (*i).socket << std::endl;
-            if (FD_ISSET((*i).socket, &write_fds))
+            if (FD_ISSET((*i).socket, &write_fds) and (*i).status)
             {
-                result = response((*i).socket, buffer);
+                result = response((*i).socket, (*i).buffer);
                 if (result == -1)
                     std::cerr << "send failed: " << strerror(errno) << "\n"; // произошла ошибка при отправке данных
                 std::cout << "Sended responce" << std::endl;
-                // close(configuration.fd[i]);
+                close((*i).socket);
+                std::cout << "Sended responce" << std::endl;
+                i = configuration.clients.erase(i);
+                std::cout << "Sended responce" << std::endl;
+                // (*i).status = 0;
             }
         }
         std::cout << "Cycle ended" << std::endl;
