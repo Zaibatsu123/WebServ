@@ -20,12 +20,15 @@ private:
 	static std::map<int, std::string>	_createMap();
 
 	int 		_status;
+	std::string	_uplRoot;
 public:
 	Response();
 	~Response();
 
 	void 				setStatus(int n);
 	int 				getStatus() const;
+	void 				setUplRoot(const std::string & root);
+	const std::string & getUplRoot() const;
 
 	void				display(const std::string & fileName) const;
 	std::string 		upload(const std::string & fileName, const char * data, const std::string & responseFileName) const;

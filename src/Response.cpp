@@ -97,8 +97,9 @@ std::string Response::generateBody(int status, const std::string & fileName) con
 
 std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) const {
 	std::ofstream dstFile;
-	std::cout << "upload" << std::endl;
-	dstFile.open(fileName.c_str(), std::ofstream::out);
+	std::string tmp = _uplRoot + fileName;
+	std::cout << "upload: " << tmp << std::endl;
+	dstFile.open(tmp.c_str(), std::ofstream::out);
 	dstFile << std::string(data);
 	return this->generateHeader(200) + this->generateBody(200, responseFileName);
 }
@@ -109,4 +110,12 @@ void Response::setStatus(int n) {
 
 int Response::getStatus() const {
 	return _status;
+}
+
+const std::string & Response::getUplRoot() const {
+	return _uplRoot;
+}
+
+void Response::setUplRoot(const std::string &root) {
+	_uplRoot = root;
 }

@@ -14,7 +14,7 @@ int response(const int clientSocket, const std::string & request){
 	int			result = 0;
 	std::string	fileName;
 	std::string	buffer;
-	std::string method = "get";
+	std::string method = "post";
 	std::string dstFileName = "test.txt";
 	std::string fileData = "test_text";
 	Response* 	response = new Response;
@@ -38,6 +38,7 @@ int response(const int clientSocket, const std::string & request){
 	}
 	if (method == "post"){
 		fileName = root + "uploadSuccess.html";
+		response->setUplRoot("./root/tmp/");
 		buffer = response->upload(dstFileName, fileData.c_str(), fileName);
 	}
 	result = send(clientSocket, buffer.c_str(), buffer.length(), 0);
