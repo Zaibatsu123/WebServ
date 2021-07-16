@@ -35,6 +35,7 @@ int response(const int clientSocket, const std::string & request){
 		resBuffer << buffer;
 		resBuffer << "\n";
 	}
+	resBuffer << "\4";
 	response->setResponse(resBuffer.str());
 	result = send(clientSocket,response->getResponse().c_str(), response->getResponse().length(), 0);
 //	std::cout << response->getResponse();

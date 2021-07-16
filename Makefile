@@ -14,7 +14,9 @@ INC				= inc
 HEADER			=
 SRC				:=	main.cpp	\
 					response.cpp \
-					Response.cpp
+					Response.cpp \
+					webserver.cpp \
+					Config.cpp
 
 OBJ				:= $(addprefix $(OBJPATH), $(SRC:.cpp=.o))
 
