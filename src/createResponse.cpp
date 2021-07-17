@@ -65,7 +65,8 @@ int response(const int clientSocket, const std::string & request){
 			fileName = root + "upload.html";
 		else
 			fileName = root + "index.html";
-		fileName = root + "test.cgi";
+//TODO: раскомментить для включения CGI
+//		fileName = root + "test.cgi";
 		if (fileName.find(".cgi") != std::string::npos){
 			std::cout << "CGI" << std::endl;
 			std::stringstream str;
