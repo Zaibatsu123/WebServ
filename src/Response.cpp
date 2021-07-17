@@ -63,10 +63,11 @@ std::string Response::generateHeader(int status) const {
 	str << _protocol << " "
 		<< status << " "
 		<< _code[status] << "\n"
+        // << "Content-Length: 500\n"
 		<< "Connection: close\n"
 		<< "\n";
 //	str << "Content-Type: text/html; charset=UTF-8\n";
-//	str << "Content-Length: 21\n";
+	// str << "Content-Length: 50\n";
 	return str.str();
 }
 
