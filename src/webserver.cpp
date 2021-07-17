@@ -22,7 +22,7 @@ int bind_socket(int listen_socket)
 
 	strcpy(address_name, ip_address);
 	socket_info.sin_family = AF_INET;
-	socket_info.sin_port = htons(80);
+	socket_info.sin_port = htons(9909);
 	socket_info.sin_addr.s_addr = inet_addr(address_name);
 	memset(socket_info.sin_zero, 0, 8);
 	if (bind(listen_socket, reinterpret_cast<sockaddr *>(&socket_info), sizeof(sockaddr)) == -1)
