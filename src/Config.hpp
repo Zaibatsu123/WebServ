@@ -2,10 +2,15 @@
 #define CONFIG_HPP
 
 #include <netinet/in.h>
+#include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <string>
 #include <cstring>
 #include <list>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <vector>
 
 typedef struct  s_client 
 {
@@ -35,8 +40,9 @@ class Config
         int                 socket;
 
         int                 getPort();
-        int                 getAddress();
+        char                *getAddress();
         int                 readConfig();
+        int                 parsingConfiguration();
         ~Config();
 };
 

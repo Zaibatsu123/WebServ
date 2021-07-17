@@ -14,18 +14,15 @@ int rebind(int listen_socket) //устраняем залипание сокет
 	return (EXIT_SUCCESS);
 }
 
-int bind_socket(int listen_socket)
+int bind_socket(Config *configuration)
 {
 	sockaddr_in socket_info;
-	char *address_name = new char[16];
-	char ip_address[] = "127.0.0.1";
 
-	strcpy(address_name, ip_address);
 	socket_info.sin_family = AF_INET;
-	socket_info.sin_port = htons(9909);
-	socket_info.sin_addr.s_addr = inet_addr(address_name);
+	socket_info.sin_port = htons(configuration->getPort());
+	socket_info.sin_addr.s_addr = inet_addr(configuration->getAddress());
 	memset(socket_info.sin_zero, 0, 8);
-	if (bind(listen_socket, reinterpret_cast<sockaddr *>(&socket_info), sizeof(sockaddr)) == -1)
+	if (bind(configuration->socket, reinterpret_cast<sockaddr *>(&socket_info), sizeof(sockaddr)) == -1)
 	{
 		std::cout << "Error when try to bind socket!" << strerror(errno) << std::endl;
 		return (-1);
@@ -33,31 +30,29 @@ int bind_socket(int listen_socket)
 	return (0);
 }
 
-int create_socket() //создаём сокет и прикрепляем к нему имя
+int create_socket(Config *configuration) //создаём сокет и прикрепляем к нему имя
 {
-	int listen_socket;
-
-	if ((listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == EXIT_FAILURE)
+	if ((configuration->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == EXIT_FAILURE)
     {
 		std::cout << "Error when try to create socket!" << std::endl;
         return (EXIT_FAILURE);
     }
-    if (rebind(listen_socket) == EXIT_FAILURE) //разлипание сокета перед его прикреплением
+    if (rebind(configuration->socket) == EXIT_FAILURE) //разлипание сокета перед его прикреплением
     {
         std::cout << "Error when try to rebind socket!" << std::endl;
 		return (EXIT_FAILURE);
     }
-	if (bind_socket(listen_socket) == EXIT_FAILURE)
+	if (bind_socket(configuration) == EXIT_FAILURE)
     {
         std::cout << "Error when try to bind socket!" << std::endl;
 		return (EXIT_FAILURE);
     }
-    if (listen(listen_socket, 5) == EXIT_FAILURE)
+    if (listen(configuration->socket, 5) == EXIT_FAILURE)
     {
         std::cout << "Error when listen the socket" << std::endl;
         return (EXIT_FAILURE);
     }
-	return (listen_socket);
+	return (EXIT_SUCCESS);
 }
 
 int master_process(){
@@ -70,7 +65,8 @@ int master_process(){
     int max_fd;
     t_client *new_client = NULL;
 
-	if ((configuration.socket = create_socket()) == EXIT_FAILURE)
+    configuration.parsingConfiguration();
+	if (create_socket(&configuration) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
     fcntl(configuration.socket, F_SETFL, O_NONBLOCK);
 	while (true)
@@ -91,7 +87,7 @@ int master_process(){
         }
         if ((result = select(max_fd + 1, &read_fds, NULL, NULL, NULL)) == -1)
             std::cout << "Select error: " << strerror(errno) << std::endl;
-        std::cout << "After select:" << result << std::endl;
+        std::cout << "After select: " << result << std::endl;
         if (FD_ISSET(configuration.socket, &read_fds))
         {
             if ((new_client_socket = accept(configuration.socket, NULL, NULL)) == -1)
@@ -128,12 +124,10 @@ int master_process(){
                 result = response((*i).socket, (*i).buffer);
                 if (result == -1)
                     std::cerr << "send failed: " << strerror(errno) << "\n"; // произошла ошибка при отправке данных
-                std::cout << "Sended responce" << std::endl;
                 close((*i).socket);
-                std::cout << "Sended responce" << std::endl;
                 i = configuration.clients.erase(i);
                 std::cout << "Sended responce" << std::endl;
-                // (*i).status = 0;
+                (*i).status = 0;
             }
         }
         std::cout << "Cycle ended" << std::endl;
