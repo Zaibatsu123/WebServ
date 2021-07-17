@@ -14,7 +14,7 @@ int response(const int clientSocket, const std::string & request){
 	int			result = 0;
 	std::string	fileName;
 	std::string	buffer;
-	std::string method = "post";
+	std::string method = "get";
 	std::string dstFileName = "test.txt";
 	std::string fileData = "test_text";
 	Response* 	response = new Response;
