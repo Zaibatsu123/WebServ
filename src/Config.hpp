@@ -42,7 +42,7 @@ class Config
         int                 getPort();
         char                *getAddress();
         int                 readConfig();
-        int                 parsingConfiguration();
+        int                 parsingConfiguration(char *config_name);
         ~Config();
 };
 

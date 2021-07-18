@@ -55,29 +55,27 @@ int create_socket(Config *configuration) //создаём сокет и прик
 	return (EXIT_SUCCESS);
 }
 
-int master_process(){
+int master_process(Config *configuration){
 	char read_buffer[1024];
     std::string buffer;
-    Config configuration;
     fd_set read_fds,write_fds;
 	int new_client_socket;
 	int result;
     int max_fd;
     t_client *new_client = NULL;
 
-    configuration.parsingConfiguration();
-	if (create_socket(&configuration) == EXIT_FAILURE)
+	if (create_socket(configuration) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-    fcntl(configuration.socket, F_SETFL, O_NONBLOCK);
+    fcntl(configuration->socket, F_SETFL, O_NONBLOCK);
 	while (true)
 	{
-        max_fd = configuration.socket;
+        max_fd = configuration->socket;
         std::cout << "Cycle started" << max_fd << std::endl;
         FD_ZERO(&read_fds);
         FD_ZERO(&write_fds);
-        FD_SET(configuration.socket, &read_fds);
+        FD_SET(configuration->socket, &read_fds);
 
-        for (std::list<t_client>::iterator i = configuration.clients.begin(); i != configuration.clients.end(); i++)
+        for (std::list<t_client>::iterator i = configuration->clients.begin(); i != configuration->clients.end(); i++)
         {
             std::cout << "Adding to read/write sets fd:" << (*i).socket << std::endl;
             FD_SET((*i).socket, &read_fds);
@@ -88,9 +86,9 @@ int master_process(){
         if ((result = select(max_fd + 1, &read_fds, NULL, NULL, NULL)) == -1)
             std::cout << "Select error: " << strerror(errno) << std::endl;
         std::cout << "After select: " << result << std::endl;
-        if (FD_ISSET(configuration.socket, &read_fds))
+        if (FD_ISSET(configuration->socket, &read_fds))
         {
-            if ((new_client_socket = accept(configuration.socket, NULL, NULL)) == -1)
+            if ((new_client_socket = accept(configuration->socket, NULL, NULL)) == -1)
             {
                 std::cout << "Error when accept connection to the socket. " << strerror(errno) << std::endl;
                 return (EXIT_FAILURE);
@@ -98,11 +96,11 @@ int master_process(){
             new_client = new t_client;
             new_client->socket = new_client_socket;
             fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
-            configuration.clients.push_back(*new_client);
+            configuration->clients.push_back(*new_client);
             std::cout << "Connected new client" << std::endl;
             new_client = NULL;
         }
-        for (std::list<t_client>::iterator i = configuration.clients.begin(); i != configuration.clients.end(); i++)
+        for (std::list<t_client>::iterator i = configuration->clients.begin(); i != configuration->clients.end(); i++)
         {
             std::cout << "Check for request fd:" << (*i).socket << " status: " << FD_ISSET((*i).socket, &read_fds) << std::endl;
             if (FD_ISSET((*i).socket, &read_fds))
@@ -116,7 +114,7 @@ int master_process(){
                 (*i).status = 1;
             }
         }
-        for (std::list<t_client>::iterator i = configuration.clients.begin(); i != configuration.clients.end(); i++)
+        for (std::list<t_client>::iterator i = configuration->clients.begin(); i != configuration->clients.end(); i++)
         {
             std::cout << "Check ready for responce fd:" << (*i).socket << std::endl;
             if (FD_ISSET((*i).socket, &write_fds) and (*i).status)
@@ -125,7 +123,7 @@ int master_process(){
                 if (result == -1)
                     std::cerr << "send failed: " << strerror(errno) << "\n"; // произошла ошибка при отправке данных
                 close((*i).socket);
-                i = configuration.clients.erase(i);
+                i = configuration->clients.erase(i);
                 std::cout << "Sended responce" << std::endl;
                 (*i).status = 0;
             }

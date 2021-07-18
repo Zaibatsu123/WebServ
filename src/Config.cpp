@@ -20,9 +20,9 @@ Config::Config()
     memset(this->fd, 0, 1024);
 }
 
-std::vector<std::string> readFile()
+std::vector<std::string> readFile(char *config_name)
 {
-    std::ifstream               config_file("configuration.cnfg");
+    std::ifstream               config_file(config_name);
     std::string                 temp;
     std::vector<std::string>    configuration;
 
@@ -47,9 +47,9 @@ std::vector<std::string> readFile()
     return (configuration);
 }
 
-int Config::parsingConfiguration()
+int Config::parsingConfiguration(char *config_name)
 {
-    std::vector<std::string>    configuration = readFile();
+    std::vector<std::string>    configuration = readFile(config_name);
     std::string                 next_string;
 
     if (configuration.size() == 0)
@@ -59,10 +59,13 @@ int Config::parsingConfiguration()
     }
     for (std::vector<std::string>::iterator iter = configuration.begin(); iter != configuration.end(); iter++)
     {
+        std::cout << (*iter) << "|" << std::endl;
         if ((*iter).find("ip") != std::string::npos)
         {
-            this->address = new char[strlen((*iter).substr((*iter).find("ip") + 3).c_str())];
+            this->address = new char[strlen((*iter).substr((*iter).find("ip") + 3).c_str()) + 1];
             memcpy(this->address, (*iter).substr((*iter).find("ip") + 3).c_str(), strlen((*iter).substr((*iter).find("ip") + 3).c_str()));
+            this->address[strlen((*iter).substr((*iter).find("ip") + 3).c_str())] = '\0';
+            std::cout << "strlen:|" << strlen((*iter).substr((*iter).find("ip") + 3).c_str()) << "|" << std::endl;
         }
         else if((*iter).find("port") != std::string::npos)
         {
@@ -70,6 +73,10 @@ int Config::parsingConfiguration()
             std::cout << this->port << std::endl;
         }
     }
+    std::cout << "PARSED CONFIG:" << std::endl;
+    std::cout << "IP:" << this->getAddress() << "len" << strlen(this->getAddress()) << std::endl;
+    std::cout << "PORT:" << this->getPort() << std::endl;
+    std::cout << "___________________________" << std::endl;
     return (EXIT_SUCCESS);
 }
 
