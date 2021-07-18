@@ -84,7 +84,12 @@ int master_process(){
 			std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
 		std::cout << "Received request" << std::endl;
 		buffer = read_buffer;
-		result = send(client_socket,response.getResponse().c_str(), response.getResponse().length(), 0);
+		std::cout << buffer << std::endl;
+		std::cout << "----" << std::endl << buffer << "|" << (int)'\15' << "-----" << std::endl;
+		if (buffer == "hello\15\n")
+			result = send(client_socket, "\nWelcome =)\n\n", 13, 0);
+		else
+			result = send(client_socket,response.getResponse().c_str(), response.getResponse().length(), 0);
 		if (result == -1) {
 			// произошла ошибка при отправле данных
 			std::cerr << "send failed: " << strerror(errno) << "\n";
