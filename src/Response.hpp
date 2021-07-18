@@ -10,22 +10,31 @@
 
 #include <iostream>
 #include <map>
+#include <fstream>
 #include <sstream>
 
 class Response{
 private:
-	std::string	_response;
-	std::map<std::string, std::string>	_c;
+	static const std::string			_protocol;
+	static std::map<int, std::string>	_code;
+	static std::map<int, std::string>	_createMap();
+
+	int 		_status;
+	std::string	_uplRoot;
 public:
 	Response();
 	~Response();
 
-	void display() const;
+	void 				setStatus(int n);
+	int 				getStatus() const;
+	void 				setUplRoot(const std::string & root);
+	const std::string & getUplRoot() const;
 
-	const std::string &	getResponse() const;
-	void				setResponse(const std::string &response);
-	void 				expandResponse(const std::string & string);
-	void				addMapField(const std::string & key, const std::string & value);
+	void				display(const std::string & fileName) const;
+	std::string 		upload(const std::string & fileName, const char * data, const std::string & responseFileName) const;
+	std::string			generateResponse(const std::string & fileName) const;
+	std::string			generateHeader(int status) const;
+	std::string			generateBody(int status, const std::string & fileName) const;
 };
 
 

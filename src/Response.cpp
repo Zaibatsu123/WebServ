@@ -7,62 +7,116 @@
 
 #include "Response.hpp"
 
-Response::Response() {
-	std::stringstream str;
-	str << "HTTP/1.1 200 OK\n";
-	str << "Content-Type: text/html; charset=UTF-8\n";
-	str << "Connection: close\n";
-//		TODO: int to len convert
-//		this->expandResponse("Content-Length: 21\n");
-	str << "\n";
-	str << "<!DOCTYPE html>\n"
-		   "<html>\n"
-		   "<head>\n"
-		   "<title>Welcome to server!</title>\n"
-		   "<style>\n"
-		   "    body {\n"
-		   "        width: 35em;\n"
-		   "        margin: 0 auto;\n"
-		   "        font-family: Tahoma, Verdana, Arial, sans-serif;\n"
-		   "    }\n"
-		   "</style>\n"
-		   "</head>\n"
-		   "<body>\n"
-		   "<h1>EQUAL RIGHT SERVER!</h1>\n"
-		   "<p>Hello! It is working!</p>\n"
-		   "\n"
-		   "<p>For online support please refer to\n"
-		   "<a href=\"http://google.com/\">->TAP<-</a>.<br/>\n"
-		   "Commercial support is available!\n"
-		   "\n"
-		   "<p><em>Thank you for using our server.</em></p>\n"
-		   "</body>\n"
-		   "</html>\n";
-	_response = str.str();
+const std::string Response::_protocol = "HTTP/1.1";
+
+std::map<int, std::string> Response::_code = Response::_createMap();
+
+std::map<int, std::string> Response::_createMap() {
+	std::map<int, std::string> m;
+	m.insert(std::pair<int, std::string>(200, "OK"));
+	m.insert(std::pair<int, std::string>(404, "not found"));
+	return m;
+}
+
+Response::Response() : _status(0){
 }
 
 Response::~Response(){
 }
 
-void Response::display() const{
-	std::cout << "\e[37m" << _response << "\e[0m" << std::endl;
+void Response::display(const std::string & fileName) const{
+	std::cout	<< "\e[37m" << "---\n"
+//				<< this->generateHeader()
+//				<< this->generateBody(fileName)
+				<< "---\e[0m\n" << std::endl;
+	(void )fileName;
 }
 
-void Response::expandResponse(const std::string &string){
+//void Response::expandResponse(const std::string &string){
+//	std::stringstream str;
+//	str << _responseBody;
+//	str << string;
+//	_responseBody = str.str();
+//}
+
+//void Response::addMapField(const std::string &key, const std::string &value){
+//	_c.insert(std::pair<std::string, std::string>(key, value));
+//}
+
+std::string Response::generateResponse(const std::string &fileName) const {
+	int 			status;
+	std::ifstream	srcFile;
+
+	srcFile.open(fileName.c_str(), std::ifstream::in);
+	if (!srcFile.is_open())
+		status = 404;
+	else {
+		srcFile.close();
+		status = 200;
+	}
+	return this->generateHeader(status) + this->generateBody(status, fileName);
+}
+
+std::string Response::generateHeader(int status) const {
 	std::stringstream str;
-	str << _response;
-	str << string;
-	_response = str.str();
+
+	str << _protocol << " "
+		<< status << " "
+		<< _code[status] << "\n"
+        // << "Content-Length: 500\n"
+		<< "Connection: close\n"
+		<< "\n";
+//	str << "Content-Type: text/html; charset=UTF-8\n";
+	// str << "Content-Length: 50\n";
+	return str.str();
 }
 
-void Response::addMapField(const std::string &key, const std::string &value){
-	_c.insert(std::pair<std::string, std::string>(key, value));
+std::string Response::generateBody(int status, const std::string & fileName) const {
+	std::string			buffer;
+	std::ifstream		file;
+	std::stringstream	str;
+
+	if (status == 404)
+		file.open("./root/404.html", std::ifstream::in);
+	else
+		file.open(fileName.c_str(), std::ifstream::in);
+	while (file.good()) {
+		std::getline(file, buffer);
+		str << buffer;
+		str << "\n";
+	}
+	return str.str();
 }
 
-void Response::setResponse(const std::string &response){
-	_response = response;
+//void Response::setResponse(const std::string &response){
+//	_responseBody = response;
+//}
+//
+//const std::string &Response::getResponse() const{
+//	return _responseBody;
+//}
+
+std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) const {
+	std::ofstream dstFile;
+	std::string tmp = _uplRoot + fileName;
+	std::cout << "upload: " << tmp << std::endl;
+	dstFile.open(tmp.c_str(), std::ofstream::out);
+	dstFile << std::string(data);
+	return this->generateHeader(200) + this->generateBody(200, responseFileName);
 }
 
-const std::string &Response::getResponse() const{
-	return _response;
+void Response::setStatus(int n) {
+	_status = n;
+}
+
+int Response::getStatus() const {
+	return _status;
+}
+
+const std::string & Response::getUplRoot() const {
+	return _uplRoot;
+}
+
+void Response::setUplRoot(const std::string &root) {
+	_uplRoot = root;
 }
