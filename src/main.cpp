@@ -16,13 +16,13 @@ void console_promt(Config *configuration){
 	std::cout << COLOR_GREEN << "Welcome to Equal Rights WebServer." << COLOR_DEFAULT << std::endl;
 	std::cout << COLOR_RED << "WARNING: This is development server. Do not use it in a production deployment." << COLOR_DEFAULT << std::endl;
 	std::cout << "Use a production WSGI server instead." << COLOR_DEFAULT << std::endl;
-	std::cout << "Running on http://" << configuration->address << ":" << configuration->port << "/ (Press CTRL+C to quit)" << std::endl;
+	std::cout << "Running on http://" << configuration->getAddress() << ":" << configuration->getPort() << "/ (Press CTRL+C to quit)" << std::endl;
 }
 
 int	main(int argc, char **argv, char **env){
     Config configuration;
 
-    if (argc < 2 || !argv || !env)
+    if (argc != 2 || !argv || !env || !argv[1])
     {
         std::cout << "Something wrong with parametrs!" << std::endl;
         return (EXIT_FAILURE);

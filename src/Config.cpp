@@ -12,24 +12,20 @@ const char* Config::ConfigException::what() const throw()
 
 Config::Config()
 {
-    if ((this->fd = new int[1024]) == NULL)
-    {
-        this->~Config();
-        throw ConfigException("Malloc error");
-    }
-    memset(this->fd, 0, 1024);
+    this->__address = NULL;
+    this->__port = -1;
 }
 
-std::vector<std::string> readFile(char *config_name)
+std::vector<std::string> Config::readFile(char *config_name)
 {
     std::ifstream               config_file(config_name);
     std::string                 temp;
     std::vector<std::string>    configuration;
 
-    std::cout << "Start config reading" << std::endl;
+    std::cout << "Start configuration reading" << std::endl;
     if (!config_file)
     {
-        std::cerr << "Configuration file not found!"<< std::endl;
+        std::cerr << "Configuration file not found!" << std::endl;
         return (configuration);
     }
     while (config_file)
@@ -47,51 +43,65 @@ std::vector<std::string> readFile(char *config_name)
     return (configuration);
 }
 
+int Config::checkigConfiguration()
+{
+    if (!this->__address || this->__port == -1)
+    {
+        std::cerr << "Configuration file is not valid!" << std::endl;
+        return (EXIT_FAILURE);
+    }
+    return (EXIT_SUCCESS);
+}
+
+void    Config::configurationPrint()
+{
+    std::cout << "___________________________" << std::endl;
+    std::cout << "PARSED CONFIG:" << std::endl;
+    std::cout << "IP:" << "|" << this->__address << "|" << std::endl;
+    std::cout << "PORT:" << "|" << this->__port << "|" << std::endl;
+    std::cout << "___________________________" << std::endl;
+}
+
 int Config::parsingConfiguration(char *config_name)
 {
     std::vector<std::string>    configuration = readFile(config_name);
     std::string                 next_string;
 
     if (configuration.size() == 0)
-    {
-        std::cout << "Configuration file is empty!" << std::endl;
         return (EXIT_FAILURE);
-    }
     for (std::vector<std::string>::iterator iter = configuration.begin(); iter != configuration.end(); iter++)
     {
-        std::cout << (*iter) << "|" << std::endl;
         if ((*iter).find("ip") != std::string::npos)
         {
-            this->address = new char[strlen((*iter).substr((*iter).find("ip") + 3).c_str()) + 1];
-            memcpy(this->address, (*iter).substr((*iter).find("ip") + 3).c_str(), strlen((*iter).substr((*iter).find("ip") + 3).c_str()));
-            this->address[strlen((*iter).substr((*iter).find("ip") + 3).c_str())] = '\0';
-            std::cout << "strlen:|" << strlen((*iter).substr((*iter).find("ip") + 3).c_str()) << "|" << std::endl;
+            this->__address = new char[strlen((*iter).substr((*iter).find("ip") + 3).c_str()) + 1];
+            memcpy(this->__address, (*iter).substr((*iter).find("ip") + 3).c_str(), strlen((*iter).substr((*iter).find("ip") + 3).c_str()));
+            this->__address[strlen((*iter).substr((*iter).find("ip") + 3).c_str())] = '\0';
         }
         else if((*iter).find("port") != std::string::npos)
-        {
-            this->port = std::stoi((*iter).substr((*iter).find("port") + 5));
-            std::cout << this->port << std::endl;
-        }
+            this->__port = std::stoi((*iter).substr((*iter).find("port") + 5));
     }
-    std::cout << "PARSED CONFIG:" << std::endl;
-    std::cout << "IP:" << this->getAddress() << "len" << strlen(this->getAddress()) << std::endl;
-    std::cout << "PORT:" << this->getPort() << std::endl;
-    std::cout << "___________________________" << std::endl;
+    if (checkigConfiguration() == EXIT_FAILURE)
+        return (EXIT_FAILURE);
+    configurationPrint();
     return (EXIT_SUCCESS);
 }
 
 int Config::getPort()
 {
-    return (this->port);
+    return (this->__port);
+}
+
+int Config::getSocket()
+{
+    return (this->__socket);
+}
+
+void Config::setSocket(int socket)
+{
+    this->__socket = socket;
 }
 
 char *Config::getAddress()
 {
-    return (this->address);
-}
-
-Config::~Config()
-{
-    if (this->fd != NULL)
-        delete this->fd;
+    return (this->__address);
 }

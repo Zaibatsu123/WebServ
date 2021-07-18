@@ -22,7 +22,7 @@ int bind_socket(Config *configuration)
 	socket_info.sin_port = htons(configuration->getPort());
 	socket_info.sin_addr.s_addr = inet_addr(configuration->getAddress());
 	memset(socket_info.sin_zero, 0, 8);
-	if (bind(configuration->socket, reinterpret_cast<sockaddr *>(&socket_info), sizeof(sockaddr)) == -1)
+	if (bind(configuration->getSocket(), reinterpret_cast<sockaddr *>(&socket_info), sizeof(sockaddr)) == -1)
 	{
 		std::cout << "Error when try to bind socket!" << strerror(errno) << std::endl;
 		return (-1);
@@ -32,12 +32,14 @@ int bind_socket(Config *configuration)
 
 int create_socket(Config *configuration) //создаём сокет и прикрепляем к нему имя
 {
-	if ((configuration->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == EXIT_FAILURE)
+    int created_socket;
+	if ((created_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == EXIT_FAILURE)
     {
 		std::cout << "Error when try to create socket!" << std::endl;
         return (EXIT_FAILURE);
     }
-    if (rebind(configuration->socket) == EXIT_FAILURE) //разлипание сокета перед его прикреплением
+    configuration->setSocket(created_socket);
+    if (rebind(configuration->getSocket()) == EXIT_FAILURE) //разлипание сокета перед его прикреплением
     {
         std::cout << "Error when try to rebind socket!" << std::endl;
 		return (EXIT_FAILURE);
@@ -47,7 +49,7 @@ int create_socket(Config *configuration) //создаём сокет и прик
         std::cout << "Error when try to bind socket!" << std::endl;
 		return (EXIT_FAILURE);
     }
-    if (listen(configuration->socket, 5) == EXIT_FAILURE)
+    if (listen(configuration->getSocket(), 5) == EXIT_FAILURE)
     {
         std::cout << "Error when listen the socket" << std::endl;
         return (EXIT_FAILURE);
@@ -66,14 +68,14 @@ int master_process(Config *configuration){
 
 	if (create_socket(configuration) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-    fcntl(configuration->socket, F_SETFL, O_NONBLOCK);
+    fcntl(configuration->getSocket(), F_SETFL, O_NONBLOCK);
 	while (true)
 	{
-        max_fd = configuration->socket;
+        max_fd = configuration->getSocket();
         std::cout << "Cycle started" << max_fd << std::endl;
         FD_ZERO(&read_fds);
         FD_ZERO(&write_fds);
-        FD_SET(configuration->socket, &read_fds);
+        FD_SET(configuration->getSocket(), &read_fds);
 
         for (std::list<t_client>::iterator i = configuration->clients.begin(); i != configuration->clients.end(); i++)
         {
@@ -86,9 +88,9 @@ int master_process(Config *configuration){
         if ((result = select(max_fd + 1, &read_fds, NULL, NULL, NULL)) == -1)
             std::cout << "Select error: " << strerror(errno) << std::endl;
         std::cout << "After select: " << result << std::endl;
-        if (FD_ISSET(configuration->socket, &read_fds))
+        if (FD_ISSET(configuration->getSocket(), &read_fds))
         {
-            if ((new_client_socket = accept(configuration->socket, NULL, NULL)) == -1)
+            if ((new_client_socket = accept(configuration->getSocket(), NULL, NULL)) == -1)
             {
                 std::cout << "Error when accept connection to the socket. " << strerror(errno) << std::endl;
                 return (EXIT_FAILURE);
