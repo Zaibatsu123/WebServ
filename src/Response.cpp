@@ -18,7 +18,7 @@ std::map<int, std::string> Response::_createMap() {
 	return m;
 }
 
-Response::Response() : _status(0), _method("get"), _buffer(""), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""){
+Response::Response() : _status(0), _method("get"), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""), _buffer(""){
 }
 
 Response::~Response(){
