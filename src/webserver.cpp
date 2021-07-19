@@ -62,7 +62,7 @@ int master_process(Config *configuration){
     std::string buffer;
     fd_set read_fds,write_fds;
 	int new_client_socket;
-	int result;
+	ssize_t result;
     int max_fd;
     t_client *new_client = NULL;
 

@@ -88,14 +88,6 @@ std::string Response::generateBody(int status, const std::string & fileName) con
 	return str.str();
 }
 
-//void Response::setResponse(const std::string &response){
-//	_responseBody = response;
-//}
-//
-//const std::string &Response::getResponse() const{
-//	return _responseBody;
-//}
-
 std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) const {
 	std::ofstream dstFile;
 	std::string tmp = _uplRoot + fileName;

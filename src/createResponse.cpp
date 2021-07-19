@@ -44,7 +44,7 @@ std::string cgiExec(){
 
 }
 
-int response(const int clientSocket, const std::string & request){
+ssize_t response(const int clientSocket, const std::string & request){
 	Response* 	response = new Response;
 	ssize_t		result = 0;
 	response->setMethod("get");
