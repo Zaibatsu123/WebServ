@@ -29,8 +29,8 @@ int	main(int argc, char **argv, char **env){
     }
     if (configuration.parsingConfiguration(argv[1]) == EXIT_FAILURE)
         return (EXIT_FAILURE);
-	console_promt(&configuration);
-	if (master_process(&configuration) == EXIT_FAILURE)
+    console_promt(&configuration);
+    if (master_process(&configuration) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
