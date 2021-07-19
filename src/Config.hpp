@@ -21,6 +21,11 @@ typedef struct  s_client
 
 class Config
 {
+    private:
+        int                 __socket;
+        char                *__address;
+        int                 __port;
+
     public:
         class ConfigException : public std::exception
         {
@@ -33,17 +38,17 @@ class Config
         };
 
         Config();
-        std::list<t_client> clients;
-        int                 port;
-        char                *address;
-        int                 *fd;
-        int                 socket;
-
-        int                 getPort();
-        char                *getAddress();
-        int                 readConfig();
-        int                 parsingConfiguration();
-        ~Config();
+        std::list<t_client>         clients;
+        void                        configurationPrint();
+        int                         getPort();
+        int                         getSocket();
+        void                        setSocket(int socket);
+        char                        *getAddress();
+        int                         readConfig();
+        std::vector<std::string>    readFile(char *config_name);
+        int                         checkigConfiguration();
+        int                         parsingConfiguration(char *config_name);
+        ~Config()                   {};
 };
 
 #endif
