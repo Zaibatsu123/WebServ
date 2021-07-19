@@ -46,15 +46,15 @@ std::string cgiExec(){
 
 ssize_t response(const int clientSocket, const std::string & request){
 	Response* 	response = new Response;
-	ssize_t		result = 0;
+	ssize_t		result;
+	std::string	requestBody = "test_text";
+
 	response->setMethod("get");
 	response->setUplFileName("test.txt");
 	response->setRoot("./root/");
-//	std::string	buffer;
-	std::string fileData = "test_text";
-	//TODO: getfromparce
 
 	std::cout << request << std::endl;
+
 	if (response->getMethod() == "get"){
 		if (request.find("bg.jpg") != std::string::npos)
 			response->setFileName(response->getRoot() + "bg.jpg");
@@ -64,27 +64,30 @@ ssize_t response(const int clientSocket, const std::string & request){
 			response->setFileName(response->getRoot() + "upload.html");
 		else
 			response->setFileName(response->getRoot() + "index.html");
-//TODO: раскомментить для включения CGI
-//		fileName = root + "test.cgi";
+
+		//TODO: раскомментить для включения CGI
+		//response->setFileName(response->getRoot() + "test.cgi");
+
 		if (response->getFileName().find(".cgi") != std::string::npos){
 			std::cout << "CGI" << std::endl;
 			std::stringstream str;
-			str << "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>CGI</title>\n</head>\n<body style=\"text-align: center;\">\n<div>\n<h1>Проверка работы CGI</h1>\n<h2>Ваши данные: ";
+			str <<	"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n"
+		  			"<title>CGI</title>\n</head>\n<body style=\"text-align: center;\">\n"
+	   				"<div>\n<h1>Проверка работы CGI</h1>\n<h2>Ваши данные: ";
 			str << cgiExec();
-			str << "</h2>\n</div>\n<br>\n<br>\n<hr>\n<h3>equal-rights 0.1.23</h3>\n</body>\n</html>\n";
+			str <<	"</h2>\n</div>\n<br>\n<br>\n<hr>\n"
+		  			"<h3>equal-rights 0.1.23</h3>\n</body>\n</html>\n";
 			response->_buffer = response->generateHeader(200) + str.str();
 		}
 		else{
-			//TODO: validate ifstream
-		//	response->display(fileName);
-			std::cout << "---\n" << response->generateHeader(200) << "---\n";
+//			std::cout << "---\n" << response->generateHeader(200) << "---\n";
 			response->_buffer = response->generateResponse(response->getFileName());
 		}
 	}
 	if (response->getMethod() == "post"){
 		response->setFileName(response->getRoot() + "uploadSuccess.html");
 		response->setUplRoot("./root/tmp/");
-		response->_buffer = response->upload(response->getUplFileName(), fileData.c_str(), response->getFileName());
+		response->_buffer = response->upload(response->getUplFileName(), requestBody.c_str(), response->getFileName());
 	}
 	result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
 	delete response;

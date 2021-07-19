@@ -44,15 +44,16 @@ void Response::display(const std::string & fileName) const{
 //}
 
 std::string Response::generateResponse(const std::string &fileName) const {
-	int 			status;
 	std::ifstream	srcFile;
 
 	srcFile.open(fileName.c_str(), std::ifstream::in);
-	if (!srcFile.is_open())
-		status = 404;
+	if (!srcFile.is_open()){
+		_status = 404;
+		srcFile.open("./root/404.html", std::ifstream::in);
+	}
 	else {
 		srcFile.close();
-		status = 200;
+		_status = 200;
 	}
 	return this->generateHeader(status) + this->generateBody(status, fileName);
 }
@@ -89,8 +90,8 @@ std::string Response::generateBody(int status, const std::string & fileName) con
 }
 
 std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) const {
-	std::ofstream dstFile;
-	std::string tmp = _uplRoot + fileName;
+	std::ofstream	dstFile;
+	std::string		tmp = _uplRoot + fileName;
 	std::cout << "upload: " << tmp << std::endl;
 	dstFile.open(tmp.c_str(), std::ofstream::out);
 	dstFile << std::string(data);
