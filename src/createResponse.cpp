@@ -44,50 +44,49 @@ std::string cgiExec(){
 
 }
 
-int response(const int clientSocket, const std::string & request){
-	int			result = 0;
-	std::string	fileName;
-	std::string	buffer;
-	std::string method = "get";
-	std::string dstFileName = "test.txt";
-	std::string fileData = "test_text";
+ssize_t response(const int clientSocket, const std::string & request){
 	Response* 	response = new Response;
-	std::string	root = "./root/";
+	ssize_t		result = 0;
+	response->setMethod("get");
+	response->setUplFileName("test.txt");
+	response->setRoot("./root/");
+//	std::string	buffer;
+	std::string fileData = "test_text";
 	//TODO: getfromparce
 
 	std::cout << request << std::endl;
-	if (method == "get"){
+	if (response->getMethod() == "get"){
 		if (request.find("bg.jpg") != std::string::npos)
-			fileName = root + "bg.jpg";
+			response->setFileName(response->getRoot() + "bg.jpg");
 		else if (request.find("style.css") != std::string::npos)
-			fileName = root + "style.css";
+			response->setFileName(response->getRoot() + "style.css");
 		else if (request.find("upload.html") != std::string::npos)
-			fileName = root + "upload.html";
+			response->setFileName(response->getRoot() + "upload.html");
 		else
-			fileName = root + "index.html";
+			response->setFileName(response->getRoot() + "index.html");
 //TODO: раскомментить для включения CGI
 //		fileName = root + "test.cgi";
-		if (fileName.find(".cgi") != std::string::npos){
+		if (response->getFileName().find(".cgi") != std::string::npos){
 			std::cout << "CGI" << std::endl;
 			std::stringstream str;
 			str << "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>CGI</title>\n</head>\n<body style=\"text-align: center;\">\n<div>\n<h1>Проверка работы CGI</h1>\n<h2>Ваши данные: ";
 			str << cgiExec();
 			str << "</h2>\n</div>\n<br>\n<br>\n<hr>\n<h3>equal-rights 0.1.23</h3>\n</body>\n</html>\n";
-			buffer = response->generateHeader(200) + str.str();
+			response->_buffer = response->generateHeader(200) + str.str();
 		}
 		else{
 			//TODO: validate ifstream
 		//	response->display(fileName);
 			std::cout << "---\n" << response->generateHeader(200) << "---\n";
-			buffer = response->generateResponse(fileName);
+			response->_buffer = response->generateResponse(response->getFileName());
 		}
 	}
-	if (method == "post"){
-		fileName = root + "uploadSuccess.html";
+	if (response->getMethod() == "post"){
+		response->setFileName(response->getRoot() + "uploadSuccess.html");
 		response->setUplRoot("./root/tmp/");
-		buffer = response->upload(dstFileName, fileData.c_str(), fileName);
+		response->_buffer = response->upload(response->getUplFileName(), fileData.c_str(), response->getFileName());
 	}
-	result = send(clientSocket, buffer.c_str(), buffer.length(), 0);
+	result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
 	delete response;
 	return result;
 }

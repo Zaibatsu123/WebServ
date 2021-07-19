@@ -18,7 +18,7 @@ std::map<int, std::string> Response::_createMap() {
 	return m;
 }
 
-Response::Response() : _status(0){
+Response::Response() : _status(0), _method("get"), _buffer(""), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""){
 }
 
 Response::~Response(){
@@ -112,10 +112,42 @@ int Response::getStatus() const {
 	return _status;
 }
 
+void Response::setMethod(const std::string & method) {
+	_method = method;
+}
+
+const std::string & Response::getMethod() const {
+	return _method;
+}
+
+void Response::setRoot(const std::string & root) {
+	_root = root;
+}
+
+const std::string & Response::getRoot() const {
+	return _root;
+}
+
+void Response::setFileName(const std::string & fileName) {
+	_fileName = fileName;
+}
+
+const std::string & Response::getFileName() const {
+	return _fileName;
+}
+
+void Response::setUplRoot(const std::string & root) {
+	_uplRoot = root;
+}
+
 const std::string & Response::getUplRoot() const {
 	return _uplRoot;
 }
 
-void Response::setUplRoot(const std::string &root) {
-	_uplRoot = root;
+void Response::setUplFileName(const std::string & uplFileName) {
+	_uplFileName = uplFileName;
+}
+
+const std::string & Response::getUplFileName() const {
+	return _uplFileName;
 }
