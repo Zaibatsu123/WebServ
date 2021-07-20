@@ -24,60 +24,48 @@ Response::Response() : _status(0), _method("get"), _root(""), _fileName(""), _up
 Response::~Response(){
 }
 
-void Response::display(const std::string & fileName) const{
-	std::cout	<< "\e[37m" << "---\n"
-//				<< this->generateHeader()
-//				<< this->generateBody(fileName)
-				<< "---\e[0m\n" << std::endl;
-	(void )fileName;
-}
-
-//void Response::expandResponse(const std::string &string){
-//	std::stringstream str;
-//	str << _responseBody;
-//	str << string;
-//	_responseBody = str.str();
-//}
-
-//void Response::addMapField(const std::string &key, const std::string &value){
-//	_c.insert(std::pair<std::string, std::string>(key, value));
-//}
-
-std::string Response::generateResponse(const std::string &fileName) const {
+std::string Response::generateResponse(const std::string &fileName) {
 	std::ifstream	srcFile;
 
 	srcFile.open(fileName.c_str(), std::ifstream::in);
+
+	// if file cannot fine -> response 404
 	if (!srcFile.is_open()){
 		_status = 404;
 		srcFile.open("./root/404.html", std::ifstream::in);
 	}
 	else {
-		srcFile.close();
 		_status = 200;
 	}
-	return this->generateHeader(status) + this->generateBody(status, fileName);
+
+	// Get file size:
+	srcFile.seekg (0, srcFile.end);
+	_fileSize = srcFile.tellg();
+	srcFile.seekg (0, srcFile.beg);
+
+
+	return this->generateHeader() + this->generateBody(fileName);
 }
 
-std::string Response::generateHeader(int status) const {
+std::string Response::generateHeader() {
 	std::stringstream str;
 
 	str << _protocol << " "
-		<< status << " "
-		<< _code[status] << "\n"
-        // << "Content-Length: 500\n"
-		<< "Connection: close\n"
+		<< _status << " "
+		<< _code[_status] << "\n"
+		<< "Connection: keep-alive\n"
+//		<< "Content-Type: " << _fileType << "\n"
+		<< "Content-Length: " << _fileSize << "\n"
 		<< "\n";
-//	str << "Content-Type: text/html; charset=UTF-8\n";
-	// str << "Content-Length: 50\n";
 	return str.str();
 }
 
-std::string Response::generateBody(int status, const std::string & fileName) const {
+std::string Response::generateBody(const std::string & fileName) {
 	std::string			buffer;
 	std::ifstream		file;
 	std::stringstream	str;
 
-	if (status == 404)
+	if (_status == 404)
 		file.open("./root/404.html", std::ifstream::in);
 	else
 		file.open(fileName.c_str(), std::ifstream::in);
@@ -89,13 +77,13 @@ std::string Response::generateBody(int status, const std::string & fileName) con
 	return str.str();
 }
 
-std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) const {
+std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) {
 	std::ofstream	dstFile;
 	std::string		tmp = _uplRoot + fileName;
 	std::cout << "upload: " << tmp << std::endl;
 	dstFile.open(tmp.c_str(), std::ofstream::out);
 	dstFile << std::string(data);
-	return this->generateHeader(200) + this->generateBody(200, responseFileName);
+	return this->generateHeader() + this->generateBody(responseFileName);
 }
 
 void Response::setStatus(int n) {

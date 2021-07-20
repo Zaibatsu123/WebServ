@@ -58,6 +58,10 @@ ssize_t response(const int clientSocket, const std::string & request){
 	if (response->getMethod() == "get"){
 		if (request.find("bg.jpg") != std::string::npos)
 			response->setFileName(response->getRoot() + "bg.jpg");
+		else if (request.find("bg2.png") != std::string::npos)
+			response->setFileName(response->getRoot() + "bg2.png");
+		else if (request.find("favicon.ico") != std::string::npos)
+			response->setFileName(response->getRoot() + "favicon.ico");
 		else if (request.find("style.css") != std::string::npos)
 			response->setFileName(response->getRoot() + "style.css");
 		else if (request.find("upload.html") != std::string::npos)
@@ -77,11 +81,11 @@ ssize_t response(const int clientSocket, const std::string & request){
 			str << cgiExec();
 			str <<	"</h2>\n</div>\n<br>\n<br>\n<hr>\n"
 		  			"<h3>equal-rights 0.1.23</h3>\n</body>\n</html>\n";
-			response->_buffer = response->generateHeader(200) + str.str();
+			response->_buffer = response->generateHeader() + str.str();
 		}
 		else{
-//			std::cout << "---\n" << response->generateHeader(200) << "---\n";
 			response->_buffer = response->generateResponse(response->getFileName());
+			std::cout << "\n--- HEADER!! ---\n" << response->generateHeader() << "----\n";
 		}
 	}
 	if (response->getMethod() == "post"){
@@ -89,7 +93,21 @@ ssize_t response(const int clientSocket, const std::string & request){
 		response->setUplRoot("./root/tmp/");
 		response->_buffer = response->upload(response->getUplFileName(), requestBody.c_str(), response->getFileName());
 	}
-	result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
+
+	result = 0;
+	do {
+		result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
+		std::cout << "Send Result: " << result << "\n" << "Buffer: " << response->_buffer.length() << "\n-----\n" << std::endl;
+		try
+		{
+			response->_buffer = response->_buffer.substr(result);
+		}
+		catch (std::exception & e){
+			std::cout << e.what() << std::endl;
+		}
+
+	} while (result != static_cast<ssize_t>(response->_buffer.length()));
+
 	delete response;
 	return result;
 }

@@ -12,6 +12,7 @@
 #include <map>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 class Response{
 private:
@@ -26,6 +27,7 @@ private:
 	std::string	_uplRoot;
 	std::string	_uplFileName;
 public:
+	size_t		_fileSize;
 	std::string _buffer;
 	Response();
 	~Response();
@@ -43,10 +45,10 @@ public:
 	const std::string & getUplFileName() const;
 
 	void				display(const std::string & fileName) const;
-	std::string 		upload(const std::string & fileName, const char * data, const std::string & responseFileName) const;
-	std::string			generateResponse(const std::string & fileName) const;
-	std::string			generateHeader(int status) const;
-	std::string			generateBody(int status, const std::string & fileName) const;
+	std::string 		upload(const std::string & fileName, const char * data, const std::string & responseFileName);
+	std::string			generateResponse(const std::string & fileName);
+	std::string			generateHeader();
+	std::string			generateBody(const std::string & fileName);
 };
 
 
