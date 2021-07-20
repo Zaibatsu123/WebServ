@@ -18,7 +18,7 @@ std::map<int, std::string> Response::_createMap() {
 	return m;
 }
 
-Response::Response() : _status(0){
+Response::Response() : _status(0), _method("get"), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""), _buffer(""){
 }
 
 Response::~Response(){
@@ -44,15 +44,16 @@ void Response::display(const std::string & fileName) const{
 //}
 
 std::string Response::generateResponse(const std::string &fileName) const {
-	int 			status;
 	std::ifstream	srcFile;
 
 	srcFile.open(fileName.c_str(), std::ifstream::in);
-	if (!srcFile.is_open())
-		status = 404;
+	if (!srcFile.is_open()){
+		_status = 404;
+		srcFile.open("./root/404.html", std::ifstream::in);
+	}
 	else {
 		srcFile.close();
-		status = 200;
+		_status = 200;
 	}
 	return this->generateHeader(status) + this->generateBody(status, fileName);
 }
@@ -88,17 +89,9 @@ std::string Response::generateBody(int status, const std::string & fileName) con
 	return str.str();
 }
 
-//void Response::setResponse(const std::string &response){
-//	_responseBody = response;
-//}
-//
-//const std::string &Response::getResponse() const{
-//	return _responseBody;
-//}
-
 std::string Response::upload(const std::string & fileName, const char *data, const std::string & responseFileName) const {
-	std::ofstream dstFile;
-	std::string tmp = _uplRoot + fileName;
+	std::ofstream	dstFile;
+	std::string		tmp = _uplRoot + fileName;
 	std::cout << "upload: " << tmp << std::endl;
 	dstFile.open(tmp.c_str(), std::ofstream::out);
 	dstFile << std::string(data);
@@ -113,10 +106,42 @@ int Response::getStatus() const {
 	return _status;
 }
 
+void Response::setMethod(const std::string & method) {
+	_method = method;
+}
+
+const std::string & Response::getMethod() const {
+	return _method;
+}
+
+void Response::setRoot(const std::string & root) {
+	_root = root;
+}
+
+const std::string & Response::getRoot() const {
+	return _root;
+}
+
+void Response::setFileName(const std::string & fileName) {
+	_fileName = fileName;
+}
+
+const std::string & Response::getFileName() const {
+	return _fileName;
+}
+
+void Response::setUplRoot(const std::string & root) {
+	_uplRoot = root;
+}
+
 const std::string & Response::getUplRoot() const {
 	return _uplRoot;
 }
 
-void Response::setUplRoot(const std::string &root) {
-	_uplRoot = root;
+void Response::setUplFileName(const std::string & uplFileName) {
+	_uplFileName = uplFileName;
+}
+
+const std::string & Response::getUplFileName() const {
+	return _uplFileName;
 }
