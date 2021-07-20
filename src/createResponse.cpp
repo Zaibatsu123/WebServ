@@ -99,7 +99,12 @@ ssize_t response(const int clientSocket, const std::string & request){
 	int it = 1;
 	do {
 		result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
-		std::cout << "---- Pack: " << it++ << "\n" << "Data Left:\t" << response->_buffer.length() << "\n" << "Send Result:\t" << result << std::endl;
+
+		std::cout
+		<< "---- Pack: " << it++ << "\n"
+		<< "Data Left:\t" << response->_buffer.length() << "\n"
+		<< "Send Result:\t" << result
+		<< std::endl;
 
 		//TODO: delete sleep for delay after send
 		usleep(1000);
