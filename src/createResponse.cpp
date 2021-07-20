@@ -55,6 +55,7 @@ ssize_t response(const int clientSocket, const std::string & request){
 
 	std::cout << request << std::endl;
 
+	std::cout << "--------------------> Response part!! <------------ " << std::endl;
 	if (response->getMethod() == "get"){
 		if (request.find("bg.jpg") != std::string::npos)
 			response->setFileName(response->getRoot() + "bg.jpg");
@@ -85,7 +86,7 @@ ssize_t response(const int clientSocket, const std::string & request){
 		}
 		else{
 			response->_buffer = response->generateResponse(response->getFileName());
-			std::cout << "\n--- HEADER!! ---\n" << response->generateHeader() << "----\n";
+			std::cout << "--- HEADER ---\n" << response->generateHeader();
 		}
 	}
 	if (response->getMethod() == "post"){
@@ -95,19 +96,29 @@ ssize_t response(const int clientSocket, const std::string & request){
 	}
 
 	result = 0;
+	int it = 1;
 	do {
 		result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
-		std::cout << "Send Result: " << result << "\n" << "Buffer: " << response->_buffer.length() << "\n-----\n" << std::endl;
+		std::cout << "---- Pack: " << it++ << "\n" << "Data Left:\t" << response->_buffer.length() << "\n" << "Send Result:\t" << result << std::endl;
+
+		//TODO: delete sleep for delay after send
+		usleep(1000);
+
+		// break loop if all data send
+		if (result == static_cast<ssize_t>(response->_buffer.length()))
+			break;
+
 		try
 		{
 			response->_buffer = response->_buffer.substr(result);
 		}
 		catch (std::exception & e){
-			std::cout << e.what() << std::endl;
+			std::cout << "Cannot substring data: " << e.what() << std::endl;
 		}
 
-	} while (result != static_cast<ssize_t>(response->_buffer.length()));
+	} while (result);
 
+	std::cout << "--------------------> Response END!! <------------ " << std::endl;
 	delete response;
 	return result;
 }
