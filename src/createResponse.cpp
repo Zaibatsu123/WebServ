@@ -11,43 +11,11 @@
 #include <sstream>
 #include <sys/wait.h>
 
-std::string cgiExec(){
-	pid_t pid;
-	int fds[2];
-	int status;
-	std::stringstream str;
-	char  buffer[1024];
-
-	pipe(fds);
-	pid = fork();
-	char *kek[3] = {(char *)"/bin/ls", (char *)".", 0};
-	if (pid == -1){
-		std::cout << "error" << std::endl;
-		return 0;
-	}
-	else if (pid == 0){
-		close(fds[0]);
-		dup2(fds[1], 1);
-		execve("/bin/ls", kek, 0);
-		_exit(1); //TODO: delete exit
-	}
-	waitpid(pid, &status, 0);
-	if (status >= 0){
-		close(fds[1]);
-		std::cout << "status: " << status << std::endl;
-		while (read(fds[0], buffer, 1024) > 0){
-			std::cout << "buffer: " << buffer << std::endl;
-			str << buffer;
-		}
-	}
-	return str.str();
-
-}
-
 ssize_t response(const int clientSocket, const std::string & request){
 	Response* 	response = new Response;
 	ssize_t		result;
 	std::string	requestBody = "test_text";
+	std::string	cgiName = "/usr/bin/php";
 
 	response->setMethod("get");
 	response->setUplFileName("test.txt");
@@ -59,6 +27,8 @@ ssize_t response(const int clientSocket, const std::string & request){
 	if (response->getMethod() == "get"){
 		if (request.find("bg.jpg") != std::string::npos)
 			response->setFileName(response->getRoot() + "bg.jpg");
+		else if (request.find(".php") != std::string::npos)
+			response->setFileName(response->getRoot() + "info.php");
 		else if (request.find("bg2.png") != std::string::npos)
 			response->setFileName(response->getRoot() + "bg2.png");
 		else if (request.find("favicon.ico") != std::string::npos)
@@ -73,16 +43,18 @@ ssize_t response(const int clientSocket, const std::string & request){
 		//TODO: раскомментить для включения CGI
 		//response->setFileName(response->getRoot() + "test.cgi");
 
-		if (response->getFileName().find(".cgi") != std::string::npos){
+		if (response->getFileName().find(".php") != std::string::npos){
 			std::cout << "CGI" << std::endl;
 			std::stringstream str;
-			str <<	"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n"
-		  			"<title>CGI</title>\n</head>\n<body style=\"text-align: center;\">\n"
-	   				"<div>\n<h1>Проверка работы CGI</h1>\n<h2>Ваши данные: ";
-			str << cgiExec();
-			str <<	"</h2>\n</div>\n<br>\n<br>\n<hr>\n"
-		  			"<h3>equal-rights 0.1.23</h3>\n</body>\n</html>\n";
-			response->_buffer = response->generateHeader() + str.str();
+//			str <<	"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n"
+//		  			"<title>CGI</title>\n</head>\n<body style=\"text-align: center;\">\n"
+//	   				"<div>\n<h1>Проверка работы CGI</h1>\n<h2>Ваши данные: ";
+//			str << cgiExec(cgiName);
+//			str <<	"</h2>\n</div>\n<br>\n<br>\n<hr>\n"
+//		  			"<h3>equal-rights 0.1.23</h3>\n</body>\n</html>\n";
+			std::string cgiString = response->cgi(cgiName);
+			response->_fileSize = cgiString.length();
+			response->_buffer = response->generateHeader() + cgiString;
 		}
 		else{
 			response->_buffer = response->generateResponse(response->getFileName());

@@ -24,6 +24,56 @@ Response::Response() : _status(0), _method("get"), _root(""), _fileName(""), _up
 Response::~Response(){
 }
 
+std::string Response::cgi(const std::string &){
+	std::stringstream	str;
+	pid_t				pid;
+	int					fds[2];
+	int					status;
+	char  buffer[1024];
+
+	pipe(fds);
+
+//	int fdIn = dup(0);
+//	int fdOut = dup(1);
+	pid = fork();
+	if (pid == -1){
+		std::cout << "error" << std::endl;
+		return 0;
+	}
+	else if (pid == 0){
+		dup2(fds[1], 1);
+		dup2(fds[0], 0);
+//		std::string buf;
+//		std::getline(std::cin, buf);
+//		std::cout << buf << std::endl;
+		execve("/bin/cat", 0, 0);
+//		execve(cgiName.c_str(), 0, 0);
+		std::cout << "error cgi not found" << std::endl;
+		_exit(1); //TODO: delete exit
+	}
+
+	std::cout << _fileName << std::endl;
+	std::string fileData = this->generateBody(_fileName);
+	std::cout << fileData << std::endl;
+
+//	close(fds[0]);
+	write(fds[1], fileData.c_str(), fileData.length());
+	close(fds[1]);
+	std::cout << "kekek" << std::endl;
+	waitpid(pid, &status, 0);
+	std::cout << "lalal" << std::endl;
+	if (status >= 0){
+		std::cout << "status: " << status << std::endl;
+		while (read(fds[0], buffer, 1024) > 0){
+			std::cout << "buffer: " << buffer << std::endl;
+			str << buffer;
+			close(fds[0]);
+		}
+		std::cout << "end read" << std::endl;
+	}
+	return str.str();
+}
+
 std::string Response::generateResponse(const std::string &fileName) {
 	std::ifstream	srcFile;
 

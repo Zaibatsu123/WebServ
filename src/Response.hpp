@@ -13,6 +13,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <unistd.h>
+#include <signal.h>
 
 class Response{
 private:
@@ -44,7 +46,7 @@ public:
 	void 				setUplFileName(const std::string &);
 	const std::string & getUplFileName() const;
 
-	void				display(const std::string & fileName) const;
+	std::string			cgi(const std::string & cgiName);
 	std::string 		upload(const std::string & fileName, const char * data, const std::string & responseFileName);
 	std::string			generateResponse(const std::string & fileName);
 	std::string			generateHeader();
