@@ -43,10 +43,10 @@ std::string Response::cgi(const std::string &){
 	else if (pid == 0){
 		dup2(fds[1], 1);
 		dup2(fds[0], 0);
-//		std::string buf;
-//		std::getline(std::cin, buf);
-//		std::cout << buf << std::endl;
-		execve("/bin/cat", 0, 0);
+		std::string buf;
+		std::getline(std::cin, buf);
+		std::cout << buf << std::endl;
+//		execve("/bin/cat", 0, 0);
 //		execve(cgiName.c_str(), 0, 0);
 		std::cout << "error cgi not found" << std::endl;
 		_exit(1); //TODO: delete exit

@@ -17,7 +17,10 @@ ssize_t response(const int clientSocket, const std::string & request){
 	std::string	requestBody = "test_text";
 	std::string	cgiName = "/usr/bin/php";
 
-	response->setMethod("get");
+	if (request.find("POST") != std::string::npos)
+		response->setMethod("post");
+	else
+		response->setMethod("get");
 	response->setUplFileName("test.txt");
 	response->setRoot("./root/");
 
@@ -25,12 +28,15 @@ ssize_t response(const int clientSocket, const std::string & request){
 
 	std::cout << "--------------------> Response part!! <------------ " << std::endl;
 	if (response->getMethod() == "get"){
+		std::cout << "GET!!" << std::endl;
 		if (request.find("bg.jpg") != std::string::npos)
 			response->setFileName(response->getRoot() + "bg.jpg");
 		else if (request.find(".php") != std::string::npos)
 			response->setFileName(response->getRoot() + "info.php");
 		else if (request.find("bg2.png") != std::string::npos)
 			response->setFileName(response->getRoot() + "bg2.png");
+		else if (request.find("main.js") != std::string::npos)
+			response->setFileName(response->getRoot() + "main.js");
 		else if (request.find("favicon.ico") != std::string::npos)
 			response->setFileName(response->getRoot() + "favicon.ico");
 		else if (request.find("style.css") != std::string::npos)
@@ -41,17 +47,11 @@ ssize_t response(const int clientSocket, const std::string & request){
 			response->setFileName(response->getRoot() + "index.html");
 
 		//TODO: раскомментить для включения CGI
-		//response->setFileName(response->getRoot() + "test.cgi");
+//		response->setFileName(response->getRoot() + "info.php");
 
-		if (response->getFileName().find(".php") != std::string::npos){
+		if (response->getFileName().find("info.php") != std::string::npos){
 			std::cout << "CGI" << std::endl;
 			std::stringstream str;
-//			str <<	"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n"
-//		  			"<title>CGI</title>\n</head>\n<body style=\"text-align: center;\">\n"
-//	   				"<div>\n<h1>Проверка работы CGI</h1>\n<h2>Ваши данные: ";
-//			str << cgiExec(cgiName);
-//			str <<	"</h2>\n</div>\n<br>\n<br>\n<hr>\n"
-//		  			"<h3>equal-rights 0.1.23</h3>\n</body>\n</html>\n";
 			std::string cgiString = response->cgi(cgiName);
 			response->_fileSize = cgiString.length();
 			response->_buffer = response->generateHeader() + cgiString;
@@ -62,9 +62,11 @@ ssize_t response(const int clientSocket, const std::string & request){
 		}
 	}
 	if (response->getMethod() == "post"){
+		std::cout << "POST!!" << std::endl;
 		response->setFileName(response->getRoot() + "uploadSuccess.html");
 		response->setUplRoot("./root/tmp/");
 		response->_buffer = response->upload(response->getUplFileName(), requestBody.c_str(), response->getFileName());
+		std::cout << "--- HEADER ---\n" << response->generateHeader();
 	}
 
 	result = 0;
