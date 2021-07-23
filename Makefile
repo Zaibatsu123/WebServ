@@ -16,11 +16,11 @@ SRC				:=	main.cpp	\
 					createResponse.cpp \
 					Response.cpp \
 					webserver.cpp \
-					Config.cpp 
-PARS			:= 	utils.cpp \
+					Config.cpp \
+					utils.cpp \
 					Request.cpp 
 
-OBJ				:= $(addprefix $(OBJPATH), $(SRC:.cpp=.o), $(PARS:.cpp=.o))
+OBJ				:= $(addprefix $(OBJPATH), $(SRC:.cpp=.o))
 
 $(OBJPATH)%.o: %.cpp $(HEADER)
 	mkdir -p obj

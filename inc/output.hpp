@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <sstream>
 #include "../src/Config.hpp"
-#include "../parser/Request.hpp"
+#include "../src/Request.hpp"
 
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"
