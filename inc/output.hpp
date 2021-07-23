@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sstream>
+#include "../src/Config.hpp"
 
 
 #define COLOR_DEFAULT "\e[0m"
@@ -26,6 +27,6 @@
 #define COLOR_GREEN "\e[32m"
 #define COLOR_GREY "\e[37m"
 
-ssize_t response(const int clientSocket, const std::string & request);
+ssize_t response(s_client client);
 
 #endif //OUTPUT_HPP

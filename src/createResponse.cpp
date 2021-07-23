@@ -12,12 +12,12 @@
 #include <sys/wait.h>
 #include "Config.hpp"
 
-ssize_t response(s_client *client){
+ssize_t response(s_client client){
 	Response* 	response = new Response;
 	ssize_t		result;
 	std::string	requestBody = "test_text";
 	std::string	cgiName = "/usr/bin/php";
-	
+
 
 	if (request.find("POST") != std::string::npos)
 		response->setMethod("post");
