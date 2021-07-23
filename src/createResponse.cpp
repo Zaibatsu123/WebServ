@@ -48,6 +48,7 @@ ssize_t response(const int clientSocket, const std::string & request){
 
 		//TODO: раскомментить для включения CGI
 //		response->setFileName(response->getRoot() + "info.php");
+		response->setFileName(response->getRoot() + "info.php");
 
 		if (response->getFileName().find("info.php") != std::string::npos){
 			std::cout << "CGI" << std::endl;
@@ -74,6 +75,9 @@ ssize_t response(const int clientSocket, const std::string & request){
 	do {
 		result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
 
+		if (static_cast<int>(result) == -1)
+			perror("");
+		EWOULDBLOCK
 		std::cout
 		<< "---- Pack: " << it++ << "\n"
 		<< "Data Left:\t" << response->_buffer.length() << "\n"
@@ -92,7 +96,7 @@ ssize_t response(const int clientSocket, const std::string & request){
 			response->_buffer = response->_buffer.substr(result);
 		}
 		catch (std::exception & e){
-			std::cout << "Cannot substring data: " << e.what() << std::endl;
+//			std::cout << "Cannot substring data: " << e.what() << std::endl;
 		}
 
 	} while (result);
