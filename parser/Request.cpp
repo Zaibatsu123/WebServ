@@ -1,12 +1,27 @@
+//                                          ┏┻━━┻┓        //
+// Created by:                        ╭┓┏╮  ┃▕▏▕▏┃  ╭┓┏╮  //
+//        Jolene Radioactive          ┃┗┛┃  ┃┏┳┳┓┃  ┃┗┛┃  //
+//         on:                        ╰┳┳╯  ┃┗┻┻┛┃  ╰┳┳╯  //
+//              07/21				   ┃┃ ┏━┻━━━━┻━┓ ┃┃   //
+//                                     ┃╰━┫╭━━━━━━╮┣━╯┃   //
+//                                     ╰━━┫┃╱╲╱╲╱╲┃┣━━╯   //
+
 #include "Request.hpp"
 #include <algorithm>
 #include <vector>
 
-
-
-
+std::vector<std::string> getarray(std::string req);
+std::string trim(std::string old_string);
+std::string trim_end(std::string old_string);
 
 Request::Request(){
+	_method = "";
+	_content_length = "";
+	_content_type = "";
+	_path = "";
+	_body = "";
+	_protocol = "";
+	_conection = "keep-alive";
 	_err = 0;
 }
 
@@ -22,23 +37,12 @@ std::string Request::getProtocol() const    {return _protocol; }
 std::string Request::getHost() const    {return _host; }
 std::string Request::getCType() const    {return _content_type; }
 std::string Request::getCLength() const    {return _content_length; }
+std::string  Request::getBody() const	{return _body; };
 
-std::vector<std::string> Request::getarray(std::string req)
+void Request::methodpath(std::string method, std::string path)
 {
-	std::vector<std::string> request;
-	int index1 = -1;
-	int index2 = 0;
-
-	size_t n = std::count(req.begin(), req.end(), '\n');
-	std::string str;
-	for (int i = 0; i < n; i++)
-	{
-		index2 = req.find("\n");
-		str = req.substr(index1 + 1, index2);
-		index1 = index2;
-		request.push_back(str);
-	}
-	return (request);
+	_path = path;
+	_method = method;
 }
 
 void Request::strrequest(std::vector<std::string> request){
@@ -56,20 +60,14 @@ void Request::strrequest(std::vector<std::string> request){
 		return ;
 	}
 	if (request[0].compare(0, 3, "GET") == 0)
-	{
-		_method = "GET";
-		_path = request[0].substr(3, request[0].length() - 11);
-	}
+		this->methodpath("GET", trim(request[0].substr(3, request[0].length() - 11)));
 	else if (request[0].compare(0, 4, "POST") == 0)
 	{
-		_method = "POST";
-		_path = request[0].substr(4, request[0].length() - 12);
+		this->methodpath("POST", trim(request[0].substr(4, request[0].length() - 12)));
+		postrequest(request);
 	}
 	else if (request[0].compare(0, 6, "DELETE") == 0)
-	{
-		_method = "DELETE";
-		_path = request[0].substr(6, request[0].length() - 14);
-	}
+		this->methodpath("DELETE", trim(request[0].substr(6, request[0].length() - 14)));
 	else
 	{
 		_err = 1;
@@ -85,17 +83,36 @@ void Request::getheaders(std::vector<std::string> request)
 	str = request[1];
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
 	if (str.compare(0, 5, "host:") == 0)
-		_host = str.substr(5, str.length() - 6);
+		_host = trim(str.substr(5, str.length() - 5));
 }
 
-void Request::getrequest(std::vector<std::string> request){
+// void Request::getrequest(std::vector<std::string> request){
+// }
+
+
+void Request::postrequest(std::vector<std::string> request) 
+{
+	std::string str;
+	if (request.size() > 1)
+		for (int i = 0; i < request.size(); ++i)
+		{
+			str = request[i];
+			transform(str.begin(), str.end(), str.begin(), ::tolower);
+			if (str.compare(0, 16, "content-length: ") == 0)
+				_content_length = trim(str.substr(16, str.length() - 16));
+			else if (str.compare(0, 14, "content-type: ") == 0)
+				_content_type = trim(str.substr(14, str.length() - 14));
+			else if (str.empty() && i + 1 < request.size())
+				for (int j = i + 1; j < request.size(); ++j)
+				{
+					if (j != request.size() - 1)
+						_body += request[j] + "\n";
+					else 
+						_body += request[j];
+				}
+		}
 }
 
+// void Request::deleterequest(std::vector<std::string> request){
 
-void Request::postrequest(std::vector<std::string> request) {
-
-}
-
-void Request::deleterequest(std::vector<std::string> request){
-
-}
+// }

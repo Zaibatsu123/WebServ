@@ -1,15 +1,18 @@
-# include <iostream>
+//                                          ┏┻━━┻┓        //
+// Created by:                        ╭┓┏╮  ┃▕▏▕▏┃  ╭┓┏╮  //
+//        Jolene Radioactive          ┃┗┛┃  ┃┏┳┳┓┃  ┃┗┛┃  //
+//         on:                        ╰┳┳╯  ┃┗┻┻┛┃  ╰┳┳╯  //
+//              07/21				   ┃┃ ┏━┻━━━━┻━┓ ┃┃   //
+//                                     ┃╰━┫╭━━━━━━╮┣━╯┃   //
+//                                     ╰━━┫┃╱╲╱╲╱╲┃┣━━╯   //
+
+#include <iostream>
 #include <vector>
 #include "Request.hpp"
 
-int parser(Request *pars, std::vector<std::string> request)
-{
-	pars->strrequest(request);
+std::vector<std::string> getarray(std::string req);
+Request start(std::string str_req);
 
-	if (pars->getErr() != 0)
-		return (1);	
-	return (0);
-}
 
 int main(void)
 {
@@ -21,14 +24,20 @@ int main(void)
 	{
 		std::string str;
 		getline(std::cin, str);
-		if (str.empty() || !str.size())
+		if (str == "END")
 			break;
 		req += str + "\n";
 	}
-	request = pars.getarray(req);
-	// pars.strrequest(request);
-	parser(&pars, request);
-	std::cout << pars.getMethod() << pars.getPath() << pars.getProtocol() << pars.getHost(); //<< std::endl;
+	if (req.empty())
+		return (1);
+
+	pars = start(req);
+
+	std::cout << pars.getMethod() << pars.getPath() << pars.getProtocol() << pars.getHost() << "|||||"  << std::endl;
+	std::cout << "CL: " << pars.getCLength() << "|\nCT: " << pars.getCType() << "|||||" << std::endl;
+	std::cout << "ERR: " << pars.getErr() << std::endl;
+	std::cout << "BODY: " << pars.getBody() << std::endl;
+
 	return (0);
 }
 
