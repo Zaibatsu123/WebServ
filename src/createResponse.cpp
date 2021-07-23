@@ -12,45 +12,26 @@
 #include <sys/wait.h>
 #include "Config.hpp"
 
-ssize_t response(s_client *client){
+ssize_t response(s_client client){
 	Response* 	response = new Response;
 	ssize_t		result;
 	std::string	requestBody = "test_text";
 	std::string	cgiName = "/usr/bin/php";
-	
 
-	if (request.find("POST") != std::string::npos)
-		response->setMethod("post");
-	else
-		response->setMethod("get");
+	response->setMethod(client.request->getMethod());
+	response->setFileName(client.request->getPath());
+
 	response->setUplFileName("test.txt");
 	response->setRoot("./root/");
 
-	std::cout << request << std::endl;
+//	std::cout << request << std::endl;
 
 	std::cout << "--------------------> Response part!! <------------ " << std::endl;
 	if (response->getMethod() == "get"){
 		std::cout << "GET!!" << std::endl;
-		if (request.find("bg.jpg") != std::string::npos)
-			response->setFileName(response->getRoot() + "bg.jpg");
-		else if (request.find(".php") != std::string::npos)
-			response->setFileName(response->getRoot() + "info.php");
-		else if (request.find("bg2.png") != std::string::npos)
-			response->setFileName(response->getRoot() + "bg2.png");
-		else if (request.find("main.js") != std::string::npos)
-			response->setFileName(response->getRoot() + "main.js");
-		else if (request.find("favicon.ico") != std::string::npos)
-			response->setFileName(response->getRoot() + "favicon.ico");
-		else if (request.find("style.css") != std::string::npos)
-			response->setFileName(response->getRoot() + "style.css");
-		else if (request.find("upload.html") != std::string::npos)
-			response->setFileName(response->getRoot() + "upload.html");
-		else
-			response->setFileName(response->getRoot() + "index.html");
 
 		//TODO: раскомментить для включения CGI
 //		response->setFileName(response->getRoot() + "info.php");
-		response->setFileName(response->getRoot() + "info.php");
 
 		if (response->getFileName().find("info.php") != std::string::npos){
 			std::cout << "CGI" << std::endl;
@@ -75,11 +56,10 @@ ssize_t response(s_client *client){
 	result = 0;
 	int it = 1;
 	do {
-		result = send(clientSocket, response->_buffer.c_str(), response->_buffer.length(), 0);
+		result = send(client.socket, response->_buffer.c_str(), response->_buffer.length(), 0);
 
 		if (static_cast<int>(result) == -1)
 			perror("");
-		EWOULDBLOCK
 		std::cout
 		<< "---- Pack: " << it++ << "\n"
 		<< "Data Left:\t" << response->_buffer.length() << "\n"

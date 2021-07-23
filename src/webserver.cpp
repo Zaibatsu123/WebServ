@@ -125,7 +125,7 @@ int master_process(Config *configuration){
             std::cout << "Check ready for responce fd:" << (*i).socket << std::endl;
             if (FD_ISSET((*i).socket, &write_fds) and (*i).status)
             {
-                result = response(i);
+                result = response(*i);
                 if (result == -1)
                     std::cerr << "send failed: " << strerror(errno) << "\n"; // произошла ошибка при отправке данных
                 close((*i).socket);

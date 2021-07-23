@@ -17,6 +17,8 @@ SRC				:=	main.cpp	\
 					Response.cpp \
 					webserver.cpp \
 					Config.cpp \
+					Request.cpp \
+					utils.cpp \
 
 OBJ				:= $(addprefix $(OBJPATH), $(SRC:.cpp=.o))
 
