@@ -13,20 +13,33 @@
 #include "Config.hpp"
 
 ssize_t response(s_client client){
+	std::cout << "--------------------> Response part!! <------------ " << std::endl;
 	Response* 	response = new Response;
 	ssize_t		result;
 	std::string	requestBody = "test_text";
 	std::string	cgiName = "/usr/bin/php";
+	std::string	name = "index.html";
+//
 
-	response->setMethod(client.request->getMethod());
-	response->setFileName(client.request->getPath());
+	response->setRoot("./root");
+	response->setMethod("get");
+//	response->setFileName(response->getRoot() + client.request->getPath());
+	response->setFileName(response->getRoot() + "index.html");
+//	response->setMethod(client.request->getMethod());
+	response->setFileName(response->getRoot() + client.request->getPath());
+//
+	std::cout << "RESPONSE!!!!" << std::endl;
+//	response->setUplFileName(response->getRoot() + name);
+	std::cout << response->getFileName() << std::endl;
+	std::cout << "END!" << std::endl;
 
-	response->setUplFileName("test.txt");
-	response->setRoot("./root/");
+////	std::cout << client.socket << std::endl;
+//	std::cout << client.buffer << std::endl;
+//	std::cout << "ERROR!" << std::endl;
+//	std::cout << client.request->getErr() << std::endl;
+////	std::cout << client.request->getMethod() << std::endl;
 
-//	std::cout << request << std::endl;
 
-	std::cout << "--------------------> Response part!! <------------ " << std::endl;
 	if (response->getMethod() == "get"){
 		std::cout << "GET!!" << std::endl;
 
@@ -85,6 +98,7 @@ ssize_t response(s_client client){
 
 	std::cout << "--------------------> Response END!! <------------ " << std::endl;
 	delete response;
+	delete client.request;
 	return result;
 }
 

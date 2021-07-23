@@ -60,14 +60,14 @@ void Request::strrequest(std::vector<std::string> request){
 		return ;
 	}
 	if (request[0].compare(0, 3, "GET") == 0)
-		this->methodpath("GET", trim(request[0].substr(3, request[0].length() - 11)));
+		this->methodpath("GET", trim(request[0].substr(3, request[0].length() - 12)));
 	else if (request[0].compare(0, 4, "POST") == 0)
 	{
-		this->methodpath("POST", trim(request[0].substr(4, request[0].length() - 12)));
+		this->methodpath("POST", trim(request[0].substr(4, request[0].length() - 13)));
 		postrequest(request);
 	}
 	else if (request[0].compare(0, 6, "DELETE") == 0)
-		this->methodpath("DELETE", trim(request[0].substr(6, request[0].length() - 14)));
+		this->methodpath("DELETE", trim(request[0].substr(6, request[0].length() - 15)));
 	else
 	{
 		_err = 1;
