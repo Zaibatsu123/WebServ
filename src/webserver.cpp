@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "../parser/Request.hpp"
+
+Request *start(std::string str_req);
 
 int rebind(int listen_socket) //устраняем залипание сокета после некорректного завершения работы сервака
 {
@@ -113,6 +116,7 @@ int master_process(Config *configuration){
                 std::cout << read_buffer << std::endl;
                 std::cout << "End request________________________" << std::endl;
                 (*i).buffer = read_buffer;
+                (*i).request = start((*i).buffer);
                 (*i).status = 1;
             }
         }
@@ -121,7 +125,7 @@ int master_process(Config *configuration){
             std::cout << "Check ready for responce fd:" << (*i).socket << std::endl;
             if (FD_ISSET((*i).socket, &write_fds) and (*i).status)
             {
-                result = response((*i).socket, (*i).buffer);
+                result = response(i);
                 if (result == -1)
                     std::cerr << "send failed: " << strerror(errno) << "\n"; // произошла ошибка при отправке данных
                 close((*i).socket);

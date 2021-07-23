@@ -43,12 +43,12 @@ std::vector<std::string> getarray(std::string req)
 	return (request);
 }
 
-Request start(std::string str_req)
+Request *start(std::string str_req)
 {
-	Request request;
+	Request *request = new Request;
 	std::vector<std::string> vect_req;
 
 	vect_req = getarray(str_req);
-	request.strrequest(vect_req);
+	request->strrequest(vect_req);
 	return (request);
 }

@@ -11,12 +11,14 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <vector>
+#include "../parser/Request.hpp"
 
 typedef struct  s_client 
 {
     int         socket;
     int         status;
     std::string buffer;
+    Request     *request;
 }               t_client;
 
 class Config
