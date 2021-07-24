@@ -46,7 +46,7 @@ void Request::methodpath(std::string method, std::string path)
 }
 
 void Request::strrequest(std::vector<std::string> request){
-	if (request[0].compare(request[0].length() - 8, 8, "HTTP/1.1") == 0)
+	if (trim(request[0]).compare(request[0].length() - 8, 8, "HTTP/1.1") == 0)
 		_protocol = "HTTP/1.1";
 	else
 	{

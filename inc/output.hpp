@@ -21,6 +21,8 @@
 #include <sstream>
 #include "../src/Config.hpp"
 #include "../src/Request.hpp"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"
