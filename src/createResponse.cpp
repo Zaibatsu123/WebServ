@@ -14,39 +14,31 @@
 
 ssize_t response(s_client client){
 	std::cout << "--------------------> Response part!! <------------ " << std::endl;
+
 	Response* 	response = new Response;
 	ssize_t		result;
+
+// debug variables
 	std::string	requestBody = "test_text";
 	std::string	cgiName = "/usr/bin/php";
-	std::string	name = "index.html";
-//
 
+// if parse errors
+//	if (client.request->getErr())
+//		return 0;
+
+// init configs
+	response->setUplRoot("./root/tmp/");
 	response->setRoot("./root");
 	response->setMethod("get");
 //	response->setFileName(response->getRoot() + client.request->getPath());
-	response->setFileName(response->getRoot() + "index.html");
-//	response->setMethod(client.request->getMethod());
-	response->setFileName(response->getRoot() + client.request->getPath());
-//
-	std::cout << "RESPONSE!!!!" << std::endl;
-//	response->setUplFileName(response->getRoot() + name);
-	std::cout << response->getFileName() << std::endl;
-	std::cout << "END!" << std::endl;
+	response->setFileName(response->getRoot() + "/info.php");
 
-////	std::cout << client.socket << std::endl;
-//	std::cout << client.buffer << std::endl;
-//	std::cout << "ERROR!" << std::endl;
-//	std::cout << client.request->getErr() << std::endl;
-////	std::cout << client.request->getMethod() << std::endl;
-
-
+// get method
 	if (response->getMethod() == "get"){
 		std::cout << "GET!!" << std::endl;
 
-		//TODO: раскомментить для включения CGI
-//		response->setFileName(response->getRoot() + "info.php");
-
-		if (response->getFileName().find("info.php") != std::string::npos){
+	// if need use CGI
+		if (response->getFileName().find("/info.php") != std::string::npos){
 			std::cout << "CGI" << std::endl;
 			std::stringstream str;
 			std::string cgiString = response->cgi(cgiName);
@@ -55,17 +47,19 @@ ssize_t response(s_client client){
 		}
 		else{
 			response->_buffer = response->generateResponse(response->getFileName());
-			std::cout << "--- HEADER ---\n" << response->generateHeader();
+		std::cout << response->_buffer << std::endl;
 		}
 	}
+
+// post method
 	if (response->getMethod() == "post"){
 		std::cout << "POST!!" << std::endl;
+
 		response->setFileName(response->getRoot() + "uploadSuccess.html");
-		response->setUplRoot("./root/tmp/");
 		response->_buffer = response->upload(response->getUplFileName(), requestBody.c_str(), response->getFileName());
-		std::cout << "--- HEADER ---\n" << response->generateHeader();
 	}
 
+// send
 	result = 0;
 	int it = 1;
 	do {
@@ -79,7 +73,7 @@ ssize_t response(s_client client){
 		<< "Send Result:\t" << result
 		<< std::endl;
 
-		//TODO: delete sleep for delay after send
+	//TODO: delete sleep for delay after send
 		usleep(1000);
 
 		// break loop if all data send
@@ -91,7 +85,6 @@ ssize_t response(s_client client){
 			response->_buffer = response->_buffer.substr(result);
 		}
 		catch (std::exception & e){
-//			std::cout << "Cannot substring data: " << e.what() << std::endl;
 		}
 
 	} while (result);
