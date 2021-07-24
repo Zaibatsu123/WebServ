@@ -14,13 +14,15 @@
 #include <sstream>
 #include <vector>
 #include <unistd.h>
-#include <signal.h>
+#include <sys/wait.h>
 
 class Response{
 private:
-	static const std::string			_protocol;
-	static std::map<int, std::string>	_code;
-	static std::map<int, std::string>	_createMap();
+	static const std::string				_protocol;
+	static const std::string				_errorPageFolder;
+	static std::map<int, std::string>		_code;
+	static std::map<int, std::string>		_createMap();
+	static std::map<int, std::string>		_createErrorPage();
 
 	int 		_status;
 	std::string	_method;
@@ -28,7 +30,11 @@ private:
 	std::string	_fileName;
 	std::string	_uplRoot;
 	std::string	_uplFileName;
+
+	void 		cgiChild(int fds1[2], int fds2[2], const std::string & cgiName);
+	std::string	cgiParent(int *fds1, int *fds2, pid_t pid);
 public:
+	static std::map<int, std::string>	_errorPage;
 	size_t		_fileSize;
 	std::string _buffer;
 	Response();
@@ -51,6 +57,7 @@ public:
 	std::string			generateResponse(const std::string & fileName);
 	std::string			generateHeader();
 	std::string			generateBody(const std::string & fileName);
+	char**				generateCgiEnv();
 };
 
 

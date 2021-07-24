@@ -20,7 +20,7 @@ ssize_t response(s_client client){
 
 // debug variables
 	std::string	requestBody = "test_text";
-	std::string	cgiName = "/usr/bin/php";
+	std::string	cgiName = "./root/cgi_tester";
 
 // if parse errors
 //	if (client.request->getErr())
@@ -36,20 +36,18 @@ ssize_t response(s_client client){
 
 // get method
 	if (response->getMethod() == "get"){
-		std::cout << "GET!!" << std::endl;
+		std::cout << "--> GET" << std::endl;
 
 	// if need use CGI
-//		if (response->getFileName().find("/info.php") != std::string::npos){
-//			std::cout << "CGI" << std::endl;
-//			std::stringstream str;
-//			std::string cgiString = response->cgi(cgiName);
-//			response->_fileSize = cgiString.length();
-//			response->_buffer = response->generateHeader() + cgiString;
-//		}
-//		else{
+		if (response->getFileName().find(".php") != std::string::npos){
+			std::cout << "----> CGI" << std::endl;
+			std::string cgiString = response->cgi(cgiName);
+			response->_fileSize = cgiString.length();
+			response->_buffer = response->generateHeader() + cgiString;
+		}
+		else{
 			response->_buffer = response->generateResponse(response->getFileName());
-//		std::cout << response->_buffer << std::endl;
-//		}
+		}
 	}
 
 // post method
