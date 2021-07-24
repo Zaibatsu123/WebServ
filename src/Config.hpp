@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <vector>
+#include <map>
 
 typedef struct  s_client 
 {
@@ -22,9 +23,7 @@ typedef struct  s_client
 class Config
 {
     private:
-        int                 __socket;
-        char                *__address;
-        int                 __port;
+
 
     public:
         class ConfigException : public std::exception
@@ -38,6 +37,7 @@ class Config
         };
 
         Config();
+        std::list<Server>           servers;
         std::list<t_client>         clients;
         void                        configurationPrint();
         int                         getPort();

@@ -1,2 +1,9 @@
-port:9909
-ip:127.0.0.1
+server
+    ip 127.0.0.1
+    port 8088
+    server_name www.pornhub.com
+    auto_index on
+    location /
+        root ~/www/
+    location /images/
+        root ~/www/images/

@@ -1,4 +1,5 @@
 #include "Config.hpp"
+#include "Server.hpp"
 
 Config::ConfigException::ConfigException(std::string error)
 {
@@ -14,6 +15,21 @@ Config::Config()
 {
     this->__address = NULL;
     this->__port = -1;
+}
+
+std::string trim(std::string old_string)
+{
+    int i = 0;
+    while (old_string[i] == ' ' || old_string[i] == '\t')
+        i++;
+    std::cout << i << std::endl;
+    int j = old_string.size() - 1;
+    while (old_string[j] == ' ' || old_string[j] == '\t')
+        j--;
+    std::cout << j << std::endl;
+    std::string new_string = old_string.substr(i, j - i + 1);
+    std::cout << "|" << new_string << "|" << std::endl;
+    return (new_string);
 }
 
 std::vector<std::string> Config::readFile(char *config_name)
@@ -33,11 +49,11 @@ std::vector<std::string> Config::readFile(char *config_name)
         std::getline(config_file, temp);
         if (config_file.eof())
         {
-            configuration.push_back(temp + '\0');
+            configuration.push_back(temp);
             break;
         }
         else
-            configuration.push_back(temp + '\0');
+            configuration.push_back(temp);
     }
     config_file.close();
     return (configuration);
@@ -66,6 +82,7 @@ int Config::parsingConfiguration(char *config_name)
 {
     std::vector<std::string>    configuration = readFile(config_name);
     std::string                 next_string;
+    std::vector<Server>         servers;
 
     if (configuration.size() == 0)
         return (EXIT_FAILURE);
@@ -84,24 +101,4 @@ int Config::parsingConfiguration(char *config_name)
         return (EXIT_FAILURE);
     configurationPrint();
     return (EXIT_SUCCESS);
-}
-
-int Config::getPort()
-{
-    return (this->__port);
-}
-
-int Config::getSocket()
-{
-    return (this->__socket);
-}
-
-void Config::setSocket(int socket)
-{
-    this->__socket = socket;
-}
-
-char *Config::getAddress()
-{
-    return (this->__address);
 }
