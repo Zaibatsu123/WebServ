@@ -35,8 +35,8 @@ ssize_t response(s_client client){
 
 ////	std::cout << client.socket << std::endl;
 //	std::cout << client.buffer << std::endl;
-//	std::cout << "ERROR!" << std::endl;
-//	std::cout << client.request->getErr() << std::endl;
+	std::cout << "ERROR!" << std::endl;
+	std::cout << client.request->getErr() << std::endl;
 ////	std::cout << client.request->getMethod() << std::endl;
 
 

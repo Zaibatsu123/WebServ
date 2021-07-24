@@ -100,6 +100,7 @@ int master_process(Config *configuration){
             }
             new_client = new t_client;
             new_client->socket = new_client_socket;
+            new_client->status = 0;
             fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
             configuration->clients.push_back(*new_client);
             std::cout << "Connected new client" << std::endl;

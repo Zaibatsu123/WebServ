@@ -6,6 +6,8 @@
 //                                   //
 
 #include "Response.hpp"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 const std::string Response::_protocol = "HTTP/1.1";
 
