@@ -11,6 +11,7 @@
 #include <vector>
 #include <algorithm>
 #include "Request.hpp"
+#include "../inc/output.hpp"
 
 std::string trim(std::string old_string)
 {

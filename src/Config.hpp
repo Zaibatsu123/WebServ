@@ -1,25 +1,10 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#include <netinet/in.h>
-#include <iostream>
-#include <fstream>
-#include <stdlib.h>
-#include <string>
-#include <cstring>
-#include <list>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <vector>
-#include "Request.hpp"
 
-typedef struct  s_client 
-{
-    int         socket;
-    int         status;
-    std::string buffer;
-    Request     *request;
-}               t_client;
+// #include "Server.hpp"
+
+
 
 class Config
 {

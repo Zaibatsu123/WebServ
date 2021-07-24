@@ -29,6 +29,7 @@
 #define COLOR_GREEN "\e[32m"
 #define COLOR_GREY "\e[37m"
 
-ssize_t response(s_client client);
+// ssize_t response(s_client client);
+std::string trim(std::string old_string);
 
 #endif //OUTPUT_HPP
