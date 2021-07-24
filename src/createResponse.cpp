@@ -30,25 +30,26 @@ ssize_t response(s_client client){
 	response->setUplRoot("./root/tmp/");
 	response->setRoot("./root");
 	response->setMethod("get");
-//	response->setFileName(response->getRoot() + client.request->getPath());
-	response->setFileName(response->getRoot() + "/info.php");
+	response->setFileName(response->getRoot() + client.request->getPath());
+//	std::cout << response->getFileName() << std::endl;
+//	response->setFileName(response->getRoot() + "/bg.jpg");
 
 // get method
 	if (response->getMethod() == "get"){
 		std::cout << "GET!!" << std::endl;
 
 	// if need use CGI
-		if (response->getFileName().find("/info.php") != std::string::npos){
-			std::cout << "CGI" << std::endl;
-			std::stringstream str;
-			std::string cgiString = response->cgi(cgiName);
-			response->_fileSize = cgiString.length();
-			response->_buffer = response->generateHeader() + cgiString;
-		}
-		else{
+//		if (response->getFileName().find("/info.php") != std::string::npos){
+//			std::cout << "CGI" << std::endl;
+//			std::stringstream str;
+//			std::string cgiString = response->cgi(cgiName);
+//			response->_fileSize = cgiString.length();
+//			response->_buffer = response->generateHeader() + cgiString;
+//		}
+//		else{
 			response->_buffer = response->generateResponse(response->getFileName());
-		std::cout << response->_buffer << std::endl;
-		}
+//		std::cout << response->_buffer << std::endl;
+//		}
 	}
 
 // post method

@@ -49,15 +49,15 @@ std::string Response::cgi(const std::string &){
 		std::getline(std::cin, buf);
 		std::cout << buf << std::endl;
 		std::cout << "lets try execve" << std::endl;
-		char **envp = (char **)malloc(sizeof(char*) * 4);
-		envp[0] = (char *)"REQUEST_METHOD=get";
-		envp[1] = (char *)"SERVER_PROTOCOL=HTTP/1.1";
-		envp[2] = (char *)"PATH_INFO=info.php";
-		envp[3] = 0;
-		int res = execve("/Users/wjarr/Desktop/webserv/root/cgi_tester", 0, envp);
+//		char **envp = (char **)malloc(sizeof(char*) * 4);
+//		envp[0] = (char *)"REQUEST_METHOD=get";
+//		envp[1] = (char *)"SERVER_PROTOCOL=HTTP/1.1";
+//		envp[2] = (char *)"PATH_INFO=info.php";
+//		envp[3] = 0;
+//		int res = execvecve("/Users/wjarr/Desktop/webserv/root/cgi_tester", 0, envp);
 //		execve(cgiName.c_str(), 0, 0);
-		if (res < 0)
-			std::cout << "error cgi not found" << std::endl;
+//		if (res < 0)
+//			std::cout << "error cgi not found" << std::endl;
 		_exit(1); //TODO: delete exit
 	}
 
