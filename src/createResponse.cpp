@@ -12,54 +12,48 @@
 #include <sys/wait.h>
 #include "Config.hpp"
 
+
 ssize_t response(s_client client){
 	std::cout << "--------------------> Response part!! <------------ " << std::endl;
 
 	Response* 	response = new Response;
-	ssize_t		result;
-
-// debug variables
-	std::string	requestBody = "test_text";
-	std::string	cgiName = "./root/cgi_tester";
 
 // if parse errors
 //	if (client.request->getErr())
 //		return 0;
 
 // init configs
-	response->setUplRoot("./root/tmp/");
+	response->setUplRoot("./root/tmp");
 	response->setRoot("./root");
-	response->setMethod("get");
-	response->setFileName(response->getRoot() + client.request->getPath());
-//	std::cout << response->getFileName() << std::endl;
-//	response->setFileName(response->getRoot() + "/bg.jpg");
-
+//	response->setMethod(client.request);
+	response->setFileName(client.request->getPath());
+	std::cout << client.request->getMethod() << std::endl;
 // get method
-	if (response->getMethod() == "get"){
+	if (client.request->getMethod() == "GET"){
 		std::cout << "--> GET" << std::endl;
-
 	// if need use CGI
 		if (response->getFileName().find(".php") != std::string::npos){
 			std::cout << "----> CGI" << std::endl;
-			std::string cgiString = response->cgi(cgiName);
-			response->_fileSize = cgiString.length();
-			response->_buffer = response->generateHeader() + cgiString;
+			response->_buffer = response->generateResponseCGI();
 		}
-		else{
-			response->_buffer = response->generateResponse(response->getFileName());
+		else {
+			response->_buffer = response->generateResponse();
 		}
 	}
 
 // post method
-	if (response->getMethod() == "post"){
+	if (client.request->getMethod() == "POST"){
 		std::cout << "POST!!" << std::endl;
-
-		response->setFileName(response->getRoot() + "uploadSuccess.html");
-		response->_buffer = response->upload(response->getUplFileName(), requestBody.c_str(), response->getFileName());
+		//TODO: add body from parse
+		response->_buffer = response->upload(client.request->getBody().c_str());
+//		response->_buffer = response->upload("Здесь мог бы быть файл");
 	}
 
 // send
-	result = 0;
+	std::cout << response->generateHeader() << std::endl;
+	std::cout << response->getFileSize() << std::endl;
+	ssize_t result;
+
 	int it = 1;
 	do {
 		result = send(client.socket, response->_buffer.c_str(), response->_buffer.length(), 0);
@@ -93,4 +87,6 @@ ssize_t response(s_client client){
 	delete client.request;
 	return result;
 }
+
+
 

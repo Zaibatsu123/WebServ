@@ -16,29 +16,41 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+#define CHILD 0
+#define FAILURE -1
+
 class Response{
 private:
-	static const std::string				_protocol;
-	static const std::string				_errorPageFolder;
-	static std::map<int, std::string>		_code;
-	static std::map<int, std::string>		_createMap();
-	static std::map<int, std::string>		_createErrorPage();
+	static const std::string			_protocol;
+	static const std::string			_errorPageFolder;
+	static std::map<int, std::string>	_errorPage;
+	static std::map<int, std::string>	_code;
+	static std::map<int, std::string>	_createMap();
+	static std::map<int, std::string>	_createErrorPage();
 
 	int 		_status;
 	std::string	_method;
 	std::string	_root;
+	size_t		_fileSize;
 	std::string	_fileName;
 	std::string	_uplRoot;
 	std::string	_uplFileName;
 
-	void 		cgiChild(int fds1[2], int fds2[2], const std::string & cgiName);
-	std::string	cgiParent(int *fds1, int *fds2, pid_t pid);
+	void 		cgiChild(int pipeIn[2], int pipeOut[2], const std::string & cgiName);
+	std::string	cgiParent(int pipeIn[2], int pipeOut[2], pid_t pid);
+
 public:
-	static std::map<int, std::string>	_errorPage;
-	size_t		_fileSize;
+	size_t getFileSize() const;
+
+private:
+	char**		generateCgiEnv();
+
+public:
 	std::string _buffer;
+
 	Response();
 	~Response();
+
 	void 				setStatus(int n);
 	int 				getStatus() const;
 	void 				setMethod(const std::string &);
@@ -53,11 +65,11 @@ public:
 	const std::string & getUplFileName() const;
 
 	std::string			cgi(const std::string & cgiName);
-	std::string 		upload(const std::string & fileName, const char * data, const std::string & responseFileName);
-	std::string			generateResponse(const std::string & fileName);
+	std::string 		upload(const char * data);
+	std::string			generateResponse();
+	std::string			generateResponseCGI();
 	std::string			generateHeader();
-	std::string			generateBody(const std::string & fileName);
-	char**				generateCgiEnv();
+	std::string			generateBody();
 };
 
 
