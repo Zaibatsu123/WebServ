@@ -10,7 +10,6 @@
 #include <fstream>
 #include <sstream>
 #include <sys/wait.h>
-#include "Config.hpp"
 
 ssize_t response(s_client client){
 	std::cout << "--------------------> Response part!! <------------ " << std::endl;
