@@ -19,108 +19,140 @@ typedef struct  s_socket
     int         port;
 }               t_socket;
 
-typedef struct  s_location 
-{
-    std::string location;
-    std::string root;
-}               t_location;
-
 class   Server
 {
-    public:
-        std::vector<t_socket>               sockets;
-        std::string                         server_name;
-        std::map<std::string, std::string>  locations;
-        std::map<int, std::string>          error_pages;
-        int                                 max_body_size; //по умолчанию ?
-        int                                 autoindex;                                 
-    public:
-        Server();
-        ~Server() {};
+	public:
+		std::vector<t_socket>               sockets;
+		std::string                         server_name;
+		std::map<std::string, std::string>  locations;
+		std::map<int, std::string>          error_pages;
+		int                                 max_body_size; //по умолчанию ?
+		int                                 autoindex;                                 
+	public:
+		Server() {};
+		~Server() {};
 };
-
-typedef struct  s_client 
-{
-    int         socket;
-    int         status;
-    std::string buffer;
-    Request     *request;
-}               t_client;
 
 //----------------------------------------------------------------------------------
 
 std::vector<std::string> readFile(char *config_name)
 {
-    std::ifstream               config_file(config_name);
-    std::string                 temp;
-    std::vector<std::string>    configuration;
+	std::ifstream               config_file(config_name);
+	std::string                 temp;
+	std::vector<std::string>    configuration;
 
-    std::cout << "Start configuration reading" << std::endl;
-    if (!config_file)
-    {
-        std::cerr << "Configuration file not found!" << std::endl;
-        return (configuration);
-    }
-    while (config_file)
-    {
-        std::getline(config_file, temp);
-        if (config_file.eof())
-        {
-            configuration.push_back(temp);
-            break;
-        }
-        else
-            configuration.push_back(temp);
-    }
-    config_file.close();
-    return (configuration);
+	std::cout << "Start configuration reading" << std::endl;
+	if (!config_file)
+	{
+		std::cerr << "Configuration file not found!" << std::endl;
+		return (configuration);
+	}
+	while (config_file)
+	{
+		std::getline(config_file, temp);
+		if (config_file.eof())
+		{
+			configuration.push_back(temp);
+			break;
+		}
+		else
+			configuration.push_back(temp);
+	}
+	config_file.close();
+	return (configuration);
 }
 
 
-// void    configurationPrint(std::vector<Server> servers)
-// {
-//     std::cout << "___________________________" << std::endl;
-//     std::cout << "PARSED CONFIG:" << std::endl;
-//     std::cout << "IP:" << "|" << this->__address << "|" << std::endl;
-//     std::cout << "PORT:" << "|" << this->__port << "|" << std::endl;
-//     std::cout << "___________________________" << std::endl;
-// }
-
-int parsingConfiguration(char *config_name)
+std::string trim_end(std::string old_string)
 {
-    std::vector<std::string>    configuration = readFile(config_name);
-    std::string                 next_string;
-    std::vector<Server>         servers;
-    Server                      *temp = new Server;
+	int j = old_string.size() - 1;
+	while (old_string[j] == ' ' || old_string[j] == '\t' || old_string[j] == 10  || old_string[j] == 13)
+		j--;
+	std::string new_string = old_string.substr(0, j + 1);
+	return (new_string);
+}
 
+std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string> *configuration, int begin, int end)
+{
+	Server                      *temp = new Server;
 
-    if (configuration.size() == 0)
-        return (EXIT_FAILURE);
-    for (std::vector<std::string>::iterator iter = configuration.begin(); iter != configuration.end(); iter++)
-    {
-        if ((*iter).find("server") != std::string::npos)
-        {
-            server>__address = new char[strlen((*iter).substr((*iter).find("ip") + 3).c_str()) + 1];
-            memcpy(this->__address, (*iter).substr((*iter).find("ip") + 3).c_str(), strlen((*iter).substr((*iter).find("ip") + 3).c_str()));
-            this->__address[strlen((*iter).substr((*iter).find("ip") + 3).c_str())] = '\0';
-        }
-        else if((*iter).find("port") != std::string::npos)
-            this->__port = std::stoi((*iter).substr((*iter).find("port") + 5));
-    }
-    // if (checkigConfiguration() == EXIT_FAILURE)
-    //     return (EXIT_FAILURE);
-    // configurationPrint(servers);
-    return (EXIT_SUCCESS);
+	for (int i = begin; i < end; ++i)
+	{
+		std::string str = trim_end((*configuration)[i]);
+		if (str.compare(0, 11, "    listen ") == 0)
+		{
+			t_socket *ts = new t_socket;
+			ts->address = new char[strlen(str.substr(11, str.find(":") - 11).c_str()) + 1];
+			memcpy(ts->address, str.substr(11, str.find(":") - 11).c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
+			ts->address[strlen(str.substr(11, str.find(":") - 11).c_str())] = '\0';
+			ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
+			temp->sockets.push_back(*ts);
+			delete ts;
+		}
+		else if (str.compare(0, 16, "    server_name ") == 0)
+			temp->server_name = str.substr(16, str.length() - 16);
+		else if (str.compare(0, 17, "    auto_index on") == 0)
+			temp->autoindex = 1;
+		else if (str.compare(0, 18, "    auto_index off") == 0)
+			temp->autoindex = 0;
+		else if (str.compare(0, 14, "    location /") == 0 && str[str.length() - 1] == '/' && (*configuration)[i+1].compare(0, 13, "        root ") == 0)
+		{
+			std::string sstr = trim_end((*configuration)[++i]);
+			sstr = sstr.substr(13, sstr.length() - 13);
+			temp->locations.insert(std::make_pair(str.substr(13, str.length() - 13), sstr));
+		}
+		else if (str != "server")
+			return (NULL);		
+	}
+	servers->push_back(*temp);
+	delete temp;
+	return (servers);
 }
 
 
-// server
-//     listen 127.0.0.1:80
-//     listen 127.0.0.1:808
-//     listen 127.0.0.1:8088
-//     server_name www.pornhub.com
-//     auto_index on
-//     location /
-//         root ~/www/
-//     location /images/
-//         root ~/www/images/
+std::vector<Server> *parsingConfiguration(char *config_name)
+{
+	std::vector<Server>         *servers = new std::vector<Server>;
+	std::vector<std::string>    configuration = readFile(config_name);
+	int cnt, begin, end = 0;
+
+	for (int i = 0; i < configuration.size(); ++i)
+		if (configuration[i] == "server")
+			cnt += 1;
+	if (configuration.size() == 0 || cnt == 0)
+		return (NULL);
+	if (cnt == 1)
+		servers = pars(servers, &configuration, 0, configuration.size());
+	else if (cnt > 1)
+		for (int i = 0; i < configuration.size(); ++i)
+			if (configuration[i] == "server")
+			{
+				begin = i;
+				for (int j = i + 1; j < configuration.size(); ++j)
+					if (configuration[j] == "server" || j + 1 == configuration.size())
+					{
+						end = j;
+						servers = pars(servers, &configuration, begin, end);
+						break;
+					}
+			}
+	return (servers);
+}
+
+int main(void)
+{
+	std::vector<Server>     *servers;
+	char *str = new char[10];
+	strcpy(str, "test.conf");
+	servers = parsingConfiguration(str);
+	for (std::vector<Server>::iterator i = servers->begin(); i != servers->end(); i++)
+	{
+		for (std::vector<t_socket>::iterator j = (*i).sockets.begin(); j != (*i).sockets.end(); j++)
+			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
+		for (std::map<std::string, std::string>::iterator it = (*i).locations.begin(); it != (*i).locations.end(); it++ )
+			std::cout << "location: " << it->first << " root: " << it->second << std::endl;
+	}
+	// while(1)
+	// 	continue;
+}
+

@@ -19,7 +19,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sstream>
-#include "../src/Config.hpp"
 #include "../src/Request.hpp"
 #include <sys/types.h>
 #include <sys/wait.h>
