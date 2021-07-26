@@ -66,7 +66,7 @@ char** Response::generateCgiEnv(){
 
 std::string Response::cgiParent(int pipeIn[2], int pipeOut[2], pid_t pid){
 	int					status;
-	char				buffer[1024];
+	char*				buffer = new char [BUFFER_SIZE];
 	std::stringstream	str;
 
 	close(pipeIn[0]);
@@ -74,18 +74,41 @@ std::string Response::cgiParent(int pipeIn[2], int pipeOut[2], pid_t pid){
 
 	std::string fileData = generateBody();
 
+//	const char* bufferr = fileData.c_str();
+//	std::cout << generateBody() << std::endl;
+
 	int out = dup(1);
 	dup2(pipeIn[1], 1);
+	close(pipeIn[1]);
+
+
+
+//	size_t totalData = fileData.length();
+//	size_t sendData = 0;
+//	while (sendData < totalData){
+//
+//		sendData += write(1, bufferr + sendData, BUFFER_SIZE);
+//		std::cout << std::flush << std::endl;
+//
+//		std::memset(buffer, 0, BUFFER_SIZE);
+//		read(pipeOut[0], buffer, BUFFER_SIZE);
+//		std::cout << buffer << std::endl;
+//		str << buffer;
+//
+//	}
+
 
 	std::cout << generateBody() << std::endl;
 
 	dup2(out, 1);
-	close(pipeIn[1]);
+	close(out);
 
 //	int in = dup(0);
 //	dup2(pipeOut[0], 0);
-
+//	close(pipeIn[1]);
+	std::cout << "write done" << std::endl;
 	waitpid(pid, &status, 0);
+	std::cout << "wait done" << std::endl;
 	if (status == EXIT_SUCCESS){
 //		std::string a;
 //		int i = 0;
@@ -97,9 +120,12 @@ std::string Response::cgiParent(int pipeIn[2], int pipeOut[2], pid_t pid){
 //			str << a;
 //			str << "\n";
 //		}
-		std::memset(buffer, 0, 1024);
-		while (read(pipeOut[0], buffer, 1024) > 0)
+		std::memset(buffer, 0, BUFFER_SIZE);
+		while (read(pipeOut[0], buffer, BUFFER_SIZE) > 0){
+			std::cout << buffer << std::endl;
 			str << buffer;
+		}
+		std::cout << "read done" << std::endl;
 	}
 	else {
 		std::cout << "execve error" << std::endl;
@@ -107,16 +133,22 @@ std::string Response::cgiParent(int pipeIn[2], int pipeOut[2], pid_t pid){
 		return generateBody();
 	}
 	close(pipeOut[0]);
+//	delete[] buffer;
 //	dup2(in, 0);
 	return str.str();
 }
 
 void Response::cgiChild(int pipeIn[2], int pipeOut[2], const std::string & cgiName) {
-	dup2(pipeIn[0], 0);
-	dup2(pipeOut[1], 1);
 
-	close(pipeIn[1]);
+	dup2(pipeIn[0], 0);
+	close(pipeIn[0]);
+
+	dup2(pipeOut[1], 1);
+	close(pipeOut[1]);
+
 	close(pipeOut[0]);
+	close(pipeIn[1]);
+
 
 //TODO: DELETE MALLOC CGIENV
 	char **env = generateCgiEnv();
@@ -124,6 +156,7 @@ void Response::cgiChild(int pipeIn[2], int pipeOut[2], const std::string & cgiNa
 		exit(1);
 	}
 	execve(cgiName.c_str(), 0, env);
+
 	exit(1);
 }
 
@@ -152,7 +185,8 @@ std::string Response::cgi(const std::string & cgiName){
 
 std::string Response::generateResponseCGI(){
 //TODO: REWORK CGI NAME
-	std::string cgiName = "./root/cgi_tester";
+//	std::string cgiName = "./root/cgi_tester";
+	std::string cgiName = "./root/myCGI";
 
 	std::string cgiString = cgi(cgiName);
 	_fileSize = cgiString.length();
@@ -211,8 +245,10 @@ std::string Response::generateBody() {
 	while (file.good()) {
 		std::getline(file, buffer);
 		str << buffer;
-		str << "\n";
+		if (file.good())
+			str << "\n";
 	}
+	file.close();
 	return str.str();
 }
 

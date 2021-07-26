@@ -18,6 +18,7 @@
 
 #define CHILD 0
 #define FAILURE -1
+#define BUFFER_SIZE 1024
 
 class Response{
 private:
