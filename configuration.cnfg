@@ -1,5 +1,4 @@
 server
-    listen 127.0.0.1:8880
+    listen 127.0.0.1:8099
 server
     listen 127.0.0.1:9099
-    server_name www.pornhub.com

@@ -1,3 +1,11 @@
+//                                          ┏┻━━┻┓        //
+// Created by:                        ╭┓┏╮  ┃▕▏▕▏┃  ╭┓┏╮  //
+//        Jolene Radioactive          ┃┗┛┃  ┃┏┳┳┓┃  ┃┗┛┃  //
+//         on:                        ╰┳┳╯  ┃┗┻┻┛┃  ╰┳┳╯  //
+//              07/21				   ┃┃ ┏━┻━━━━┻━┓ ┃┃   //
+//                                     ┃╰━┫╭━━━━━━╮┣━╯┃   //
+//                                     ╰━━┫┃╱╲╱╲╱╲┃┣━━╯   //
+
 #include <netinet/in.h>
 #include <iostream>
 #include <fstream>
@@ -65,8 +73,8 @@ std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string
 		else if (str.compare(0, 14, "    location /") == 0 && str[str.length() - 1] == '/' && (*configuration)[i+1].compare(0, 13, "        root ") == 0)
 		{
 			std::string sstr = trim_end((*configuration)[++i]);
-			sstr = sstr.substr(13, sstr.length() - 13);
-			temp->locations.insert(std::make_pair(str.substr(13, str.length() - 13), sstr));
+			sstr = sstr.substr(13, sstr.length() - 14);
+			temp->locations.insert(std::make_pair(str.substr(13, str.length() - 14), sstr));
 		}
 		else if (str != "server")
 			return (NULL);		
@@ -90,7 +98,7 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 		return (NULL);
 	if (cnt == 1)
 		servers = pars(servers, &configuration, 0, configuration.size());
-	else if (cnt > 1)
+	else if (cnt > 1)	
 	{
 		for (size_t i = 0; i < configuration.size(); ++i)
 		{
@@ -101,14 +109,14 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 					if (configuration[j] == "server" || j + 1 == configuration.size())
 					{
 						end = j + 1;
-						std::cout << "\033[1;46m3333.2\033[0m" << begin << end <<std::endl;
+						// std::cout << "\033[1;46m3333.2\033[0m" << begin << end <<std::endl;
 						servers = pars(servers, &configuration, begin, end);
 						break;
 					}
 			}
 		}
 	}
-	std::cout << "\033[1;46m3333.3\033[0m" << (*servers)[0].sockets[0].address<< std::endl;
+	// std::cout << "\033[1;46m3333.3\033[0m" << (*servers)[0].sockets[0].address<< std::endl;
 	return (servers);
 }
 
