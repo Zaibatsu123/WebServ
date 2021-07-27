@@ -50,13 +50,13 @@ void Request::strrequest(std::vector<std::string> request){
 		_protocol = "HTTP/1.1";
 	else
 	{
-		_err = 2;
+		_err = 505;
 		return ;
 	}
 	size_t n = std::count(request[0].begin(), request[0].end(), '/');
 	if (n == 0)
 	{
-		_err = 3;
+		_err = 400;
 		return ;
 	}
 	if (request[0].compare(0, 3, "GET") == 0)
@@ -70,7 +70,7 @@ void Request::strrequest(std::vector<std::string> request){
 		this->methodpath("DELETE", trim(request[0].substr(6, request[0].length() - 15)));
 	else
 	{
-		_err = 1;
+		_err = 501;
 		return ;
 	}
 	getheaders(request);
