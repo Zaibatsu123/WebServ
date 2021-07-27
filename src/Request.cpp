@@ -35,9 +35,9 @@ std::string Request::getMethod() const    {return _method; }
 std::string Request::getPath() const    {return _path; }
 std::string Request::getProtocol() const    {return _protocol; }
 std::string Request::getHost() const    {return _host; }
-std::string Request::getCType() const    {return _content_type; }
-std::string Request::getCLength() const    {return _content_length; }
-std::string  Request::getBody() const	{return _body; };
+std::string Request::getCType() const		{return _content_type; }
+std::string Request::getCLength() const		{return _content_length; }
+std::string  Request::getBody() const		{return _body; };
 
 void Request::methodpath(std::string method, std::string path)
 {

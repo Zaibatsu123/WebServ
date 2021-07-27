@@ -20,8 +20,8 @@ ssize_t response(s_client *client){
 	Response* 	response = new Response;
 
 // if parse errors
-if (client->request->getErr())
-	return 0;
+	if (client->request->getErr())
+		return 0;
 
 // init configs
 	response->setUplRoot("./root/tmp");

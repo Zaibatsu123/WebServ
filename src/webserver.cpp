@@ -110,12 +110,9 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
                 result = recv((*i).socket, read_buffer, 1024, 0);
                 if (static_cast<int>(result) == -1)
                 {
-                    perror("");
+                    perror("Somthing goes wrong, when receiving message");
                     break;
                 }
-                //TODO: delete sleep for delay after send
-                usleep(1000);
-                std::cout << read_buffer << std::endl;
                 std::cout << result << std::endl;
                 str << read_buffer;
                 if (result < 1024)

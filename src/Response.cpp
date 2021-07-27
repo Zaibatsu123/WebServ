@@ -262,7 +262,10 @@ const std::string & Response::getRoot() const {
 }
 
 void Response::setFileName(const std::string & fileName) {
-	_fileName = fileName;
+	if (fileName == "/")
+		_fileName = "/index.html";
+	else
+		_fileName = fileName;
 }
 
 const std::string & Response::getFileName() const {
