@@ -38,6 +38,9 @@ typedef struct  s_client
 }               t_client;
 
 ssize_t response(t_client client);
-std::vector<Server> *parsing_configuration(char *config_name);
+std::vector<Server> *parsingConfiguration(char *config_name);
+// ssize_t response(s_client client);
+std::string trim(std::string old_string);
+std::string trim_end(std::string old_string);
 
 #endif //OUTPUT_HPP
