@@ -88,23 +88,27 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 			cnt += 1;
 	if (configuration.size() == 0 || cnt == 0)
 		return (NULL);
-	std::cout << "2222" << std::endl;
 	if (cnt == 1)
 		servers = pars(servers, &configuration, 0, configuration.size());
 	else if (cnt > 1)
+	{
 		for (size_t i = 0; i < configuration.size(); ++i)
+		{
 			if (configuration[i] == "server")
 			{
 				begin = i;
 				for (size_t j = i + 1; j < configuration.size(); ++j)
 					if (configuration[j] == "server" || j + 1 == configuration.size())
 					{
-						end = j;
+						end = j + 1;
+						std::cout << "\033[1;46m3333.2\033[0m" << begin << end <<std::endl;
 						servers = pars(servers, &configuration, begin, end);
 						break;
 					}
 			}
-	std::cout << "333    " << (*servers)[0].sockets[0].address<< std::endl;
+		}
+	}
+	std::cout << "\033[1;46m3333.3\033[0m" << (*servers)[0].sockets[0].address<< std::endl;
 	return (servers);
 }
 

@@ -108,6 +108,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
                 std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
             std::cout << "Received request________________________" << std::endl;
             std::cout << read_buffer << std::endl;
+            std::cout << read_buffer << std::endl;
             std::cout << "End request________________________" << std::endl;
             (*i).buffer = read_buffer;
             (*i).request = start((*i).buffer);
