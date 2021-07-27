@@ -9,10 +9,11 @@
 #include "Request.hpp"
 #include <algorithm>
 #include <vector>
+#include "../inc/output.hpp"
 
-std::vector<std::string> getarray(std::string req);
-std::string trim(std::string old_string);
-std::string trim_end(std::string old_string);
+// std::vector<std::string> getarray(std::string req);
+// std::string trim(std::string old_string);
+// std::string trim_end(std::string old_string);
 
 Request::Request(){
 	_method = "";
@@ -21,6 +22,8 @@ Request::Request(){
 	_path = "";
 	_body = "";
 	_protocol = "";
+	_body_content = "";
+	_filename = "uploadFilename";
 	_conection = "keep-alive";
 	_err = 0;
 }
@@ -38,6 +41,8 @@ std::string Request::getHost() const    {return _host; }
 std::string Request::getCType() const    {return _content_type; }
 std::string Request::getCLength() const    {return _content_length; }
 std::string  Request::getBody() const	{return _body; };
+std::string Request::getBodyCnt() const	{return _body_content; };
+std::string Request::getFilename() const 	{return _filename; };
 
 void Request::methodpath(std::string method, std::string path)
 {
@@ -89,10 +94,35 @@ void Request::getheaders(std::vector<std::string> request)
 // void Request::getrequest(std::vector<std::string> request){
 // }
 
+void Request::post_fname_body(std::vector<std::string> request){
+	
+	int fn =  request[0].find("filename=");
+	_filename = request[0].substr(fn + 10, request[0].length() - fn - 11);
+	for (size_t j = 0; j < request.size(); ++j)
+	{
+		if (request[j].compare(0, 14, "Content-Type: ") == 0)
+			_content_type = trim(request[j].substr(14, request[j].length() - 14));
+		if (request[j].empty() && j + 1 < request.size())
+		{
+			for (size_t k = j + 1; k < request.size(); ++k)
+			{
+				if (k != request.size() - 1)
+					_body_content += request[k] + "\n";
+				else 
+					_body_content += request[k];
+			}
+			break;
+		}
+	}
+}
 
 void Request::postrequest(std::vector<std::string> request) 
 {
+	// std::ofstream outf;                                  // DELETE AFTER DEBUG
+    // outf.open( "hhh.txt", std::ios_base::app);
+	
 	std::string str;
+	std::cout << "\033[1;46m1\033[0m" << std::endl;
 	if (request.size() > 1)
 		for (size_t i = 0; i < request.size(); ++i)
 		{
@@ -101,18 +131,28 @@ void Request::postrequest(std::vector<std::string> request)
 			if (str.compare(0, 16, "content-length: ") == 0)
 				_content_length = trim(str.substr(16, str.length() - 16));
 			else if (str.compare(0, 14, "content-type: ") == 0)
+			{
+				int bn = request[i].find("boundary=");
 				_content_type = trim(str.substr(14, str.length() - 14));
+				_boundary = "--" + request[i ].substr(bn + 9, request[i].length() - bn - 9);
+			}
 			else if (str.empty() && i + 1 < request.size())
+			{
+				post_fname_body(splitvector(request, _boundary));
 				for (size_t j = i + 1; j < request.size(); ++j)
 				{
+					std::cout << "\033[1;46m222\033[0m" << request[j] << std::endl;
 					if (j != request.size() - 1)
 						_body += request[j] + "\n";
 					else 
 						_body += request[j];
 				}
+				break;
+			}
 		}
+	// outf << "BODY CONTENT\n" << _body_content << std::endl;
+	// outf << "FILENAME: " << _filename << std::endl;
+	// outf << "BODY\n" << _body << std::endl;
+	// outf << "CONTENT TYPE: " << _content_type << std::endl;
+	// outf << "BOUNDARY: " << _boundary << std::endl;
 }
-
-// void Request::deleterequest(std::vector<std::string> request){
-
-// }

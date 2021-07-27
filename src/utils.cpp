@@ -58,5 +58,38 @@ Request *start(std::string str_req)
 	std::vector<std::string> vect_req;
 	vect_req = getarray(str_req);
 	request->strrequest(vect_req);
+	std::cout << "\033[1;46m0\033[0m" << std::endl;
 	return (request);
+}
+
+
+std::vector<std::string> getneedvector(std::vector<std::string> old_vector, size_t begin, size_t end)
+{
+	std::vector<std::string> new_vector;
+	for (size_t i = begin; i < end; ++i)
+		new_vector.push_back(old_vector[i]);
+	return (new_vector);
+}
+
+std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str)
+{
+	std::vector<std::string> new_vector;
+	for (size_t i = 0; i < old_vector.size(); ++i)
+	{
+		if (old_vector[i] == str && i + 1 < old_vector.size())
+		{
+			size_t begin = i + 1;
+			for (size_t j = i + 1; j < old_vector.size(); ++j)
+			{
+				if (old_vector[j] == str)
+				{
+					size_t end = j;
+					new_vector = getneedvector(old_vector, begin, end);
+					break;
+				}
+			}
+			break;
+		}
+	}
+	return (new_vector);
 }
