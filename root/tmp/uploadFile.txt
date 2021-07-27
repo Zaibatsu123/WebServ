@@ -1,3 +1,0 @@
-------WebKitFormBoundaryMOUAMv33sRK73p7B
-Content-Disposition: form-data; name="myfile"; filename="create_minikube.sh"
-Content-Type: text/x-sh
