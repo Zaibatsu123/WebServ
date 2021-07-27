@@ -37,7 +37,7 @@ typedef struct  s_client
     Request     *request;
 }               t_client;
 
-ssize_t response(t_client client);
+ssize_t response(t_client *client);
 std::vector<Server> *parsingConfiguration(char *config_name);
 // ssize_t response(s_client client);
 std::string trim(std::string old_string);

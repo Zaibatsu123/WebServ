@@ -99,7 +99,7 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 				for (size_t j = i + 1; j < configuration.size(); ++j)
 					if (configuration[j] == "server" || j + 1 == configuration.size())
 					{
-						end = j;
+						end = j + 1;
 						servers = pars(servers, &configuration, begin, end);
 						break;
 					}

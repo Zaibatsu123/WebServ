@@ -1,10 +1,4 @@
 server
     listen 127.0.0.1:8099
-    server_name www.pornhub.com
-    auto_index on
-    location /
-        root ~/www/
-    location /images/
-        root ~/www/images/
 server
-    listen 127.0.0.1:8088
+    listen 127.0.0.1:9099

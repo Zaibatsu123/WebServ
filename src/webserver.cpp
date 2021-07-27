@@ -109,9 +109,14 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
             std::cout << "Received request________________________" << std::endl;
             std::cout << read_buffer << std::endl;
             std::cout << "End request________________________" << std::endl;
-            (*i).buffer = read_buffer;
-            (*i).request = start((*i).buffer);
-            (*i).status = 1;
+            if (result > 0)
+            {
+                (*i).buffer = read_buffer;
+                (*i).request = start((*i).buffer);
+                (*i).status = 1;
+            }
+            else if (result == -1)
+                i = clients->erase(i);
         }
     }
     return (EXIT_SUCCESS);
@@ -124,16 +129,17 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client> *clients)
     for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
     {
         std::cout << "Check ready for responce fd:" << (*i).socket << std::endl;
-        if (FD_ISSET((*i).socket, write_fds) and (*i).status)
+        if (FD_ISSET((*i).socket, write_fds))
         {
-            result = response(*i);
+            result = response(&(*i));
             if (result == -1)
             {
                 std::cerr << "send failed: " << strerror(errno) << std::endl;
                 exit_status = EXIT_FAILURE;
             }
-            close((*i).socket);
-            i = clients->erase(i);
+            // close((*i).socket);
+            // i = clients->erase(i);
+            (*i).status = 0;
             std::cout << "Sended responce" << std::endl;
         }
     }
@@ -156,7 +162,8 @@ int adding_sockets_to_sets(std::vector<Server> *servers, std::list<t_client> *cl
     {
         std::cout << "Adding to read/write sets fd:" << (*i).socket << std::endl;
         FD_SET((*i).socket, read_fds);
-        FD_SET((*i).socket, write_fds);
+        if ((*i).status == 1)
+            FD_SET((*i).socket, write_fds);
         if ((*i).socket > max_fd)
             max_fd = (*i).socket;
     }
