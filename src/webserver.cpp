@@ -104,14 +104,37 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
         std::cout << "Check for request fd:" << (*i).socket << " status: " << FD_ISSET((*i).socket, read_fds) << std::endl;
         if (FD_ISSET((*i).socket, read_fds))
         {
-            if ((result = recv((*i).socket, read_buffer, 1024, 0)) == -1)
-                std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
-            std::cout << "Received request________________________" << std::endl;
-            std::cout << read_buffer << std::endl;
-            std::cout << "End request________________________" << std::endl;
-            (*i).buffer = read_buffer;
-            (*i).request = start((*i).buffer);
-            (*i).status = 1;
+            std::stringstream str;
+            do {
+                std::memset(read_buffer, 0, 1024);
+                result = recv((*i).socket, read_buffer, 1024, 0);
+                if (static_cast<int>(result) == -1)
+                {
+                    perror("");
+                    break;
+                }
+                //TODO: delete sleep for delay after send
+                usleep(1000);
+                std::cout << read_buffer << std::endl;
+                std::cout << result << std::endl;
+                str << read_buffer;
+                if (result < 1024)
+                    break;
+            } while (result > 0);
+            if (result > 0)
+            {
+                std::cout << "Received request________________________" << std::endl;
+                std::cout << str.str() << std::endl;
+                std::cout << "End request________________________" << std::endl;
+                (*i).buffer = str.str();
+                (*i).request = start((*i).buffer);
+                (*i).status = 1;
+            }
+            else if (result <= 0)
+            {
+                i = clients->erase(i);
+                std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
+            }
         }
     }
     return (EXIT_SUCCESS);
@@ -124,16 +147,17 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client> *clients)
     for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
     {
         std::cout << "Check ready for responce fd:" << (*i).socket << std::endl;
-        if (FD_ISSET((*i).socket, write_fds) and (*i).status)
+        if (FD_ISSET((*i).socket, write_fds))
         {
-            result = response(*i);
+            result = response(&(*i));
             if (result == -1)
             {
                 std::cerr << "send failed: " << strerror(errno) << std::endl;
                 exit_status = EXIT_FAILURE;
             }
-            close((*i).socket);
-            i = clients->erase(i);
+            // close((*i).socket);
+            // i = clients->erase(i);
+            (*i).status = 0;
             std::cout << "Sended responce" << std::endl;
         }
     }
@@ -156,7 +180,8 @@ int adding_sockets_to_sets(std::vector<Server> *servers, std::list<t_client> *cl
     {
         std::cout << "Adding to read/write sets fd:" << (*i).socket << std::endl;
         FD_SET((*i).socket, read_fds);
-        FD_SET((*i).socket, write_fds);
+        if ((*i).status == 1)
+            FD_SET((*i).socket, write_fds);
         if ((*i).socket > max_fd)
             max_fd = (*i).socket;
     }

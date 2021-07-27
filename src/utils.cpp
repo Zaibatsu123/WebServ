@@ -11,6 +11,7 @@
 #include <vector>
 #include <algorithm>
 #include "Request.hpp"
+#include "../inc/output.hpp"
 
 std::string trim(std::string old_string)
 {
@@ -27,7 +28,7 @@ std::string trim(std::string old_string)
 std::string trim_end(std::string old_string)
 {
 	int j = old_string.size() - 1;
-	while (old_string[j] == ' ' || old_string[j] == '\t')
+	while (old_string[j] == ' ' || old_string[j] == '\t' || old_string[j] == 10  || old_string[j] == 13)
 		j--;
 	std::string new_string = old_string.substr(0, j + 1);
 	return (new_string);

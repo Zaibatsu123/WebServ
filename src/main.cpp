@@ -46,8 +46,9 @@ int	main(int argc, char **argv, char **env){
         std::cout << "Something wrong with parametrs!" << std::endl;
         return (EXIT_FAILURE);
     }
-    if ((servers = parsing_configuration(argv[1])) == NULL)
+    if ((servers = parsingConfiguration(argv[1])) == NULL)
         return (EXIT_FAILURE);
+    std::cout << "1111" << std::endl;
     console_promt(servers);
     if (master_process(servers) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
