@@ -118,7 +118,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
                 std::cout << read_buffer << std::endl;
                 std::cout << result << std::endl;
                 str << read_buffer;
-                if (result <= 1024)
+                if (result < 1024)
                     break;
             } while (result > 0);
             if (result > 0)
