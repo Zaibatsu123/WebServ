@@ -1,3 +1,30 @@
-------WebKitFormBoundaryMOUAMv33sRK73p7B
+------WebKitFormBoundaryr7oVHnWmfdYcz4CA
 Content-Disposition: form-data; name="myfile"; filename="create_minikube.sh"
 Content-Type: text/x-sh
+p·p¤ÿ
+#!/bin/bash
+
+# mv ~/.brew ~/goinfre/.brew
+# ln -s ~/goinfre/.brew ~/.brew
+# mv ~/.minikube ~/goinfre/.minikube
+mkdir -p ~/goinfre/com.docker.docker/Data
+mkdir -p ~/goinfre/.minikube
+# ln -s ~/goinfre/.minikube ~/.minikube
+# brew install minikube
+------WebKitFormBoundaryr7oVHnWmfdYcz4CA
+Content-Disposition: form-data; name="Submit"
+
+Submit
+------WebKitFormBoundaryr7oVHnWmfdYcz4CA--# mv ~/.brew ~/goinfre/.brew
+# ln -s ~/goinfre/.brew ~/.brew
+# mv ~/.minikube ~/goinfre/.minikube
+mkdir -p ~/goinfre/com.docker.docker/Data
+mkdir -p ~/goinfre/.minikube
+# ln -s ~/goinfre/.minikube ~/.minikube
+# brew install minikube
+------WebKitFormBoundaryr7oVHnWmfdYcz4CA
+Content-Disposition: form-data; name="Submit"
+
+Submit
+------WebKitFormBoundaryr7oVHnWmfdYcz4CA--Submit
+------WebKitFormBoundaryr7oVHnWmfdYcz4CA--

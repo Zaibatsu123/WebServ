@@ -111,12 +111,22 @@ int master_process(Config *configuration){
             std::cout << "Check for request fd:" << (*i).socket << " status: " << FD_ISSET((*i).socket, &read_fds) << std::endl;
             if (FD_ISSET((*i).socket, &read_fds))
             {
-                if ((result = recv((*i).socket, read_buffer, 1024, 0)) == -1)
-			        std::cout << "Error when receiving  message! " << strerror(errno) << std::endl;
+            	std::stringstream str;
+				do {
+					std::memset(read_buffer, 0, 1024);
+					result = recv((*i).socket, read_buffer, 1024, 0);
+					if (static_cast<int>(result) == -1)
+						perror("");
+					//TODO: delete sleep for delay after send
+					usleep(1000);
+					std::cout << read_buffer << std::endl;
+					str << read_buffer;
+					std::cout << result << std::endl;
+				} while (result > 0);
                 std::cout << "Received request________________________" << std::endl;
-                std::cout << read_buffer << std::endl;
+                std::cout << str.str() << std::endl;
                 std::cout << "End request________________________" << std::endl;
-                (*i).buffer = read_buffer;
+                (*i).buffer = str.str();
                 (*i).request = start((*i).buffer);
                 (*i).status = 1;
             }
