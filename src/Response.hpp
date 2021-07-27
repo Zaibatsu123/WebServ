@@ -17,10 +17,6 @@
 #include <sys/wait.h>
 #include <sys/fcntl.h>
 
-
-#define CHILD 0
-#define FAILURE -1
-#define BUFFER_SIZE 1024
 //#define CGI "./root/cgi_tester"
 #define CGI "./root/myCGI"
 
@@ -36,21 +32,11 @@ private:
 	static std::map<int, std::string>	_createErrorPage();
 
 	int 		_status;
-	std::string	_method;
 	std::string	_root;
 	size_t		_fileSize;
 	std::string	_fileName;
 	std::string	_uplRoot;
 	std::string	_uplFileName;
-
-	void 		cgiChild(const std::string & cgiName);
-	std::string	cgiParent(pid_t pid);
-
-public:
-	size_t getFileSize() const;
-
-private:
-	char**		generateCgiEnv();
 
 public:
 	std::string _buffer;
@@ -58,23 +44,23 @@ public:
 	Response();
 	~Response();
 
+	Response(const std::string & root, const std::string & fileName);
+
 	void 				setStatus(int n);
 	int 				getStatus() const;
-	void 				setMethod(const std::string &);
-	const std::string & getMethod() const;
 	void 				setRoot(const std::string &);
 	const std::string & getRoot() const;
 	void 				setFileName(const std::string &);
 	const std::string & getFileName() const;
+	void				setFileSize(size_t fileSize);
+	size_t				getFileSize() const;
 	void 				setUplRoot(const std::string &);
 	const std::string & getUplRoot() const;
 	void 				setUplFileName(const std::string &);
 	const std::string & getUplFileName() const;
 
-	std::string			cgi(const std::string & cgiName);
-	std::string 		upload(const char * data);
 	std::string			generateResponse();
-	std::string			generateResponseCGI();
+	std::string			generateResponseCGI(std::string f(const std::string &, Response*));
 	std::string			generateHeader();
 	std::string			generateBody();
 };
