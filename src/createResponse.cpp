@@ -121,24 +121,27 @@ std::string cgi(const std::string & cgiName, Response* response){
 std::string upload(const char *data, Response* response) {
 	std::ofstream	dstFile;
 
-	std::string fileName = "/uploadFile.txt";
-	std::string		tmp = response->getUplRoot() + fileName;
+	std::cout << "upload to: " << response->getUplFileName() << std::endl;
 
-	std::cout << "upload to: " << tmp << std::endl;
+	dstFile.open(response->getUplFileName().c_str(), std::ofstream::out);
 
-	dstFile.open(tmp.c_str(), std::ofstream::out);
+	if (!dstFile.is_open()){
+		response->setFileName("/uploadFailure.html");
+		response->setFileSize(307);
+		return response->generateHeader() + response->generateBody();
+	}
 	dstFile << std::string(data);
 	dstFile.close();
 
 	//TODO: KOSTYL!
-	response->setFileSize(282);
-
+	response->setFileSize(249);
 	response->setFileName("/uploadSuccess.html");
+
 	return response->generateHeader() + response->generateBody();
 }
 
 ssize_t response(s_client *client){
-	std::cout << "--------------------> Response part!! <------------ " << std::endl;
+	std::cout << "--------------------> Response part <------------ " << std::endl;
 
 	if (client->request->getErr())
 		return 0;
@@ -159,8 +162,9 @@ ssize_t response(s_client *client){
 
 	if (client->request->getMethod() == "POST"){
 		std::cout << "--> POST" << std::endl;
-		//TODO: add body from parse
-		response->_buffer = upload(client->request->getBody().c_str(), response);
+
+		response->setUplFileName(client->request->getFilename());
+		response->_buffer = upload(client->request->getBodyCnt().c_str(), response);
 	}
 
 //	std::cout << response->generateHeader() << std::endl;
@@ -193,6 +197,6 @@ ssize_t response(s_client *client){
 
 	delete response;
 	delete client->request;
-	std::cout << "--------------------> Response END!! <------------ " << std::endl;
+	std::cout << "--------------------> Response END <------------ " << std::endl;
 	return result;
 }

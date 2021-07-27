@@ -52,7 +52,7 @@ std::map<int, std::string> Response::_createErrorPage() {
 Response::Response() : _status(200), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""), _buffer(""){
 }
 
-Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp"), _uplFileName(""), _buffer("") {
+Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp/"), _uplFileName(""), _buffer("") {
 }
 
 Response::~Response(){
@@ -158,7 +158,7 @@ const std::string & Response::getUplRoot() const {
 }
 
 void Response::setUplFileName(const std::string & uplFileName) {
-	_uplFileName = uplFileName;
+	_uplFileName = _uplRoot + uplFileName;
 }
 
 const std::string & Response::getUplFileName() const {
