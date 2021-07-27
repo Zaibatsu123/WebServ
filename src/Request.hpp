@@ -23,9 +23,12 @@ private:
 	std::string _host;
 	std::string _port;
 	std::string _body;
+	std::string _body_content;
+	std::string _filename;
 	std::string _conection;
 	std::string _content_type;
 	std::string _content_length;
+	std::string _boundary;
 	
 	int			_err;
 
@@ -43,13 +46,15 @@ public:
 	std::string getCType() const;
 	std::string getCLength() const;
 	std::string getBody() const;
+	std::string getBodyCnt() const;
+	std::string getFilename() const;
 
 	void strrequest(std::vector<std::string> request);
 	void getheaders(std::vector<std::string> request);
 	void methodpath(std::string method, std::string path);
 	// void getrequest(std::vector<std::string> request);
 	void postrequest(std::vector<std::string> request);
-	// void deleterequest(std::vector<std::string> request);
+	void post_fname_body(std::vector<std::string> request);
 
 };
 
