@@ -15,14 +15,20 @@
 #include <vector>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/fcntl.h>
+
 
 #define CHILD 0
 #define FAILURE -1
 #define BUFFER_SIZE 1024
+//#define CGI "./root/cgi_tester"
+#define CGI "./root/myCGI"
 
 class Response{
 private:
 	static const std::string			_protocol;
+	static const std::string			_cgiInputFile;
+	static const std::string			_cgiOutputFile;
 	static const std::string			_errorPageFolder;
 	static std::map<int, std::string>	_errorPage;
 	static std::map<int, std::string>	_code;
@@ -37,8 +43,8 @@ private:
 	std::string	_uplRoot;
 	std::string	_uplFileName;
 
-	void 		cgiChild(int pipeIn[2], int pipeOut[2], const std::string & cgiName);
-	std::string	cgiParent(int pipeIn[2], int pipeOut[2], pid_t pid);
+	void 		cgiChild(const std::string & cgiName);
+	std::string	cgiParent(pid_t pid);
 
 public:
 	size_t getFileSize() const;

@@ -9,6 +9,10 @@
 
 const std::string Response::_protocol = "HTTP/1.1";
 
+const std::string Response::_cgiInputFile = "outputMy.txt";
+
+const std::string Response::_cgiOutputFile = "outputCGI.txt";
+
 const std::string Response::_errorPageFolder = "./root/errorPages/";
 
 std::map<int, std::string> Response::_code = Response::_createMap();
@@ -54,9 +58,13 @@ Response::~Response(){
 char** Response::generateCgiEnv(){
 	char **env;
 
-	env = (char **)malloc(sizeof(char*) * 4);
-	if (env == NULL)
+	try
+	{
+		env = new char* [sizeof(char*) * 4];
+	}
+	catch (std::exception & e){
 		return 0;
+	}
 	env[0] = (char *)"REQUEST_METHOD=get";
 	env[1] = (char *)"SERVER_PROTOCOL=HTTP/1.1";
 	env[2] = (char *)"PATH_INFO=./root/info.php";
@@ -64,129 +72,90 @@ char** Response::generateCgiEnv(){
 	return env;
 }
 
-std::string Response::cgiParent(int pipeIn[2], int pipeOut[2], pid_t pid){
+void Response::cgiChild(const std::string & cgiName) {
+
+	char **env = generateCgiEnv();
+	if (env == NULL){
+		exit(2);
+	}
+
+	int in = open(_cgiInputFile.c_str(), O_RDONLY, S_IRUSR | S_IWUSR);
+	int out = open(_cgiOutputFile.c_str(), O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+
+	if(in == -1 || out == -1)
+		exit(2);
+
+	if (dup2(in, 0) == -1 || dup2(out, 1) == -1)
+		exit(2);
+	execve(cgiName.c_str(), 0, env);
+	exit(1);
+}
+
+std::string Response::cgiParent(pid_t pid){
 	int					status;
-	char*				buffer = new char [BUFFER_SIZE];
 	std::stringstream	str;
 
-	close(pipeIn[0]);
-	close(pipeOut[1]);
-
-	std::string fileData = generateBody();
-
-//	const char* bufferr = fileData.c_str();
-//	std::cout << generateBody() << std::endl;
-
-	int out = dup(1);
-	dup2(pipeIn[1], 1);
-	close(pipeIn[1]);
-
-
-
-//	size_t totalData = fileData.length();
-//	size_t sendData = 0;
-//	while (sendData < totalData){
-//
-//		sendData += write(1, bufferr + sendData, BUFFER_SIZE);
-//		std::cout << std::flush << std::endl;
-//
-//		std::memset(buffer, 0, BUFFER_SIZE);
-//		read(pipeOut[0], buffer, BUFFER_SIZE);
-//		std::cout << buffer << std::endl;
-//		str << buffer;
-//
-//	}
-
-
-	std::cout << generateBody() << std::endl;
-
-	dup2(out, 1);
-	close(out);
-
-//	int in = dup(0);
-//	dup2(pipeOut[0], 0);
-//	close(pipeIn[1]);
-	std::cout << "write done" << std::endl;
 	waitpid(pid, &status, 0);
-	std::cout << "wait done" << std::endl;
+
+	if (WIFEXITED(status))
+		status = WEXITSTATUS(status);
+
 	if (status == EXIT_SUCCESS){
-//		std::string a;
-//		int i = 0;
-//		while (std::cin.good()) {
-//			std::cout << "it: " << i++ << std::endl;
-//			std::getline(std::cin, a);
-//			if (std::cin.bad())
-//				std::cout << "BAD" << std::endl;
-//			str << a;
-//			str << "\n";
-//		}
-		std::memset(buffer, 0, BUFFER_SIZE);
-		while (read(pipeOut[0], buffer, BUFFER_SIZE) > 0){
-			std::cout << buffer << std::endl;
-			str << buffer;
+		std::ifstream inputCGI(_cgiOutputFile, std::ifstream::in);
+
+		if (!inputCGI.is_open()){
+			std::cout << "cannot write to outputMY" << std::endl;
+			_status = 500;
+			return generateBody();
 		}
-		std::cout << "read done" << std::endl;
+
+		std::string buf;
+		while (std::getline(inputCGI, buf))
+			str << buf << std::endl;
 	}
-	else {
+	else if (status == EXIT_FAILURE){
 		std::cout << "execve error" << std::endl;
 		_status = 502;
 		return generateBody();
 	}
-	close(pipeOut[0]);
-//	delete[] buffer;
-//	dup2(in, 0);
-	return str.str();
-}
-
-void Response::cgiChild(int pipeIn[2], int pipeOut[2], const std::string & cgiName) {
-
-	dup2(pipeIn[0], 0);
-	close(pipeIn[0]);
-
-	dup2(pipeOut[1], 1);
-	close(pipeOut[1]);
-
-	close(pipeOut[0]);
-	close(pipeIn[1]);
-
-
-//TODO: DELETE MALLOC CGIENV
-	char **env = generateCgiEnv();
-	if (env == NULL){
-		exit(1);
-	}
-	execve(cgiName.c_str(), 0, env);
-
-	exit(1);
-}
-
-std::string Response::cgi(const std::string & cgiName){
-	std::string	str;
-	pid_t		pid;
-	int			pipeIn[2];
-	int			pipeOut[2];
-
-	if (pipe(pipeIn) || pipe(pipeOut)){
-		std::cout << "Pipe error" << std::endl;
+	else {
+		std::cout << "child error" << std::endl;
 		_status = 500;
 		return generateBody();
 	}
-	pid = fork();
+	return str.str();
+}
+
+
+
+std::string Response::cgi(const std::string & cgiName){
+
+	std::ofstream outMy(_cgiInputFile,std::ofstream::out);
+
+	if (!outMy.is_open()){
+		std::cout << "cannot write to outputMY" << std::endl;
+		_status = 500;
+		return generateBody();
+	}
+
+	outMy << generateBody();
+	outMy.close();
+
+	pid_t pid = fork();
 	if (pid == FAILURE){
 		std::cout << "fork error" << std::endl;
 		_status = 500;
 		return generateBody();
 	}
 	else if (pid == CHILD){
-		cgiChild(pipeIn, pipeOut, cgiName);
+		cgiChild(cgiName);
 	}
-	return cgiParent(pipeIn, pipeOut, pid);
+	return cgiParent(pid);
 }
 
 std::string Response::generateResponseCGI(){
 //TODO: REWORK CGI NAME
-//	std::string cgiName = "./root/cgi_tester";
-	std::string cgiName = "./root/myCGI";
+	std::string cgiName = CGI;
 
 	std::string cgiString = cgi(cgiName);
 	_fileSize = cgiString.length();
