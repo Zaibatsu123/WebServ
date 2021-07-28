@@ -12,9 +12,6 @@
 #include <map>
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <unistd.h>
-#include <sys/wait.h>
 #include <sys/fcntl.h>
 
 class Response{
@@ -36,8 +33,9 @@ private:
 	std::string	_uplFileName;
 	std::string _body;
 
+	size_t _calculateFileSize(const std::string & fileName);
+
 public:
-	std::string _buffer;
 
 	Response();
 	~Response();
@@ -58,7 +56,6 @@ public:
 	const std::string & getUplFileName() const;
 
 	std::string			generateResponse();
-	std::string			generateResponseCGI(const std::string & cgiName, std::string f(const std::string &, Response*));
 	std::string			generateHeader();
 	std::string			generateBody();
 };

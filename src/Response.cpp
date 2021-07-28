@@ -58,18 +58,12 @@ Response::Response(const std::string & root, const std::string & fileName) : _st
 Response::~Response(){
 }
 
-std::string Response::generateResponseCGI(const std::string & cgiName, std::string f(const std::string &, Response*)){
-
-	std::string cgiString = f(cgiName, this);
-	_fileSize = cgiString.length();
-
-	return generateHeader() + cgiString;
-}
 
 std::string Response::generateResponse() {
-
 	return generateHeader() + generateBody();
 }
+
+
 
 std::string Response::generateHeader() {
 	std::stringstream str;
@@ -78,7 +72,7 @@ std::string Response::generateHeader() {
 		<< _code[_status] << "\n"
 		<< "Connection: keep-alive\n"
 //		<< "Content-Type: " << "text/html" << "\n"
-		<< "Content-Length: " << _fileSize << "\n"
+		<< "Content-Length: " << _calculateFileSize(_fileName) << "\n"
 		<< "\n";
 	return str.str();
 }
@@ -104,6 +98,22 @@ std::string Response::generateBody() {
 	}
 	file.close();
 	return str.str();
+}
+
+size_t Response::_calculateFileSize(const std::string &fileName){
+	std::ifstream	srcFile;
+	srcFile.open(fileName.c_str(), std::ifstream::in);
+
+	if (!srcFile.is_open()){
+		return 0;
+	}
+
+	srcFile.seekg (0, srcFile.end);
+	size_t size = srcFile.tellg();
+	srcFile.seekg (0, srcFile.beg);
+
+	srcFile.close();
+	return size;
 }
 
 void Response::setStatus(int n) {

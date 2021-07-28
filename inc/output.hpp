@@ -45,7 +45,7 @@ std::string trim(std::string old_string);
 std::string trim_end(std::string old_string);
 std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str);
 
-void requestFileValidator(Response * response);
+bool requestFileValidator(Response * response);
 ssize_t sendall(int socket, std::string & buffer, int flags);
 int upload(const std::string & uplFileName, const char *data);
 std::string cgi(const std::string & cgiName, Response* response);

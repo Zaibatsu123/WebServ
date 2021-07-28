@@ -7,11 +7,6 @@
 
 #include "../inc/output.hpp"
 #include "Response.hpp"
-#include <fstream>
-#include <sstream>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 
 #define MSG_NOSIGNAL 0x2000
 
@@ -31,7 +26,7 @@ ssize_t response(s_client *client){
 
 		if (client->request->getMethod() == "GET"){
 			std::cout << "--> GET" << std::endl;
-
+			requestFileValidator(response);
 			if (client->request->getPath().find(".php") != std::string::npos){
 				std::cout << "----> CGI" << std::endl;
 
@@ -56,8 +51,6 @@ ssize_t response(s_client *client){
 				response->setFileSize(249);
 			}
 		}
-
-		requestFileValidator(response);
 	}
 
 	std::string buffer = response->generateResponse();
@@ -99,20 +92,16 @@ ssize_t sendall(int socket, std::string & buffer, int flags){
 	return result;
 }
 
-void requestFileValidator(Response * response){
+bool requestFileValidator(Response * response){
 	std::ifstream	srcFile;
 	srcFile.open((response->getRoot() + response->getFileName()).c_str(), std::ifstream::in);
 
 	if (!srcFile.is_open()){
 		response->setStatus(404);
-		//TODO: KOSTYL!
-		response->setFileSize(409);
+		return false;
 	}
-	else {
-		srcFile.seekg (0, srcFile.end);
-		response->setFileSize(srcFile.tellg());
-		srcFile.seekg (0, srcFile.beg);
-	}
+	srcFile.close();
+	return true;
 }
 
 int upload(const std::string & uplFileName, const char *data) {
