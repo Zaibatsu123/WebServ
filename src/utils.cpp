@@ -39,6 +39,8 @@ std::vector<std::string> getarray(std::string req)
 	std::vector<std::string> request;
 	int index1 = 0;
 	int index2 = -1;
+	if (req.empty())
+		throw std::exception();
 	size_t n = std::count(req.begin(), req.end(), '\n');
 	std::string str;
 
@@ -56,7 +58,20 @@ Request *start(std::string str_req)
 {
 	Request *request = new Request;
 	std::vector<std::string> vect_req;
-	vect_req = getarray(str_req);
+	try 
+	{
+		vect_req = getarray(str_req);
+	}
+	catch (std::exception(&e))
+	{
+		request->setErr(400);
+		return (request);
+	}
+	if (vect_req.size() == 0)
+	{
+		request->setErr(400);
+		return (request);
+	}
 	request->strrequest(vect_req);
 	std::cout << "\033[1;46m0\033[0m" << std::endl;
 	return (request);

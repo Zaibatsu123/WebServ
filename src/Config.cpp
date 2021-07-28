@@ -47,23 +47,76 @@ std::vector<std::string> readFile(char *config_name)
 	return (configuration);
 }
 
+Server  *print_error(Server *temp, int i, int flag)
+{
+	if (flag == 1)
+		std::cerr << "Configuration file:" << i + 1 << " Error not found" << std::endl;
+	else if (flag == 2)
+		std::cerr << "Configuration file:" << i + 1 << " Incorrect path" << std::endl;
+	else if (flag == 3)
+		std::cerr << "Configuration file:" << i + 1 << " Error reading file" << std::endl;
+	temp = NULL;
+	return (temp);
+}
+
+Server  *error_pages(Server *temp, std::string str, int i)
+{
+	std::map <int, std::string>::iterator it;
+	int error;
+	try
+	{
+		error = std::stoi(str.substr(15, 4));
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << "Configuration file:" << i + 1 << " Invalid error number" << std::endl;
+		return (NULL);
+	}
+	it = temp->error_pages.find(error);
+	if (it == temp->error_pages.end())
+		temp = print_error(temp, i, 1);
+
+	else
+		it->second = trim(str.substr(19, str.length() - 19));
+	if (it != temp->error_pages.end() && it->second.empty())
+		temp = print_error(temp, i, 2);
+	else
+	{
+		std::fstream fs(it->second, std::fstream::in);
+		if (!fs.is_open())
+			temp = print_error(temp, i, 3);
+		else
+			std::cout << COLOR_RED << it->first << "| |" << it->second << COLOR_RED << std::endl;
+		fs.close();
+	}
+	return(temp);
+}
+
+Server  *listen(Server *temp, std::string str)
+{
+	t_socket *ts = new t_socket;
+	std::string ip =  trim(str.substr(11, str.find(":") - 11));
+	// std::cout << "IP(listen):" << ip << "\n STR(listen):" << str << std::endl;
+	std::cout << "Enter in listen: " << str << std::endl;
+	ts->address = new char[strlen(ip.c_str()) + 1];
+	memcpy(ts->address, ip.c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
+	ts->address[strlen(ip.c_str())] = '\0';
+	ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
+	temp->sockets.push_back(*ts);
+	delete ts;
+	return(temp);
+}
+
 std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string> *configuration, int begin, int end)
 {
 	Server                      *temp = new Server;
 
 	for (int i = begin; i < end; ++i)
 	{
+		std::cout << (*configuration)[i] << std::endl;
 		std::string str = trim_end((*configuration)[i]);
 		if (str.compare(0, 11, "    listen ") == 0)
-		{
-			t_socket *ts = new t_socket;
-			ts->address = new char[strlen(str.substr(11, str.find(":") - 11).c_str()) + 1];
-			memcpy(ts->address, str.substr(11, str.find(":") - 11).c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
-			ts->address[strlen(str.substr(11, str.find(":") - 11).c_str())] = '\0';
-			ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
-			temp->sockets.push_back(*ts);
-			delete ts;
-		}
+			temp = listen(temp, str);
 		else if (str.compare(0, 16, "    server_name ") == 0)
 			temp->server_name = str.substr(16, str.length() - 16);
 		else if (str.compare(0, 17, "    auto_index on") == 0)
@@ -72,12 +125,24 @@ std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string
 			temp->autoindex = 0;
 		else if (str.compare(0, 14, "    location /") == 0 && str[str.length() - 1] == '/' && (*configuration)[i+1].compare(0, 13, "        root ") == 0)
 		{
-			std::string sstr = trim_end((*configuration)[++i]);
-			sstr = sstr.substr(13, sstr.length() - 14);
-			temp->locations.insert(std::make_pair(str.substr(13, str.length() - 14), sstr));
+			std::string root = trim_end((*configuration)[++i]);
+			root = root.substr(13, root.length() - 14);
+			temp->locations.insert(std::make_pair(str.substr(13, str.length() - 14), root));
+		}
+		else if (str.compare(0, 15, "    error_page ") == 0)
+		{
+			if ((temp = error_pages(temp, str, i)) == NULL)
+			{
+				delete temp;
+				return (NULL);
+			}
 		}
 		else if (str != "server")
+		{
+			std::cerr << "Configuration file:" << i + 1 << str << " Unknown directive" << std::endl;
+			delete temp;
 			return (NULL);		
+		}
 	}
 	servers->push_back(*temp);
 	delete temp;
@@ -95,7 +160,10 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 		if (configuration[i] == "server")
 			cnt += 1;
 	if (configuration.size() == 0 || cnt == 0)
+	{
+		std::cerr << "Configuration file: no mandatory directives" << std::endl;
 		return (NULL);
+	}
 	if (cnt == 1)
 		servers = pars(servers, &configuration, 0, configuration.size());
 	else if (cnt > 1)	

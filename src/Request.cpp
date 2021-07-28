@@ -155,4 +155,5 @@ void Request::postrequest(std::vector<std::string> request)
 	// outf << "BODY\n" << _body << std::endl;
 	// outf << "CONTENT TYPE: " << _content_type << std::endl;
 	// outf << "BOUNDARY: " << _boundary << std::endl;
+	// outf.close();
 }
