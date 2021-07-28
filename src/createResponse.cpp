@@ -21,41 +21,44 @@
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 
-	if (client->request->getErr())
-		return 0;
-
 	Response* response = new Response("./root", client->request->getPath());
 
-	if (client->request->getMethod() == "GET"){
-		std::cout << "--> GET" << std::endl;
-
-		if (client->request->getPath().find(".php") != std::string::npos){
-			std::cout << "----> CGI" << std::endl;
-
-			std::string cgiString = cgi(CGI, response);
-			response->setFileSize(cgiString.length());
-			response->setFileName("outputCGI");
-			//TODO: FIX CGI OUT BUFFER
-//			response->_buffer = response->generateResponseCGI(CGI, cgi);
-		}
+	if (client->request->getErr() != 0){
+		response->setStatus(400);
+		response->setFileSize(378);
 	}
+	else{
 
-	if (client->request->getMethod() == "POST"){
-		std::cout << "--> POST" << std::endl;
+		if (client->request->getMethod() == "GET"){
+			std::cout << "--> GET" << std::endl;
 
-		int ret = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
-		if (ret == EXIT_FAILURE){
-			response->setFileName("/uploadFailure.html");
-			response->setFileSize(307);
+			if (client->request->getPath().find(".php") != std::string::npos){
+				std::cout << "----> CGI" << std::endl;
+
+				std::string cgiString = cgi(CGI, response);
+				response->setFileSize(cgiString.length());
+				response->setFileName("outputCGI");
+				//TODO: FIX CGI OUT BUFFER
+				//response->_buffer = response->generateResponseCGI(CGI, cgi);
+			}
 		}
-		else {
-			response->setFileName("/uploadSuccess.html");
-			response->setFileSize(249);
+
+		if (client->request->getMethod() == "POST"){
+			std::cout << "--> POST" << std::endl;
+
+			int ret = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
+			if (ret == EXIT_FAILURE){
+				response->setFileName("/uploadFailure.html");
+				response->setFileSize(307);
+			}
+			else {
+				response->setFileName("/uploadSuccess.html");
+				response->setFileSize(249);
+			}
 		}
+
+		requestFileValidator(response);
 	}
-
-
-	requestFileValidator(response);
 
 	std::string buffer = response->generateResponse();
 
