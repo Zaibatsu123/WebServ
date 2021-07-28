@@ -18,10 +18,8 @@ ssize_t response(s_client *client){
 
 	Response* response = new Response("./root", client->request->getPath());
 
-	if (client->request->getErr() != 0){
+	if (client->request->getErr() != 0)
 		response->setStatus(400);
-		response->setFileSize(378);
-	}
 	else{
 
 		if (client->request->getMethod() == "GET"){
@@ -42,17 +40,13 @@ ssize_t response(s_client *client){
 			std::cout << "--> POST" << std::endl;
 
 			int ret = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
-			if (ret == EXIT_FAILURE){
+			if (ret == EXIT_FAILURE)
 				response->setFileName("/uploadFailure.html");
-				response->setFileSize(307);
-			}
-			else {
+			else
 				response->setFileName("/uploadSuccess.html");
-				response->setFileSize(249);
-			}
 		}
 	}
-
+	std::cout << response->generateHeader() << std::endl;
 	std::string buffer = response->generateResponse();
 
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
@@ -107,10 +101,12 @@ bool requestFileValidator(Response * response){
 int upload(const std::string & uplFileName, const char *data) {
 	std::ofstream	dstFile;
 
-	if (!data || !std::strlen(data) || !uplFileName.length())
+	if (!data || !std::strlen(data) || !uplFileName.length()){
+		std::cout << "--> Error: Empty File <--" << std::endl;
 		return EXIT_FAILURE;
-	std::cout << "upload to: " << uplFileName << std::endl;
+	}
 
+	std::cout << "upload to: " << uplFileName << std::endl;
 	dstFile.open(uplFileName.c_str(), std::ofstream::out);
 
 	if (!dstFile.is_open())

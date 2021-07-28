@@ -9,10 +9,6 @@
 
 const std::string Response::_protocol = "HTTP/1.1";
 
-const std::string Response::_cgiInputFile = "outputMy.txt";
-
-const std::string Response::_cgiOutputFile = "outputCGI.txt";
-
 const std::string Response::_errorPageFolder = "./root/errorPages/";
 
 std::map<int, std::string> Response::_code = Response::_createMap();
@@ -49,10 +45,10 @@ std::map<int, std::string> Response::_createErrorPage() {
 	return m;
 }
 
-Response::Response() : _status(200), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""), _buffer(""){
+Response::Response() : _status(200), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""){
 }
 
-Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp/"), _uplFileName(""), _buffer("") {
+Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp/"), _uplFileName(""){
 }
 
 Response::~Response(){
@@ -72,7 +68,7 @@ std::string Response::generateHeader() {
 		<< _code[_status] << "\n"
 		<< "Connection: keep-alive\n"
 //		<< "Content-Type: " << "text/html" << "\n"
-		<< "Content-Length: " << _calculateFileSize(_fileName) << "\n"
+		<< "Content-Length: " << _calculateFileSize(_root + _fileName) << "\n"
 		<< "\n";
 	return str.str();
 }
@@ -102,7 +98,11 @@ std::string Response::generateBody() {
 
 size_t Response::_calculateFileSize(const std::string &fileName){
 	std::ifstream	srcFile;
-	srcFile.open(fileName.c_str(), std::ifstream::in);
+
+	if (_status != 200)
+		srcFile.open(_errorPage[_status], std::ifstream::in);
+	else
+		srcFile.open(fileName.c_str(), std::ifstream::in);
 
 	if (!srcFile.is_open()){
 		return 0;
@@ -167,4 +167,14 @@ size_t Response::getFileSize() const
 void Response::setFileSize(size_t fileSize)
 {
 	_fileSize = fileSize;
+}
+
+const std::string &Response::getBody() const
+{
+	return _body;
+}
+
+void Response::setBody(const std::string &body)
+{
+	_body = body;
 }
