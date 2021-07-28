@@ -48,6 +48,7 @@ int	main(int argc, char **argv, char **env){
     }
     if ((servers = parsingConfiguration(argv[1])) == NULL)
         return (EXIT_FAILURE);
+    while (1);
     // std::cout << "1111" << std::endl;
     console_promt(servers);
     if (master_process(servers) == EXIT_FAILURE)

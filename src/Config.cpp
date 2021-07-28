@@ -20,11 +20,11 @@
 #include "../inc/output.hpp"
 #include  "Server.hpp"
 
-std::vector<std::string> readFile(char *config_name)
+std::vector<std::string> *readFile(char *config_name)
 {
 	std::ifstream               config_file(config_name);
 	std::string                 temp;
-	std::vector<std::string>    configuration;
+	std::vector<std::string>    *configuration = new std::vector<std::string>;
 
 	std::cout << "Start configuration reading" << std::endl;
 	if (!config_file)
@@ -37,11 +37,11 @@ std::vector<std::string> readFile(char *config_name)
 		std::getline(config_file, temp);
 		if (config_file.eof())
 		{
-			configuration.push_back(temp);
+			configuration->push_back(temp);
 			break;
 		}
 		else
-			configuration.push_back(temp);
+			configuration->push_back(temp);
 	}
 	config_file.close();
 	return (configuration);
@@ -92,16 +92,23 @@ Server  *error_pages(Server *temp, std::string str, int i)
 	return(temp);
 }
 
-Server  *listen(Server *temp, std::string str)
+Server  *listen(Server *temp, std::string str, int i)
 {
 	t_socket *ts = new t_socket;
 	std::string ip =  trim(str.substr(11, str.find(":") - 11));
-	// std::cout << "IP(listen):" << ip << "\n STR(listen):" << str << std::endl;
-	std::cout << "Enter in listen: " << str << std::endl;
 	ts->address = new char[strlen(ip.c_str()) + 1];
 	memcpy(ts->address, ip.c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
 	ts->address[strlen(ip.c_str())] = '\0';
-	ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
+	try
+	{
+		ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << "Configuration file:" << i + 1 << " Incorrect port" << std::endl;
+		delete ts;
+		return (NULL);
+	}
 	temp->sockets.push_back(*ts);
 	delete ts;
 	return(temp);
@@ -116,7 +123,10 @@ std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string
 		std::cout << (*configuration)[i] << std::endl;
 		std::string str = trim_end((*configuration)[i]);
 		if (str.compare(0, 11, "    listen ") == 0)
-			temp = listen(temp, str);
+		{
+			if ((temp = listen(temp, str, i)) == NULL)
+				return (NULL);
+		}
 		else if (str.compare(0, 16, "    server_name ") == 0)
 			temp->server_name = str.substr(16, str.length() - 16);
 		else if (str.compare(0, 17, "    auto_index on") == 0)
@@ -153,39 +163,42 @@ std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string
 std::vector<Server> *parsingConfiguration(char *config_name)
 {
 	std::vector<Server>         *servers = new std::vector<Server>;
-	std::vector<std::string>    configuration = readFile(config_name);
+	std::vector<std::string>    *configuration = readFile(config_name);
 	int cnt = 0, begin = 0, end = 0;
 
-	for (size_t i = 0; i < configuration.size(); ++i)
-		if (configuration[i] == "server")
+	for (size_t i = 0; i < configuration->size(); ++i)
+		if ((*configuration)[i] == "server")
 			cnt += 1;
-	if (configuration.size() == 0 || cnt == 0)
+	if (configuration->size() == 0 || cnt == 0)
 	{
 		std::cerr << "Configuration file: no mandatory directives" << std::endl;
 		return (NULL);
 	}
 	if (cnt == 1)
-		servers = pars(servers, &configuration, 0, configuration.size());
+		servers = pars(servers, configuration, 0, configuration->size());
 	else if (cnt > 1)	
 	{
-		for (size_t i = 0; i < configuration.size(); ++i)
+		for (size_t i = 0; i < configuration->size(); ++i)
 		{
-			if (configuration[i] == "server")
+			if ((*configuration)[i] == "server")
 			{
 				begin = i;
-				for (size_t j = i + 1; j < configuration.size(); ++j)
-					if (configuration[j] == "server" || j + 1 == configuration.size())
+				for (size_t j = i + 1; j < configuration->size(); ++j)
+					if ((*configuration)[j] == "server" || j + 1 == configuration->size())
 					{
 						end = j + 1;
 						// std::cout << "\033[1;46m3333.2\033[0m" << begin << end <<std::endl;
-						servers = pars(servers, &configuration, begin, end);
+						if ((servers = pars(servers, configuration, begin, end)) == NULL)
+							return (NULL);
 						break;
 					}
 			}
 		}
 	}
+	delete configuration;
 	// std::cout << "\033[1;46m3333.3\033[0m" << (*servers)[0].sockets[0].address<< std::endl;
 	return (servers);
+
 }
 
 // int main(void)
