@@ -118,7 +118,7 @@ void requestFileValidator(Response * response){
 int upload(const std::string & uplFileName, const char *data) {
 	std::ofstream	dstFile;
 
-	if (!data || !std::strlen(data))
+	if (!data || !std::strlen(data) || !uplFileName.length())
 		return EXIT_FAILURE;
 	std::cout << "upload to: " << uplFileName << std::endl;
 
