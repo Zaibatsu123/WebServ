@@ -14,6 +14,7 @@ INC				= inc
 HEADER			=
 SRC				:=	main.cpp	\
 					createResponse.cpp \
+					cgiHandler.cpp \
 					Response.cpp \
 					webserver.cpp \
 					Config.cpp \
