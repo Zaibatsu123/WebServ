@@ -15,8 +15,13 @@
 
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
-
-	Response* response = new Response("./root", client->request->getPath());
+	Response* response;
+	try{
+		response = new Response("./root", client->request->getPath());
+	}
+	catch (std::exception & e){
+		std::cout << e.what() << std::endl;
+	}
 
 	if (client->request->getErr() != 0)
 		response->setStatus(400);
@@ -44,6 +49,11 @@ ssize_t response(s_client *client){
 				response->setFileName("/uploadFailure.html");
 			else
 				response->setFileName("/uploadSuccess.html");
+		}
+
+		if (client->request->getMethod() == "DELETE"){
+			std::remove((response->getRoot() + response->getFileName()).c_str());
+			response->setStatus(505);
 		}
 	}
 	std::cout << response->generateHeader() << std::endl;
