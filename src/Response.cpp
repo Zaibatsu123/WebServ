@@ -58,9 +58,7 @@ Response::Response(const std::string & root, const std::string & fileName) : _st
 Response::~Response(){
 }
 
-std::string Response::generateResponseCGI(std::string f(const std::string &, Response*)){
-	//TODO: REWORK CGI NAME
-	std::string cgiName = CGI;
+std::string Response::generateResponseCGI(const std::string & cgiName, std::string f(const std::string &, Response*)){
 
 	std::string cgiString = f(cgiName, this);
 	_fileSize = cgiString.length();

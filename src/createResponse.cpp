@@ -18,6 +18,8 @@
 #define MSG_NOSIGNAL 0x2000
 #define CGI_INPUT_FILE "outputMy.txt"
 #define CGI_OUTPUT_FILE "outputCGI.txt"
+//#define CGI "./root/cgi_tester"
+#define CGI "./root/myCGI"
 
 
 char** generateCgiEnv(){
@@ -153,7 +155,7 @@ ssize_t response(s_client *client){
 
 		if (response->getFileName().find(".php") != std::string::npos){
 			std::cout << "----> CGI" << std::endl;
-			response->_buffer = response->generateResponseCGI(cgi);
+			response->_buffer = response->generateResponseCGI(CGI, cgi);
 		}
 		else {
 			response->_buffer = response->generateResponse();

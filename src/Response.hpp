@@ -17,9 +17,6 @@
 #include <sys/wait.h>
 #include <sys/fcntl.h>
 
-//#define CGI "./root/cgi_tester"
-#define CGI "./root/myCGI"
-
 class Response{
 private:
 	static const std::string			_protocol;
@@ -60,7 +57,7 @@ public:
 	const std::string & getUplFileName() const;
 
 	std::string			generateResponse();
-	std::string			generateResponseCGI(std::string f(const std::string &, Response*));
+	std::string			generateResponseCGI(const std::string & cgiName, std::string f(const std::string &, Response*));
 	std::string			generateHeader();
 	std::string			generateBody();
 };
