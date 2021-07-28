@@ -67,20 +67,6 @@ std::string Response::generateResponseCGI(const std::string & cgiName, std::stri
 }
 
 std::string Response::generateResponse() {
-	std::ifstream	srcFile;
-
-	srcFile.open((_root + _fileName).c_str(), std::ifstream::in);
-
-	if (!srcFile.is_open()){
-		_status = 404;
-	//TODO: KOSTYL!
-		_fileSize =  409;
-	}
-	else {
-		srcFile.seekg (0, srcFile.end);
-		_fileSize = srcFile.tellg();
-		srcFile.seekg (0, srcFile.beg);
-	}
 
 	return generateHeader() + generateBody();
 }

@@ -34,6 +34,7 @@ private:
 	std::string	_fileName;
 	std::string	_uplRoot;
 	std::string	_uplFileName;
+	std::string _body;
 
 public:
 	std::string _buffer;
