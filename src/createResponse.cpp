@@ -41,9 +41,6 @@ ssize_t response(s_client *client){
 				response->setFileSize(cgiString.length());
 				response->setRoot("");
 				response->setFileName("outputCGI.txt");
-				std::cout << response->getFileName() << std::endl;
-				//TODO: FIX CGI OUT BUFFER
-				//response->_buffer = response->generateResponseCGI(CGI, cgi);
 			}
 		}
 
