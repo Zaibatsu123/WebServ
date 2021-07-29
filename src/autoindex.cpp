@@ -31,33 +31,6 @@ void autoindex(char *directory)
     closedir(dir);
 }
 
-int file_or_directory_existing(std::string path, Server *server)
-{
-	std::ifstream		file;
-	DIR                 *dir = NULL;
-    struct dirent       *de;
-    std::stringstream   str;
-
-	if (server->autoindex == 1)
-	{
-		file.open(path);
-		if (file.is_open()){
-			file.close();
-			return (1);
-		}
-		else if (dir = opendir(path.c_str()))
-		{
-			closedir(dir);
-			return (2);
-		}
-		else
-	}
-	else
-	{
-
-	}
-}
-
 // void autodirectory(char *directory)
 // {
 //     std::ifstream	srcFile;
@@ -71,7 +44,11 @@ int file_or_directory_existing(std::string path, Server *server)
 int main(int argc, char **argv)
 {
     (void)argc;
+    std::ifstream ifs;
+
     std::cout << "directory:" << argv[1] << std::endl;
-    autoindex(argv[1]);
+    ifs.open(argv[1]);
+    std::cout << "Opened:" << ifs.is_open() << std::endl;
+    // autoindex(argv[1]);
     return (0);
 }

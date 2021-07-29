@@ -85,6 +85,7 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server> *servers, std::
                 new_client->socket = new_client_socket;
                 new_client->status = 0;
                 new_client->request = NULL;
+                new_client->server = &(*i);
                 fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
                 clients->push_back(*new_client);
                 std::cout << "Connected new client" << std::endl;
@@ -98,8 +99,8 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
 	char        read_buffer[1025];
     std::string buffer;
     ssize_t     result = 0;
-    // std::ofstream outf;                                  // DELETE AFTER DEBUG
-    // outf.open( "output_request", std::ios_base::app);    // DELETE AFTER DEBUG
+    std::ofstream outf;                                  // DELETE AFTER DEBUG
+    outf.open( "output_request", std::ios_base::app);    // DELETE AFTER DEBUG
 
     for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
     {
@@ -124,9 +125,9 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
             } while (result > 0);
             if (result > 0)
             {
-                // outf << "Received request________________________" << std::endl;
-                // outf << str.str(); // DELETE AFTER DEBUG
-                // outf << "End request________________________" << std::endl;
+                outf << "Received request________________________" << std::endl;
+                outf << str.str(); // DELETE AFTER DEBUG
+                outf << "End request________________________" << std::endl;
                 (*i).buffer = str.str();
                 (*i).request = start((*i).buffer);
                 (*i).status = 1;
@@ -138,7 +139,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
             }
         }
     }
-    // outf.close();  // DELETE AFTER DEBUG
+    outf.close();  // DELETE AFTER DEBUG
     return (EXIT_SUCCESS);
 }
 

@@ -13,7 +13,7 @@ Server::Server()
     this->server_name = "default_server";
     this->autoindex = 1;
     this->max_body_size = 1024;
-    this->locations.insert(std::pair<std::string, std::string>("/", "./root/"));;
+    this->locations.insert(std::pair<std::string, std::string>("/", "./root"));;
 	this->error_pages.insert(std::pair<int, std::string>(400, "./root/errorPages/400.html"));
 	this->error_pages.insert(std::pair<int, std::string>(403, "./root/errorPages/403.html"));
 	this->error_pages.insert(std::pair<int, std::string>(404, "./root/errorPages/404.html"));

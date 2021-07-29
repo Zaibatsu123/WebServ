@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><head><title>Вы находитесь в директории: ./root/errorPages</title></head><body><H1>Autoindex</H1><p><a href="./root/.">.</a></p>
+<p><a href="./root/..">..</a></p>
+<p><a href="./root/400.html">400.html</a></p>
+<p><a href="./root/403.html">403.html</a></p>
+<p><a href="./root/404.html">404.html</a></p>
+<p><a href="./root/405.html">405.html</a></p>
+<p><a href="./root/500.html">500.html</a></p>
+<p><a href="./root/501.html">501.html</a></p>
+<p><a href="./root/502.html">502.html</a></p>
+<p><a href="./root/503.html">503.html</a></p>
+<p><a href="./root/505.html">505.html</a></p>
+</body></html>

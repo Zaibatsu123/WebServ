@@ -9,10 +9,6 @@
 
 const std::string Response::_protocol = "HTTP/1.1";
 
-const std::string Response::_cgiInputFile = "outputMy.txt";
-
-const std::string Response::_cgiOutputFile = "outputCGI.txt";
-
 const std::string Response::_errorPageFolder = "./root/errorPages/";
 
 std::map<int, std::string> Response::_code = Response::_createMap();
@@ -49,37 +45,40 @@ std::map<int, std::string> Response::_createErrorPage() {
 	return m;
 }
 
-Response::Response() : _status(200), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""), _buffer(""){
+Response::Response() : _status(200), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""){
 }
 
-Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp/"), _uplFileName(""), _buffer("") {
+Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp/"), _uplFileName(""){
 }
 
 Response::~Response(){
 }
 
-std::string Response::generateResponseCGI(const std::string & cgiName, std::string f(const std::string &, Response*)){
 
-	std::string cgiString = f(cgiName, this);
-	_fileSize = cgiString.length();
-
-	return generateHeader() + cgiString;
+std::string Response::generateResponse(int res) {
+	if (res > 0)
+		return generateHeader(this->_body.size()) + this->_body.c_str();
+	return generateHeader(0) + generateBody();
 }
 
-std::string Response::generateResponse() {
-
-	return generateHeader() + generateBody();
-}
-
-std::string Response::generateHeader() {
+std::string Response::generateHeader(int status) {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << "\n"
 		<< "Connection: keep-alive\n"
+		<< "Content-Length: ";
 //		<< "Content-Type: " << "text/html" << "\n"
-		<< "Content-Length: " << _fileSize << "\n"
-		<< "\n";
+	if (status > 0)
+	{
+		std::cout << "content-lenght: " << status << std::endl;
+		str << status << "\n\n";
+	}
+	else
+	{
+		std::cout << "generating header"<< _root + _fileName << std::endl;
+		str << _calculateFileSize(_root + _fileName) << "\n\n";
+	}
 	return str.str();
 }
 
@@ -106,6 +105,26 @@ std::string Response::generateBody() {
 	return str.str();
 }
 
+size_t Response::_calculateFileSize(const std::string &fileName){
+	std::ifstream	srcFile;
+
+	if (_status != 200)
+		srcFile.open(_errorPage[_status], std::ifstream::in);
+	else
+		srcFile.open(fileName.c_str(), std::ifstream::in);
+
+	if (!srcFile.is_open()){
+		return 0;
+	}
+
+	srcFile.seekg (0, srcFile.end);
+	size_t size = srcFile.tellg();
+	srcFile.seekg (0, srcFile.beg);
+
+	srcFile.close();
+	return size;
+}
+
 void Response::setStatus(int n) {
 	_status = n;
 }
@@ -123,10 +142,7 @@ const std::string & Response::getRoot() const {
 }
 
 void Response::setFileName(const std::string & fileName) {
-	if (fileName == "/")
-		_fileName = "/index.html";
-	else
-		_fileName = fileName;
+	_fileName = fileName;
 }
 
 const std::string & Response::getFileName() const {
@@ -157,4 +173,14 @@ size_t Response::getFileSize() const
 void Response::setFileSize(size_t fileSize)
 {
 	_fileSize = fileSize;
+}
+
+const std::string &Response::getBody() const
+{
+	return _body;
+}
+
+void Response::setBody(const std::string &body)
+{
+	_body = body;
 }
