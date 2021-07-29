@@ -75,19 +75,17 @@ Server  *error_pages(Server *temp, std::string str, int i)
 	it = temp->error_pages.find(error);
 	if (it == temp->error_pages.end())
 		temp = print_error(temp, i, 1);
-
 	else
 		it->second = trim(str.substr(19, str.length() - 19));
-	if (it != temp->error_pages.end() && it->second.empty())
+	if (temp != NULL && it != temp->error_pages.end() && it->second.empty())
 		temp = print_error(temp, i, 2);
-	else
+	else if (temp != NULL)
 	{
 		std::fstream fs(it->second, std::fstream::in);
 		if (!fs.is_open())
 			temp = print_error(temp, i, 3);
 		else
-			std::cout << COLOR_RED << it->first << "| |" << it->second << COLOR_RED << std::endl;
-		fs.close();
+			fs.close();
 	}
 	return(temp);
 }
@@ -114,18 +112,33 @@ Server  *listen(Server *temp, std::string str, int i)
 	return(temp);
 }
 
+Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
+{
+	std::string loc = trim_end((*configuration)[i]);
+	std::string root = trim_end((*configuration)[++i]);
+	root = root.substr(13, root.length() - 14);
+	temp->locations.insert(std::make_pair(loc.substr(13, loc.length() - 14), root));
+	return (temp);
+}
+
+Server  *upload_file_to(Server *temp, std::string str)
+{
+	temp->upload_file_to = trim(str.substr(19, str.length() - 19));
+	// std::cout << COLOR_GREEN << temp->upload_file_to << std::endl;
+	return (temp);
+}
+
 std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string> *configuration, int begin, int end)
 {
 	Server                      *temp = new Server;
 
 	for (int i = begin; i < end; ++i)
 	{
-		std::cout << (*configuration)[i] << std::endl;
 		std::string str = trim_end((*configuration)[i]);
 		if (str.compare(0, 11, "    listen ") == 0)
 		{
 			if ((temp = listen(temp, str, i)) == NULL)
-				return (NULL);
+				break;
 		}
 		else if (str.compare(0, 16, "    server_name ") == 0)
 			temp->server_name = str.substr(16, str.length() - 16);
@@ -134,25 +147,27 @@ std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string
 		else if (str.compare(0, 18, "    auto_index off") == 0)
 			temp->autoindex = 0;
 		else if (str.compare(0, 14, "    location /") == 0 && str[str.length() - 1] == '/' && (*configuration)[i+1].compare(0, 13, "        root ") == 0)
-		{
-			std::string root = trim_end((*configuration)[++i]);
-			root = root.substr(13, root.length() - 14);
-			temp->locations.insert(std::make_pair(str.substr(13, str.length() - 14), root));
-		}
+			temp = location(temp, configuration, i);
 		else if (str.compare(0, 15, "    error_page ") == 0)
 		{
 			if ((temp = error_pages(temp, str, i)) == NULL)
-			{
-				delete temp;
-				return (NULL);
-			}
+				break;
 		}
-		else if (str != "server")
+		else if (str.compare(0, 19, "    upload_file_to ") == 0)
+			temp = upload_file_to(temp, str);
+		else if (str == "server" || str.compare(0, 13, "        root ") == 0)
+			continue;
+		else
 		{
-			std::cerr << "Configuration file:" << i + 1 << str << " Unknown directive" << std::endl;
-			delete temp;
-			return (NULL);		
+			std::cerr << "Configuration file:" << i + 1 << " Unknown directive" << std::endl;
+			temp = NULL;
+			break;
 		}
+	}
+	if (temp == NULL)
+	{
+		delete temp;
+		return (NULL);
 	}
 	servers->push_back(*temp);
 	delete temp;
@@ -187,7 +202,6 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 					if ((*configuration)[j] == "server" || j + 1 == configuration->size())
 					{
 						end = j + 1;
-						// std::cout << "\033[1;46m3333.2\033[0m" << begin << end <<std::endl;
 						if ((servers = pars(servers, configuration, begin, end)) == NULL)
 							return (NULL);
 						break;
@@ -196,7 +210,7 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 		}
 	}
 	delete configuration;
-	// std::cout << "\033[1;46m3333.3\033[0m" << (*servers)[0].sockets[0].address<< std::endl;
+	// std::cout << "SIZE: " << servers->size() << std::endl;
 	return (servers);
 
 }
