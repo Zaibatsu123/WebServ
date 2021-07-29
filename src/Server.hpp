@@ -27,7 +27,7 @@ class   Server
         std::map<std::string, std::string>  locations;
         std::map<int, std::string>          error_pages;
         int                                 max_body_size; //по умолчанию ?
-        int                                 autoindex;
+        int                                 autoindex;                                 
     public:
         Server();
         ~Server() {};

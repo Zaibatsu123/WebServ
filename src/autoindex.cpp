@@ -5,11 +5,15 @@
 
 void autoindex(char *directory)
 {
-    DIR                 *dir;
+    DIR                 *dir = NULL;
     struct dirent       *de;
     std::stringstream   str;
 
-    dir = opendir(directory);
+    if ((dir = opendir(directory)) == NULL)
+    {
+        std::cout << strerror(errno) << std::endl;
+        exit(1);
+    }
     str << "<!DOCTYPE html><html><head><title>Вы находитесь в директории: " << directory << "</title></head><body><H1>Autoindex</H1>";
     while(dir)
     {
@@ -27,11 +31,47 @@ void autoindex(char *directory)
     closedir(dir);
 }
 
+int file_or_directory_existing(std::string path, Server *server)
+{
+	std::ifstream		file;
+	DIR                 *dir = NULL;
+    struct dirent       *de;
+    std::stringstream   str;
+
+	if (server->autoindex == 1)
+	{
+		file.open(path);
+		if (file.is_open()){
+			file.close();
+			return (1);
+		}
+		else if (dir = opendir(path.c_str()))
+		{
+			closedir(dir);
+			return (2);
+		}
+		else
+	}
+	else
+	{
+
+	}
+}
+
+// void autodirectory(char *directory)
+// {
+//     std::ifstream	srcFile;
+
+// 	srcFile.open((_root + _fileName).c_str(), std::ifstream::in);
+
+// 	if (!srcFile.is_open()){
+// 		_status = 404;
+// }
+
 int main(int argc, char **argv)
 {
     (void)argc;
-    (void)argv;
-    
+    std::cout << "directory:" << argv[1] << std::endl;
     autoindex(argv[1]);
     return (0);
 }

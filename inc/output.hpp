@@ -21,6 +21,7 @@
 #include <sstream>
 #include "../src/Request.hpp"
 #include "../src/Server.hpp"
+#include "../src/Response.hpp"
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -42,5 +43,14 @@ std::vector<Server> *parsingConfiguration(char *config_name);
 // ssize_t response(s_client client);
 std::string trim(std::string old_string);
 std::string trim_end(std::string old_string);
+std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str);
+<<<<<<< Updated upstream
+
+void requestFileValidator(Response * response);
+ssize_t sendall(int socket, std::string & buffer, int flags);
+int upload(const std::string & uplFileName, const char *data);
+std::string cgi(const std::string & cgiName, Response* response);
+=======
+>>>>>>> Stashed changes
 
 #endif //OUTPUT_HPP

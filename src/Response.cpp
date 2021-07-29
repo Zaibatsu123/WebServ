@@ -49,145 +49,30 @@ std::map<int, std::string> Response::_createErrorPage() {
 	return m;
 }
 
-Response::Response() : _status(200), _method("get"), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""), _buffer(""){
+Response::Response() : _status(200), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""), _buffer(""){
+}
+
+Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp/"), _uplFileName(""), _buffer("") {
 }
 
 Response::~Response(){
 }
 
-char** Response::generateCgiEnv(){
-	char **env;
+std::string Response::generateResponseCGI(const std::string & cgiName, std::string f(const std::string &, Response*)){
 
-	try
-	{
-		env = new char* [sizeof(char*) * 4];
-	}
-	catch (std::exception & e){
-		return 0;
-	}
-	env[0] = (char *)"REQUEST_METHOD=get";
-	env[1] = (char *)"SERVER_PROTOCOL=HTTP/1.1";
-	env[2] = (char *)"PATH_INFO=./root/info.php";
-	env[3] = 0;
-	return env;
-}
-
-void Response::cgiChild(const std::string & cgiName) {
-
-	char **env = generateCgiEnv();
-	if (env == NULL){
-		exit(2);
-	}
-
-	int in = open(_cgiInputFile.c_str(), O_RDONLY, S_IRUSR | S_IWUSR);
-	int out = open(_cgiOutputFile.c_str(), O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
-
-	if(in == -1 || out == -1)
-		exit(2);
-
-	if (dup2(in, 0) == -1 || dup2(out, 1) == -1)
-		exit(2);
-	execve(cgiName.c_str(), 0, env);
-	exit(1);
-}
-
-std::string Response::cgiParent(pid_t pid){
-	int					status;
-	std::stringstream	str;
-
-	waitpid(pid, &status, 0);
-
-	if (WIFEXITED(status))
-		status = WEXITSTATUS(status);
-
-	if (status == EXIT_SUCCESS){
-		std::ifstream inputCGI(_cgiOutputFile, std::ifstream::in);
-
-		if (!inputCGI.is_open()){
-			std::cout << "cannot write to outputMY" << std::endl;
-			_status = 500;
-			return generateBody();
-		}
-
-		std::string buf;
-		while (std::getline(inputCGI, buf))
-			str << buf << std::endl;
-	}
-	else if (status == EXIT_FAILURE){
-		std::cout << "execve error" << std::endl;
-		_status = 502;
-		return generateBody();
-	}
-	else {
-		std::cout << "child error" << std::endl;
-		_status = 500;
-		return generateBody();
-	}
-	return str.str();
-}
-
-
-
-std::string Response::cgi(const std::string & cgiName){
-
-	std::ofstream outMy(_cgiInputFile,std::ofstream::out);
-
-	if (!outMy.is_open()){
-		std::cout << "cannot write to outputMY" << std::endl;
-		_status = 500;
-		return generateBody();
-	}
-
-	outMy << generateBody();
-	outMy.close();
-
-	pid_t pid = fork();
-	if (pid == FAILURE){
-		std::cout << "fork error" << std::endl;
-		_status = 500;
-		return generateBody();
-	}
-	else if (pid == CHILD){
-		cgiChild(cgiName);
-	}
-	return cgiParent(pid);
-}
-
-std::string Response::generateResponseCGI(){
-//TODO: REWORK CGI NAME
-	std::string cgiName = CGI;
-
-	std::string cgiString = cgi(cgiName);
+	std::string cgiString = f(cgiName, this);
 	_fileSize = cgiString.length();
 
 	return generateHeader() + cgiString;
 }
 
 std::string Response::generateResponse() {
-	std::ifstream	srcFile;
-
-	srcFile.open((_root + _fileName).c_str(), std::ifstream::in);
-
-	// if file cannot fine -> response 404
-	if (!srcFile.is_open()){
-		_status = 404;
-	//TODO: KOSTYL!
-		_fileSize =  409;
-	}
-	else {
-		// Get file size:
-		srcFile.seekg (0, srcFile.end);
-		_fileSize = srcFile.tellg();
-		srcFile.seekg (0, srcFile.beg);
-	}
-
 
 	return generateHeader() + generateBody();
 }
 
 std::string Response::generateHeader() {
 	std::stringstream str;
-
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << "\n"
@@ -221,36 +106,12 @@ std::string Response::generateBody() {
 	return str.str();
 }
 
-std::string Response::upload(const char *data) {
-	std::ofstream	dstFile;
-
-	std::string fileName = "/uploadFile.txt";
-	std::string		tmp = _uplRoot + fileName;
-
-	std::cout << "upload: " << tmp << std::endl;
-	dstFile.open(tmp.c_str(), std::ofstream::out);
-	dstFile << std::string(data);
-	dstFile.close();
-	//TODO: KOSTYL!
-	_fileName = "/uploadSuccess.html";
-	_fileSize =	282;
-	return generateHeader() + generateBody();
-}
-
 void Response::setStatus(int n) {
 	_status = n;
 }
 
 int Response::getStatus() const {
 	return _status;
-}
-
-void Response::setMethod(const std::string & method) {
-	_method = method;
-}
-
-const std::string & Response::getMethod() const {
-	return _method;
 }
 
 void Response::setRoot(const std::string & root) {
@@ -281,7 +142,7 @@ const std::string & Response::getUplRoot() const {
 }
 
 void Response::setUplFileName(const std::string & uplFileName) {
-	_uplFileName = uplFileName;
+	_uplFileName = _uplRoot + uplFileName;
 }
 
 const std::string & Response::getUplFileName() const {
@@ -291,4 +152,9 @@ const std::string & Response::getUplFileName() const {
 size_t Response::getFileSize() const
 {
 	return _fileSize;
+}
+
+void Response::setFileSize(size_t fileSize)
+{
+	_fileSize = fileSize;
 }

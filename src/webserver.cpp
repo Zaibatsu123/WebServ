@@ -95,9 +95,11 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server> *servers, std::
 
 int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
 {
-	char        read_buffer[1024];
+	char        read_buffer[1025];
     std::string buffer;
     ssize_t     result = 0;
+    // std::ofstream outf;                                  // DELETE AFTER DEBUG
+    // outf.open( "output_request", std::ios_base::app);    // DELETE AFTER DEBUG
 
     for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
     {
@@ -113,16 +115,18 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
                     perror("Somthing goes wrong, when receiving message");
                     break;
                 }
-                std::cout << result << std::endl;
+                //TODO: delete sleep for delay after send
+                usleep(1000);
+                read_buffer[result] = '\0';
                 str << read_buffer;
                 if (result < 1024)
                     break;
             } while (result > 0);
             if (result > 0)
             {
-                std::cout << "Received request________________________" << std::endl;
-                std::cout << str.str() << std::endl;
-                std::cout << "End request________________________" << std::endl;
+                // outf << "Received request________________________" << std::endl;
+                // outf << str.str(); // DELETE AFTER DEBUG
+                // outf << "End request________________________" << std::endl;
                 (*i).buffer = str.str();
                 (*i).request = start((*i).buffer);
                 (*i).status = 1;
@@ -134,6 +138,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
             }
         }
     }
+    // outf.close();  // DELETE AFTER DEBUG
     return (EXIT_SUCCESS);
 }
 
