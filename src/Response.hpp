@@ -16,12 +16,14 @@
 
 class Response{
 private:
-	static const std::string			_protocol;
-	static const std::string			_errorPageFolder;
-	static std::map<int, std::string>	_errorPage;
-	static std::map<int, std::string>	_code;
-	static std::map<int, std::string>	_createMap();
-	static std::map<int, std::string>	_createErrorPage();
+	static const std::string					_protocol;
+	static const std::string					_errorPageFolder;
+	static std::map<int, std::string>			_errorPage;
+	static std::map<int, std::string>			_code;
+	static std::map<int, std::string>			_createMap();
+	static std::map<int, std::string>			_createErrorPage();
+	static std::map<std::string, std::string>	_fileTypes;
+	static std::map<std::string, std::string>	_createTypesMap();
 
 	const long long _maxContent;
 
@@ -33,7 +35,9 @@ private:
 	std::string	_uplFileName;
 	std::string _body;
 
-	size_t _calculateFileSize(const std::string & fileName) const;
+	size_t		_calculateFileSize() const;
+	std::string	_indicateFileType() const;
+
 
 public:
 

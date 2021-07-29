@@ -11,6 +11,20 @@ const std::string Response::_protocol = "HTTP/1.1";
 
 const std::string Response::_errorPageFolder = "./root/errorPages/";
 
+std::map<std::string, std::string> Response::_fileTypes = _createTypesMap();
+
+std::map<std::string, std::string> Response::_createTypesMap() {
+	std::map<std::string, std::string> m;
+	m.insert(std::pair<std::string, std::string>(".html", "text/html"));
+	m.insert(std::pair<std::string, std::string>(".css", "text/css"));
+	m.insert(std::pair<std::string, std::string>(".js", "text/javascript"));
+	m.insert(std::pair<std::string, std::string>(".jpg", "image/jpeg"));
+	m.insert(std::pair<std::string, std::string>(".jpeg", "image/jpeg"));
+	m.insert(std::pair<std::string, std::string>(".png", "image/png"));
+	m.insert(std::pair<std::string, std::string>(".ico", "image/ico"));
+	return m;
+}
+
 std::map<int, std::string> Response::_code = Response::_createMap();
 
 std::map<int, std::string> Response::_errorPage = Response::_createErrorPage();
@@ -81,8 +95,8 @@ std::string Response::generateHeader() {
 		<< _status << " "
 		<< _code[_status] << "\n"
 		<< "Connection: keep-alive\n"
-//		<< "Content-Type: " << "text/html" << "\n"
-		<< "Content-Length: " << _calculateFileSize(_root + _fileName) << "\n"
+		<< "Content-Type: " << _indicateFileType() << "\n"
+		<< "Content-Length: " << _calculateFileSize() << "\n"
 		<< "\n";
 	return str.str();
 }
@@ -110,13 +124,22 @@ std::string Response::generateBody() {
 	return str.str();
 }
 
-size_t Response::_calculateFileSize(const std::string &fileName) const{
+std::string Response::_indicateFileType() const{
+	std::map<std::string, std::string>::iterator it;
+	for (it = _fileTypes.begin(); it != _fileTypes.end(); ++it){
+		if (_fileName.find(it->first) != std::string::npos)
+			return it->second;
+	}
+	return "text/plain";
+}
+
+size_t Response::_calculateFileSize() const{
 	std::ifstream	srcFile;
 
 	if (_status != 200)
 		srcFile.open(_errorPage[_status], std::ifstream::in);
 	else
-		srcFile.open(fileName.c_str(), std::ifstream::in);
+		srcFile.open((_root + _fileName).c_str(), std::ifstream::in);
 
 	if (!srcFile.is_open()){
 		return 0;

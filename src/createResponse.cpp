@@ -22,7 +22,7 @@ ssize_t response(s_client *client){
 	std::string protocol = "HTTP/1.1";
 
 	try{
-		response = new Response(10000,"./root", client->request->getPath());
+		response = new Response(0,"./root", client->request->getPath());
 	}
 	catch (std::exception & e){
 		std::cout << e.what() << std::endl;
@@ -59,7 +59,7 @@ ssize_t response(s_client *client){
 			response->setStatus(505);
 		}
 	}
-
+	std::cout << response->generateHeader() << std::endl;
 	requestContentSizeValidator(response);
 	std::string buffer = response->generateResponse();
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
@@ -128,7 +128,7 @@ bool requestContentSizeValidator(Response *response){
 	srcFile.seekg (0, srcFile.beg);
 	srcFile.close();
 
-	if (size > response->getMaxContent()){
+	if (response->getMaxContent() && size > response->getMaxContent()){
 		response->setStatus(413);
 		return false;
 	}
