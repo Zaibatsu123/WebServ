@@ -23,6 +23,8 @@ private:
 	static std::map<int, std::string>	_createMap();
 	static std::map<int, std::string>	_createErrorPage();
 
+	const long long _maxContent;
+
 	int 		_status;
 	std::string	_root;
 	size_t		_fileSize;
@@ -31,14 +33,14 @@ private:
 	std::string	_uplFileName;
 	std::string _body;
 
-	size_t _calculateFileSize(const std::string & fileName);
+	size_t _calculateFileSize(const std::string & fileName) const;
 
 public:
 
 	Response();
 	~Response();
 
-	Response(const std::string & root, const std::string & fileName);
+	Response(long long maxContent, const std::string & root, const std::string & fileName);
 
 	void 				setStatus(int n);
 	int 				getStatus() const;
@@ -58,6 +60,8 @@ public:
 	std::string			generateResponse();
 	std::string			generateHeader();
 	std::string			generateBody();
+
+	long long 			getMaxContent();
 };
 
 

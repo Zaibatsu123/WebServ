@@ -49,5 +49,6 @@ bool requestFileValidator(Response * response);
 ssize_t sendall(int socket, std::string & buffer, int flags);
 int upload(const std::string & uplFileName, const char *data);
 std::string cgi(const std::string & cgiName, Response* response);
+bool requestContentSizeValidator(Response *response);
 
 #endif //OUTPUT_HPP

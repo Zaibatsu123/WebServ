@@ -16,8 +16,13 @@
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	Response* response;
+
+	std::string method = "GET";
+	std::string file = "/index.html";
+	std::string protocol = "HTTP/1.1";
+
 	try{
-		response = new Response("./root", client->request->getPath());
+		response = new Response(10000,"./root", client->request->getPath());
 	}
 	catch (std::exception & e){
 		std::cout << e.what() << std::endl;
@@ -26,7 +31,6 @@ ssize_t response(s_client *client){
 	if (client->request->getErr() != 0)
 		response->setStatus(400);
 	else{
-
 		if (client->request->getMethod() == "GET"){
 			std::cout << "--> GET" << std::endl;
 			requestFileValidator(response);
@@ -35,7 +39,9 @@ ssize_t response(s_client *client){
 
 				std::string cgiString = cgi(CGI, response);
 				response->setFileSize(cgiString.length());
-				response->setFileName("outputCGI");
+				response->setRoot("");
+				response->setFileName("outputCGI.txt");
+				std::cout << response->getFileName() << std::endl;
 				//TODO: FIX CGI OUT BUFFER
 				//response->_buffer = response->generateResponseCGI(CGI, cgi);
 			}
@@ -56,9 +62,9 @@ ssize_t response(s_client *client){
 			response->setStatus(505);
 		}
 	}
-	std::cout << response->generateHeader() << std::endl;
-	std::string buffer = response->generateResponse();
 
+	requestContentSizeValidator(response);
+	std::string buffer = response->generateResponse();
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
 
 	delete response;
@@ -100,11 +106,35 @@ bool requestFileValidator(Response * response){
 	std::ifstream	srcFile;
 	srcFile.open((response->getRoot() + response->getFileName()).c_str(), std::ifstream::in);
 
+	//TODO: delete when evaluate
+	std::cout << response->getRoot() + response->getFileName() << std::endl;
 	if (!srcFile.is_open()){
 		response->setStatus(404);
 		return false;
 	}
 	srcFile.close();
+	return true;
+}
+
+bool requestContentSizeValidator(Response *response){
+	std::ifstream	srcFile;
+	srcFile.open((response->getRoot() + response->getFileName()).c_str(), std::ifstream::in);
+
+	long long size;
+	if (!srcFile.is_open()){
+		response->setStatus(404);
+		return false;
+	}
+
+	srcFile.seekg (0, srcFile.end);
+	size = srcFile.tellg();
+	srcFile.seekg (0, srcFile.beg);
+	srcFile.close();
+
+	if (size > response->getMaxContent()){
+		response->setStatus(413);
+		return false;
+	}
 	return true;
 }
 

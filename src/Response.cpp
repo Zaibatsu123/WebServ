@@ -22,6 +22,7 @@ std::map<int, std::string> Response::_createMap() {
 	m.insert(std::pair<int, std::string>(403, "Forbidden"));
 	m.insert(std::pair<int, std::string>(404, "Not Found"));
 	m.insert(std::pair<int, std::string>(405, "Method Not Allowed"));
+	m.insert(std::pair<int, std::string>(413, "Request Entity Too Large"));
 	m.insert(std::pair<int, std::string>(500, "Internal Server error"));
 	m.insert(std::pair<int, std::string>(501, "Not Implemented"));
 	m.insert(std::pair<int, std::string>(502, "Bad Gateway"));
@@ -32,10 +33,11 @@ std::map<int, std::string> Response::_createMap() {
 
 std::map<int, std::string> Response::_createErrorPage() {
 	std::map<int, std::string> m;
-	m.insert(std::pair<int, std::string>(403, _errorPageFolder + "403.html"));
 	m.insert(std::pair<int, std::string>(400, _errorPageFolder + "400.html"));
+	m.insert(std::pair<int, std::string>(403, _errorPageFolder + "403.html"));
 	m.insert(std::pair<int, std::string>(404, _errorPageFolder + "404.html"));
 	m.insert(std::pair<int, std::string>(405, _errorPageFolder + "405.html"));
+	m.insert(std::pair<int, std::string>(413, _errorPageFolder + "413.html"));
 	m.insert(std::pair<int, std::string>(500, _errorPageFolder + "500.html"));
 	m.insert(std::pair<int, std::string>(501, _errorPageFolder + "501.html"));
 	m.insert(std::pair<int, std::string>(502, _errorPageFolder + "502.html"));
@@ -45,10 +47,22 @@ std::map<int, std::string> Response::_createErrorPage() {
 	return m;
 }
 
-Response::Response() : _status(200), _root(""), _fileName(""), _uplRoot(""), _uplFileName(""){
+Response::Response() :
+	_maxContent(0),
+	_status(200),
+	_root(""),
+	_fileName(""),
+	_uplRoot(""),
+	_uplFileName(""){
 }
 
-Response::Response(const std::string & root, const std::string & fileName) : _status(200), _root(root), _fileName(fileName), _uplRoot(root + "/tmp/"), _uplFileName(""){
+Response::Response(long long maxContent, const std::string & root, const std::string & fileName) :
+	_maxContent(maxContent),
+	_status(200),
+	_root(root),
+	_fileName(fileName),
+	_uplRoot(root + "/tmp/"),
+	_uplFileName(""){
 }
 
 Response::~Response(){
@@ -96,7 +110,7 @@ std::string Response::generateBody() {
 	return str.str();
 }
 
-size_t Response::_calculateFileSize(const std::string &fileName){
+size_t Response::_calculateFileSize(const std::string &fileName) const{
 	std::ifstream	srcFile;
 
 	if (_status != 200)
@@ -177,4 +191,9 @@ const std::string &Response::getBody() const
 void Response::setBody(const std::string &body)
 {
 	_body = body;
+}
+
+long long Response::getMaxContent()
+{
+	return _maxContent;
 }
