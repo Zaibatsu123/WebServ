@@ -91,6 +91,7 @@ int file_or_directory_existing(t_client *client, Response *response)
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 
+	std::cout << client->request->getMethod() << std::endl;
 	Response* response;
 	try{
 		response = new Response(0,"./root", client->request->getPath());
@@ -100,6 +101,7 @@ ssize_t response(s_client *client){
 	}
 
 	if (client->request->getErr() != 0)
+		//TODO: set to 400
 		response->setStatus(400);
 	else{
 
@@ -128,14 +130,19 @@ ssize_t response(s_client *client){
 			}
 		}
 
+
 		if (client->request->getMethod() == "POST"){
 			std::cout << "--> POST" << std::endl;
 
-			int ret = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
-			if (ret == EXIT_FAILURE)
-				response->setFileName("/uploadFailure.html");
-			else
-				response->setFileName("/uploadSuccess.html");
+			if (client->request->getBodyCnt().length() == 0)
+				response->setStatus(405);
+			else{
+				int ret = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
+				if (ret == EXIT_FAILURE)
+					response->setFileName("/uploadFailure.html");
+				else
+					response->setFileName("/uploadSuccess.html");
+			}
 		}
 
 		if (client->request->getMethod() == "DELETE"){
@@ -149,8 +156,8 @@ ssize_t response(s_client *client){
 
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
 
-	delete response;
-	delete client->request;
+//	delete response;
+//	delete client->request;
 	std::cout << "--------------------> Response END <------------ " << std::endl;
 	return result;
 }
