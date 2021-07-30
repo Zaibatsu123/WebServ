@@ -83,21 +83,27 @@ Response::~Response(){
 }
 
 
-std::string Response::generateResponse() {
-	return generateHeader() + generateBody();
+std::string Response::generateResponse(int res) {
+	if (res > 0)
+		return generateHeader(this->_body.size()) + this->_body.c_str();
+	return generateHeader(0) + generateBody();
 }
 
-
-
-std::string Response::generateHeader() {
+std::string Response::generateHeader(int status) {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << "\n"
 		<< "Connection: keep-alive\n"
-		<< "Content-Type: " << _indicateFileType() << "\n"
-		<< "Content-Length: " << _calculateFileSize() << "\n"
-		<< "\n";
+//		<< "Content-Type: " << _indicateFileType() << "\n"
+		<< "Content-Length: ";
+//		<< "Content-Length: " << _calculateFileSize(_root + _fileName) << "\n"
+
+		if (status > 0)
+			str << status << "\n";
+		else
+			str << _calculateFileSize() << "\n";
+		str << "\n";
 	return str.str();
 }
 
@@ -170,10 +176,7 @@ const std::string & Response::getRoot() const {
 }
 
 void Response::setFileName(const std::string & fileName) {
-	if (fileName == "/")
-		_fileName = "/index.html";
-	else
-		_fileName = fileName;
+	_fileName = fileName;
 }
 
 const std::string & Response::getFileName() const {

@@ -61,8 +61,8 @@ public:
 	void				setBody(const std::string &body);
 	const std::string &	getBody() const;
 
-	std::string			generateResponse();
-	std::string			generateHeader();
+	std::string			generateResponse(int res);
+	std::string			generateHeader(int status);
 	std::string			generateBody();
 
 	long long 			getMaxContent();

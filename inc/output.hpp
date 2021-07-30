@@ -32,6 +32,7 @@
 
 typedef struct  s_client 
 {
+    Server      *server;
     int         socket;
     int         status;
     std::string buffer;
@@ -44,7 +45,6 @@ std::vector<Server> *parsingConfiguration(char *config_name);
 std::string trim(std::string old_string);
 std::string trim_end(std::string old_string);
 std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str);
-
 bool requestFileValidator(Response * response);
 ssize_t sendall(int socket, std::string & buffer, int flags);
 int upload(const std::string & uplFileName, const char *data);

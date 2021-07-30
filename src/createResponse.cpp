@@ -7,16 +7,91 @@
 
 #include "../inc/output.hpp"
 #include "Response.hpp"
+#include <dirent.h>
 
 #define MSG_NOSIGNAL 0x2000
 
 //#define CGI "./root/cgi_tester"
 #define CGI "./root/myCGI"
 
+int autoindex(const char *directory, t_client *client, Response *response)
+{
+	DIR                 *dir = NULL;
+	struct dirent       *de;
+	std::stringstream   str;
+	(void)client;
+
+	std::cout << "Directory" << directory << std::endl;
+	if ((dir = opendir(directory)) == NULL)
+	{
+		std::cout << strerror(errno) << std::endl;
+		return (1);
+	}
+	std::string prefix = "/";
+	if (client->request->getPath()[client->request->getPath().size() - 1] == '/')
+		prefix = "";
+	str << "<!DOCTYPE html><html><head><title>Вы находитесь в директории: " << directory << "</title></head><body><H1>Autoindex</H1>";
+	while(dir)
+	{
+		de = readdir(dir);
+		if (!de)
+			break;
+		if (!strcmp(de->d_name, "."))
+			continue;
+		str << "<p><a href=\""  << client->request->getPath() << prefix << de->d_name << "\">" << de->d_name << "</a></p>" << std::endl;
+	}
+	str << "</body></html>";
+	response->setBody(str.str());
+	// std::ofstream file("answer.html");
+	// if (!file)
+	//     std::cout << "File opening error!" << std::endl;
+	// file << str.str();
+	closedir(dir);
+	return (0);
+}
+
+int file_or_directory_existing(t_client *client, Response *response)
+{
+	std::ifstream		file;
+
+	std::cout << "AUTOINDEX ENTER" << std::endl;
+	std::string fullpath = client->server->locations["/"].c_str();
+	fullpath += client->request->getPath();
+	if (client->server->autoindex == 1)
+	{
+		std::cout << "path:|" << fullpath + "/index.html" << "|" << std::endl;
+		std::cout << "internet path:|" << client->request->getPath() << "|" << std::endl;
+		file.open(fullpath + "/index.html");
+		if (file.is_open()){
+			std::cout << "path:|" << fullpath + "index.html" << "|" << std::endl;
+			response->setRoot(fullpath);
+			response->setFileName("/index.html");
+			file.close();
+			return (1);
+		}
+		if (!autoindex(fullpath.c_str(), client, response))
+		{
+			std::cout << "after autoindex" << std::endl;
+			return (2);
+		}
+		file.open(fullpath);
+		if (file.is_open()){
+			std::cout << "FILEpath:|" << fullpath << "|" << std::endl;
+			response->setRoot(client->server->locations["/"]);
+			// response->setFileName(client->request->getPath());
+			file.close();
+			return (3);
+		}
+		else
+			return (404);
+	}
+	return (0);
+}
+
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
-	Response* response;
 
+	Response* response;
 	try{
 		response = new Response(0,"./root", client->request->getPath());
 	}
@@ -27,9 +102,22 @@ ssize_t response(s_client *client){
 	if (client->request->getErr() != 0)
 		response->setStatus(400);
 	else{
+
 		if (client->request->getMethod() == "GET"){
 			std::cout << "--> GET" << std::endl;
-			requestFileValidator(response);
+
+			int res;
+			res = file_or_directory_existing(client, response);
+			std::cout << "res checking" << res << std::endl;
+			if (res == 2){
+				std::string buffer = response->generateResponse(1);
+				ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
+				return (result);
+			}
+			else if(res == 404)
+				response->setStatus(404);
+
+
 			if (client->request->getPath().find(".php") != std::string::npos){
 				std::cout << "----> CGI" << std::endl;
 
@@ -55,9 +143,10 @@ ssize_t response(s_client *client){
 			response->setStatus(505);
 		}
 	}
-	std::cout << response->generateHeader() << std::endl;
-	requestContentSizeValidator(response);
-	std::string buffer = response->generateResponse();
+	std::cout << response->generateHeader(0) << std::endl;
+	std::string buffer = response->generateResponse(0);
+
+
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
 
 	delete response;
