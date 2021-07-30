@@ -128,7 +128,7 @@ Server  *upload_file_to(Server *temp, std::string str)
 	return (temp);
 }
 
-std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string> *configuration, int begin, int end)
+std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::string> *configuration, int begin, int end)
 {
 	Server                      *temp = new Server;
 
@@ -165,19 +165,15 @@ std::vector<Server>  *pars(std::vector<Server> *servers, std::vector<std::string
 		}
 	}
 	if (temp == NULL)
-	{
-		delete temp;
 		return (NULL);
-	}
-	servers->push_back(*temp);
-	delete temp;
+	servers->push_back(temp);
 	return (servers);
 }
 
 
-std::vector<Server> *parsingConfiguration(char *config_name)
+std::vector<Server*> *parsingConfiguration(char *config_name)
 {
-	std::vector<Server>         *servers = new std::vector<Server>;
+	std::vector<Server*>         *servers = new std::vector<Server*>;
 	std::vector<std::string>    *configuration = readFile(config_name);
 	int cnt = 0, begin = 0, end = 0;
 
@@ -217,7 +213,7 @@ std::vector<Server> *parsingConfiguration(char *config_name)
 
 // int main(void)
 // {
-// 	std::vector<Server>     *servers;
+// 	std::vector<Server*>     *servers;
 // 	char *str = new char[10];
 // 	strcpy(str, "test.conf");
 // 	servers = parsingConfiguration(str);

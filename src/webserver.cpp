@@ -55,10 +55,10 @@ int create_socket(t_socket *server_socket) //создаём сокет, устр
 	return (created_socket);
 }
 
-int creating_socket_servers(std::vector<Server> *servers)
+int creating_socket_servers(std::vector<Server*> *servers)
 {
-    for (std::vector<Server>::iterator i = servers->begin(); i != servers->end(); i++)
-        for (std::vector<t_socket>::iterator j = (*i).sockets.begin(); j != (*i).sockets.end(); j++)
+    for (std::vector<Server*>::iterator i = servers->begin(); i != servers->end(); i++)
+        for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
         {
             if ((j->socket = create_socket(&(*j))) == -1)
                 return (EXIT_FAILURE);
@@ -67,13 +67,13 @@ int creating_socket_servers(std::vector<Server> *servers)
     return (EXIT_SUCCESS);
 }
 
-int connecting_new_clients(fd_set *read_fds, std::vector<Server> *servers, std::list<t_client> *clients)
+int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std::list<t_client> *clients)
 {
     int         new_client_socket = -1;
     t_client    *new_client = NULL;
 
-    for (std::vector<Server>::iterator i = servers->begin(); i != servers->end(); i++)
-        for (std::vector<t_socket>::iterator j = (*i).sockets.begin(); j != (*i).sockets.end(); j++)
+    for (std::vector<Server*>::iterator i = servers->begin(); i != servers->end(); i++)
+        for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
             if (FD_ISSET((*j).socket, read_fds))
             {
                 if ((new_client_socket = accept((*j).socket, NULL, NULL)) == -1)
@@ -85,7 +85,7 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server> *servers, std::
                 new_client->socket = new_client_socket;
                 new_client->status = 0;
                 new_client->request = NULL;
-                new_client->server = &(*i);
+                new_client->server = (*i);
                 fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
                 clients->push_back(*new_client);
                 std::cout << "Connected new client" << std::endl;
@@ -167,13 +167,13 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client> *clients)
     return (exit_status);
 }
 
-int adding_sockets_to_sets(std::vector<Server> *servers, std::list<t_client> *clients, fd_set *read_fds, fd_set *write_fds)
+int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client> *clients, fd_set *read_fds, fd_set *write_fds)
 {
     int max_fd = -1;
     FD_ZERO(read_fds);
     FD_ZERO(write_fds);
-    for (std::vector<Server>::iterator i = servers->begin(); i != servers->end(); i++)
-        for (std::vector<t_socket>::iterator j = (*i).sockets.begin(); j != (*i).sockets.end(); j++)
+    for (std::vector<Server*>::iterator i = servers->begin(); i != servers->end(); i++)
+        for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
         {
             FD_SET((*j).socket, read_fds);
             if ((*j).socket > max_fd)
@@ -191,7 +191,7 @@ int adding_sockets_to_sets(std::vector<Server> *servers, std::list<t_client> *cl
     return (max_fd);
 }
 
-int master_process(std::vector<Server> *servers){
+int master_process(std::vector<Server*> *servers){
     int result = 0;
     int max_fd = 0;
     fd_set read_fds,write_fds;
