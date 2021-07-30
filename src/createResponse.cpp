@@ -17,10 +17,6 @@ ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	Response* response;
 
-	std::string method = "GET";
-	std::string file = "/index.html";
-	std::string protocol = "HTTP/1.1";
-
 	try{
 		response = new Response(0,"./root", client->request->getPath());
 	}
@@ -105,6 +101,7 @@ bool requestFileValidator(Response * response){
 
 	//TODO: delete when evaluate
 	std::cout << response->getRoot() + response->getFileName() << std::endl;
+
 	if (!srcFile.is_open()){
 		response->setStatus(404);
 		return false;
@@ -118,10 +115,6 @@ bool requestContentSizeValidator(Response *response){
 	srcFile.open((response->getRoot() + response->getFileName()).c_str(), std::ifstream::in);
 
 	long long size;
-	if (!srcFile.is_open()){
-		response->setStatus(404);
-		return false;
-	}
 
 	srcFile.seekg (0, srcFile.end);
 	size = srcFile.tellg();
@@ -154,4 +147,5 @@ int upload(const std::string & uplFileName, const char *data) {
 
 	return EXIT_SUCCESS;
 }
+
 
