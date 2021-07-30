@@ -97,13 +97,18 @@ int autoindex(const char *directory, t_client *client, Response *response)
         std::cout << strerror(errno) << std::endl;
         return (1);
     }
+	std::string prefix = "/";
+	if (client->request->getPath()[client->request->getPath().size() - 1] == '/')
+		prefix = "";
     str << "<!DOCTYPE html><html><head><title>Вы находитесь в директории: " << directory << "</title></head><body><H1>Autoindex</H1>";
     while(dir)
     {
         de = readdir(dir);
         if (!de)
             break;
-        str << "<p><a href=\"" << client->server->locations["/"] << "/" << de->d_name << "\">" << de->d_name << "</a></p>" << std::endl;
+		if (!strcmp(de->d_name, "."))
+			continue;
+        str << "<p><a href=\""  << client->request->getPath() << prefix << de->d_name << "\">" << de->d_name << "</a></p>" << std::endl;
     }
     str << "</body></html>";
 	response->setBody(str.str());
@@ -118,21 +123,31 @@ int autoindex(const char *directory, t_client *client, Response *response)
 
 #define CGI "./root/myCGI"
 
+void	print_params(t_client *client)
+{
+	std::cout << "PRINT PARSED PARAMS: __________________" << std::endl;
+	std::cout << client->request->getHost() << std::endl;
+	std::cout << client->request->getPath() << std::endl;
+	std::cout << "END PARAMETRS: ___________________" << std::endl;
+}
+
 int file_or_directory_existing(t_client *client, Response *response)
 {
 	std::ifstream		file;
 
+	print_params(client);
 	std::cout << "AUTOINDEX ENTER" << std::endl;
 	std::string fullpath = client->server->locations["/"].c_str();
 	fullpath += client->request->getPath();
 	if (client->server->autoindex == 1)
 	{
-		std::cout << "path:|" << client->server->locations["/"] +  client->request->getPath() << "|" << std::endl;
-		file.open(fullpath + "index.html");
+		std::cout << "path:|" << fullpath + "/index.html" << "|" << std::endl;
+		std::cout << "internet path:|" << client->request->getPath() << "|" << std::endl;
+		file.open(fullpath + "/index.html");
 		if (file.is_open()){
 			std::cout << "path:|" << fullpath + "index.html" << "|" << std::endl;
 			response->setRoot(fullpath);
-			response->setFileName("index.html");
+			response->setFileName("/index.html");
 			file.close();
 			return (1);
 		}

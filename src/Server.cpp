@@ -10,7 +10,7 @@ Server::Server()
     // socket->address = address;
     // socket->port = 2142;
     // sockets.push_back(*socket);
-    this->server_name = "default_server";
+    this->server_name = "127.0.0.1";
     this->autoindex = 1;
     this->max_body_size = 1024;
     this->locations.insert(std::pair<std::string, std::string>("/", "./root"));;

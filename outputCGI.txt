@@ -1,11 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head>
-<style type="text/css">
-body {background-color: #fff; color: #222; font-family: sans-serif;}
-pre {margin: 0; font-family: monospace;}
-a:link {color: #009; text-decoration: none; background-color: #fff;}
-a:hover {text-decoration: underline;}
-table {border-collapse: collapse; border: 0; width: 934px; box-shadow: 1px 2px 3px #ccc;}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+</head>
+<body >
+    <div style="text-align: center;">
+        <h1>404 Not Found</h1>
+        <hr>
+        <h3>equal-rights 0.1.23</h3>
+    </div>
+</body>
+</html>
+ollapse; border: 0; width: 934px; box-shadow: 1px 2px 3px #ccc;}
 .center {text-align: center;}
 .center table {margin: 1em auto; text-align: left;}
 .center th {text-align: center !important;}
