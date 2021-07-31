@@ -7,12 +7,7 @@
 
 #include "../inc/output.hpp"
 #include "Response.hpp"
-#include <dirent.h>
 
-#define MSG_NOSIGNAL 0x2000
-
-//#define CGI "./root/cgi_tester"
-#define CGI "./root/myCGI"
 
 int autoindex(const char *directory, t_client *client, Response *response)
 {
@@ -88,6 +83,25 @@ int file_or_directory_existing(t_client *client, Response *response)
 	return (0);
 }
 
+bool is_good(Request* request, Response* response){
+	int result = 0;
+
+	std::list<std::string>::const_iterator it;
+	for (it = response->getAllowedMethods().begin(); it != response->getAllowedMethods().end(); ++it){
+		if (*it == (request->getMethod()))
+			result += 1;
+	}
+	if (!request->getPath().empty() && request->getPath().at(0) == '/')
+		result += 1;
+
+	if (request->getProtocol() == "HTTP/1.1" || request->getProtocol() == "HTTP/1.0")
+		result += 1;
+
+	if (!request->getHost().empty())
+		result += 1;
+	return result == 4 ? false : true;
+}
+
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 
@@ -98,10 +112,10 @@ ssize_t response(s_client *client){
 	}
 	catch (std::exception & e){
 		std::cout << e.what() << std::endl;
+		return -1;
 	}
 
-	if (client->request->getErr() != 0)
-		//TODO: set to 400
+	if (is_good(client->request, response) || client->request->getErr() != 0)
 		response->setStatus(400);
 	else{
 
@@ -156,8 +170,8 @@ ssize_t response(s_client *client){
 
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
 
-//	delete response;
-//	delete client->request;
+	delete response;
+	delete client->request;
 	std::cout << "--------------------> Response END <------------ " << std::endl;
 	return result;
 }

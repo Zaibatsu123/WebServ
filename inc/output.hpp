@@ -25,6 +25,12 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <dirent.h>
+
+#define MSG_NOSIGNAL 0x2000
+
+#define CGI "./root/myCGI"
+
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"
 #define COLOR_GREEN "\e[32m"

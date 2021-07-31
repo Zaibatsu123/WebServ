@@ -3,14 +3,39 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     font-family: sans-serif;
+    height: 100%;
 }
 
 h1 {
+    font-family: Chee-Bleed;
+    font-variation-settings: "temp" 1000;
+    animation: variation 5s ease alternate-reverse;
     font-size: 400%;
-    color: rgb(128, 0, 0);
-    text-decoration: underline;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    letter-spacing: 20px;
+    margin: 0;
+    color: palevioletred;
 }
 
 h2 {
-    color: antiquewhite;
+    color: navajowhite;
+}
+
+@font-face {
+    font-family: "Chee-Bleed";
+    src: url(
+    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/209981/Cheee_Variable1.woff2"
+    );
+}
+
+@keyframes variation {
+    0% {
+        font-variation-settings: "temp" 1000;
+    }
+    100% {
+        font-variation-settings: "temp" 0;
+    }
+    
 }

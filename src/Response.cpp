@@ -15,13 +15,21 @@ std::map<std::string, std::string> Response::_fileTypes = _createTypesMap();
 
 std::map<std::string, std::string> Response::_createTypesMap() {
 	std::map<std::string, std::string> m;
+	m.insert(std::pair<std::string, std::string>(".json", "application/json"));
+	m.insert(std::pair<std::string, std::string>(".zip", "application/zip"));
+	m.insert(std::pair<std::string, std::string>(".pdf", "application/pdf"));
 	m.insert(std::pair<std::string, std::string>(".html", "text/html"));
+	m.insert(std::pair<std::string, std::string>(".xml", "text/xml"));
 	m.insert(std::pair<std::string, std::string>(".css", "text/css"));
 	m.insert(std::pair<std::string, std::string>(".js", "text/javascript"));
 	m.insert(std::pair<std::string, std::string>(".jpg", "image/jpeg"));
 	m.insert(std::pair<std::string, std::string>(".jpeg", "image/jpeg"));
 	m.insert(std::pair<std::string, std::string>(".png", "image/png"));
-	m.insert(std::pair<std::string, std::string>(".ico", "image/ico"));
+	m.insert(std::pair<std::string, std::string>(".ico", "image/x-icon"));
+	m.insert(std::pair<std::string, std::string>(".gif", "image/gif"));
+	m.insert(std::pair<std::string, std::string>(".mpeg", "audio/mpeg"));
+	m.insert(std::pair<std::string, std::string>(".mp4", "video/mp4"));
+	m.insert(std::pair<std::string, std::string>(".webm", "video/webm"));
 	return m;
 }
 
@@ -77,6 +85,11 @@ Response::Response(long long maxContent, const std::string & root, const std::st
 	_fileName(fileName),
 	_uplRoot(root + "/tmp/"),
 	_uplFileName(""){
+	_allowedMethods.push_back("GET");
+	_allowedMethods.push_back("POST");
+	_allowedMethods.push_back("HEAD");
+	_allowedMethods.push_back("PUT");
+	_allowedMethods.push_back("DELETE");
 }
 
 Response::~Response(){
@@ -89,21 +102,32 @@ std::string Response::generateResponse(int res) {
 	return generateHeader(0) + generateBody();
 }
 
+std::string Response::_dateTime() const{
+	time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	return ctime(&time);
+}
+
 std::string Response::generateHeader(int status) {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
-		<< _code[_status] << "\n"
-		<< "Connection: keep-alive\n"
-//		<< "Content-Type: " << _indicateFileType() << "\n"
-		<< "Content-Length: ";
-//		<< "Content-Length: " << _calculateFileSize(_root + _fileName) << "\n"
+		<< _code[_status] << std::endl
+		<< "Server: Equal-Rights/0.1.23" << std::endl
+		<< "Date: " << _dateTime();
 
-		if (status > 0)
-			str << status << "\n";
-		else
-			str << _calculateFileSize() << "\n";
-		str << "\n";
+	str << "Content-Type: " << _indicateFileType() << std::endl;
+
+	if (status > 0)
+		str << "Content-Length: "<< status << std::endl;
+	else
+		str << "Content-Length: " << _calculateFileSize() << std::endl;
+
+	if (_status == 200)
+		str << "Connection: keep-alive" << std::endl;
+	else
+		str << "Connection: close" << std::endl;
+
+	str << std::endl;
 	return str.str();
 }
 
@@ -136,7 +160,7 @@ std::string Response::_indicateFileType() const{
 		if (_fileName.find(it->first) != std::string::npos)
 			return it->second;
 	}
-	return "text/plain";
+	return "text/html";
 }
 
 size_t Response::_calculateFileSize() const{
@@ -222,4 +246,14 @@ void Response::setBody(const std::string &body)
 long long Response::getMaxContent()
 {
 	return _maxContent;
+}
+
+const std::list<std::string> &Response::getAllowedMethods() const
+{
+	return _allowedMethods;
+}
+
+void Response::setAllowedMethods(const std::list<std::string> &allowedMethods)
+{
+	_allowedMethods = allowedMethods;
 }
