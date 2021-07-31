@@ -112,12 +112,83 @@ Server  *listen(Server *temp, std::string str, int i)
 	return(temp);
 }
 
+void init(t_location *lctn)
+{
+	lctn->index = "";
+	lctn->root = "";
+	lctn->methods = 0;
+	lctn->autoindex = 0;
+}
+
+int getAllowsMethods(std::string str, int i)
+{
+	if (str.compare("GET") == 0)
+		return (4);
+	else if (str.compare("POST") == 0)
+		return (2);
+	else if (str.compare("DELETE") == 0)
+		return (1);
+	else if (str.compare("GET POST") == 0 || str.compare("POST GET") == 0)
+		return (6);
+	else if (str.compare("GET DELETE") == 0 || str.compare("DELETE GET") == 0)
+		return (5);
+	else if (str.compare("POST DELETE") == 0 || str.compare("DELETE POST") == 0)
+		return (3);
+	else if (str.compare("GET POST DELETE") == 0 || str.compare("DELETE POST GET") == 0 || str.compare("POST DELETE GET") == 0)
+		return (7);
+	else if (str.compare("GET DELETE POST") == 0 || str.compare("DELETE GET POST") == 0 || str.compare("POST GET DELETE") == 0)
+		return (7);
+	std::cerr << "Configuration file:" << i + 1 << " Unknown method" << std::endl;
+	return (-1);
+}
+
 Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 {
+	t_location *lctn = new t_location;
+	// init(lctn);
+	std::cout << lctn->autoindex << lctn->index << lctn->methods << lctn->root << std::endl;
 	std::string loc = trim_end((*configuration)[i]);
-	std::string root = trim_end((*configuration)[++i]);
-	root = root.substr(13, root.length() - 14);
-	temp->locations.insert(std::make_pair(loc.substr(13, loc.length() - 14), root));
+	int k = 0;
+	// for (size_t j = i; (*configuration)[j].compare(0, 8, "        ") == 0; ++j)
+	for (size_t j = i + 1; k == 0; ++j)
+	{
+		k = (*configuration)[j + 1].compare(0, 8, "        ");
+		// std::cout << "KUKUSIKI" << std::endl;
+		if ((*configuration)[j].compare(0, 13, "        root ") == 0)
+			lctn->root = trim((*configuration)[j].substr(13, (*configuration)[j].length() - 14));
+		else if ((*configuration)[j].compare(0, 14, "        index ") == 0)
+			lctn->index = trim((*configuration)[j].substr(14, (*configuration)[j].length() - 14));
+		else if ((*configuration)[j].compare(0, 21, "        auto_index on") == 0)
+			lctn->autoindex = 1;
+		else if ((*configuration)[j].compare(0, 22, "        auto_index off") == 0)
+			lctn->autoindex = 0;
+		else if ((*configuration)[j].compare(0, 22, "        allow_methods ") == 0)
+			lctn->methods = getAllowsMethods(trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), j);
+		else 
+		{
+			std::cerr << "Configuration file:" << i + 1 << " Unknown directive in location" << std::endl;
+			temp = NULL;
+			break;
+		}		
+	}
+	if (lctn->methods == - 1)
+	{
+		delete lctn;		
+		return (NULL);
+	}
+	std::cout << loc.substr(13, loc.length() - 14) << std::endl;
+	if (temp != NULL)
+	{
+		std::string ll = "/" + loc.substr(14, loc.length() - 15);
+		std::cout << "MAP SIZE:|" << temp->locations.size() << "| key:|" << ll << "|" << std::endl;
+		temp->locations.insert(std::make_pair(ll, lctn));
+		std::cout << "LOCATION " << lctn << std::endl;
+		std::cout << "LOCATION " << lctn->index << " adress " << temp->locations[ll] << std::endl;
+		std::cout << " AFTER MAP SIZE:|" << temp->locations.size() << " KEY: "<< (temp->locations[ll])->index << std::endl;
+		Server tmp;
+		tmp.locations.insert(std::make_pair(ll, lctn));
+		std::cout << " KEKEKE:|" << (tmp.locations[ll]) << std::endl;
+	}
 	return (temp);
 }
 
@@ -132,6 +203,7 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 {
 	Server                      *temp = new Server;
 
+	std::cout << "CREATING SERVERS" << std::endl;
 	for (int i = begin; i < end; ++i)
 	{
 		std::string str = trim_end((*configuration)[i]);
@@ -142,10 +214,6 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 		}
 		else if (str.compare(0, 16, "    server_name ") == 0)
 			temp->server_name = str.substr(16, str.length() - 16);
-		else if (str.compare(0, 17, "    auto_index on") == 0)
-			temp->autoindex = 1;
-		else if (str.compare(0, 18, "    auto_index off") == 0)
-			temp->autoindex = 0;
 		else if (str.compare(0, 14, "    location /") == 0 && str[str.length() - 1] == '/' && (*configuration)[i+1].compare(0, 13, "        root ") == 0)
 			temp = location(temp, configuration, i);
 		else if (str.compare(0, 15, "    error_page ") == 0)
@@ -155,7 +223,7 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 		}
 		else if (str.compare(0, 19, "    upload_file_to ") == 0)
 			temp = upload_file_to(temp, str);
-		else if (str == "server" || str.compare(0, 13, "        root ") == 0)
+		else if (str == "server" || str.compare(0, 8, "        ") == 0)
 			continue;
 		else
 		{
@@ -170,6 +238,28 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 	return (servers);
 }
 
+void print_serv(std::vector<Server*> *servers)
+{
+	int k = 1;
+	for (std::vector<Server *>::iterator i = servers->begin(); i != servers->end(); i++)
+	{
+		std::cout << "---------===SERVER===---------" << "num: " << k <<  std::endl;
+		std::cout << "---------===Sockets===---------" << std::endl;
+		for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
+			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
+		// std::cout << "---------===locations===---------" << std::endl;
+		std::cout << "---------===locations===---------size" << (*i)->locations.size() << std::endl;
+		for (std::map<std::string, t_location *>::iterator it = (*i)->locations.begin(); it != (*i)->locations.end(); it++ )
+		{
+			std::cout << "location: " << (*it).first  << std::endl;
+			std::cout << "second: " << (*i)->locations[(*it).first]->index  << std::endl;
+			// std::cout << "autoindex: " << (*it).second->autoindex << " root: " << (*it).second->root << std::endl;
+			// std::cout << "index: " << (*it).second->index << " methods: " << (*it).second->methods << std::endl;
+			std::cout << "---------======---------" << std::endl;
+		}
+		k++;
+	}
+}
 
 std::vector<Server*> *parsingConfiguration(char *config_name)
 {
@@ -207,8 +297,10 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 	}
 	delete configuration;
 	// std::cout << "SIZE: " << servers->size() << std::endl;
+	std::cout << ((*servers)[0]->locations["/"]) << std::endl;
+	// if (servers != NULL)
+	// 	print_serv(servers);
 	return (servers);
-
 }
 
 // int main(void)
