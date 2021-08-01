@@ -50,5 +50,13 @@ ssize_t sendall(int socket, std::string & buffer, int flags);
 int upload(const std::string & uplFileName, const char *data);
 std::string cgi(const std::string & cgiName, Response* response);
 bool requestContentSizeValidator(Response *response);
+std::string utrim_end(std::string old_string, std::string elems);
+std::string alter_trim_end(std::string old_string, std::string elems);
+std::string rrepeats_from_end(std::string string);
+int is_symbol(std::string string, std::string symbols);
+std::string rslash_from_end(std::string string);
+std::string rduplicate_slashes(std::string string);
+t_location *get_location(std::string root, std::map<std::string, t_location *> *locations);
+
 
 #endif //OUTPUT_HPP

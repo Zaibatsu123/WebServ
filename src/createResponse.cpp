@@ -50,43 +50,45 @@ int autoindex(const char *directory, t_client *client, Response *response)
 	return (0);
 }
 
-int file_or_directory_existing(t_client *client, Response *response)
-{
-	std::ifstream		file;
+// int file_or_directory_existing(t_client *client, Response *response)
+// {
+// 	std::ifstream		file;
 
-	std::cout << "AUTOINDEX ENTER" << std::endl;
-	std::string fullpath = client->server->locations["/"].c_str();
-	fullpath += client->request->getPath();
-	if (client->server->autoindex == 1)
-	{
-		std::cout << "path:|" << fullpath + "/index.html" << "|" << std::endl;
-		std::cout << "internet path:|" << client->request->getPath() << "|" << std::endl;
-		file.open(fullpath + "/index.html");
-		if (file.is_open()){
-			std::cout << "path:|" << fullpath + "index.html" << "|" << std::endl;
-			response->setRoot(fullpath);
-			response->setFileName("/index.html");
-			file.close();
-			return (1);
-		}
-		if (!autoindex(fullpath.c_str(), client, response))
-		{
-			std::cout << "after autoindex" << std::endl;
-			return (2);
-		}
-		file.open(fullpath);
-		if (file.is_open()){
-			std::cout << "FILEpath:|" << fullpath << "|" << std::endl;
-			response->setRoot(client->server->locations["/"]);
-			// response->setFileName(client->request->getPath());
-			file.close();
-			return (3);
-		}
-		else
-			return (404);
-	}
-	return (0);
-}
+// 	std::cout << "AUTOINDEX ENTER" << std::endl;
+// 	std::string fullpath = get_location(client->request->getPath(), );
+// 	if (fullpath == "no directory")
+// 		return (404);
+// 	fullpath += client->request->getPath();
+// 	if (client->server->autoindex == 1)
+// 	{
+// 		std::cout << "path:|" << fullpath + "/index.html" << "|" << std::endl;
+// 		std::cout << "internet path:|" << client->request->getPath() << "|" << std::endl;
+// 		file.open(fullpath + "/index.html");
+// 		if (file.is_open()){
+// 			std::cout << "path:|" << fullpath + "index.html" << "|" << std::endl;
+// 			response->setRoot(fullpath);
+// 			response->setFileName("/index.html");
+// 			file.close();
+// 			return (1);
+// 		}
+// 		if (!autoindex(fullpath.c_str(), client, response))
+// 		{
+// 			std::cout << "after autoindex" << std::endl;
+// 			return (2);
+// 		}
+// 		file.open(fullpath);
+// 		if (file.is_open()){
+// 			std::cout << "FILEpath:|" << fullpath << "|" << std::endl;
+// 			response->setRoot(client->server->locations["/"]);
+// 			// response->setFileName(client->request->getPath());
+// 			file.close();
+// 			return (3);
+// 		}
+// 		else
+// 			return (404);
+// 	}
+// 	return (0);
+// }
 
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
@@ -107,7 +109,8 @@ ssize_t response(s_client *client){
 			std::cout << "--> GET" << std::endl;
 
 			int res;
-			res = file_or_directory_existing(client, response);
+			res = 1;
+			// res = file_or_directory_existing(client, response);
 			std::cout << "res checking" << res << std::endl;
 			if (res == 2){
 				std::string buffer = response->generateResponse(1);
