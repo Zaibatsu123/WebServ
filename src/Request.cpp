@@ -46,11 +46,9 @@ std::string Request::getFilename() const 	{return _filename; };
 
 void Request::methodpath(std::string method, std::string path)
 {
-	_path = path;
+	_path = rduplicate_slashes(path);
 	_method = method;
 }
-
-
 
 void Request::getheaders(std::vector<std::string> request)
 {
@@ -157,6 +155,10 @@ void Request::strrequest(std::vector<std::string> request){
 	}
 	else if (request[0].compare(0, 6, "DELETE") == 0)
 		this->methodpath("DELETE", trim(request[0].substr(6, request[0].length() - 15)));
+	else if (request[0].compare(0, 6, "HEAD") == 0)
+		this->methodpath("HEAD", trim(request[0].substr(4, request[0].length() - 13)));
+	else if (request[0].compare(0, 3, "PUT") == 0)
+		this->methodpath("PUT", trim(request[0].substr(3, request[0].length() - 12)));
 	else
 	{
 		_err = 501;

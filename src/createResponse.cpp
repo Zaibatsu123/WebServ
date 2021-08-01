@@ -55,9 +55,12 @@ int file_or_directory_existing(t_client *client, Response *response)
 	std::ifstream		file;
 
 	std::cout << "AUTOINDEX ENTER" << std::endl;
-	std::string fullpath = client->server->locations["/"].c_str();
+	// response->setRoot("./root/");
+	response->setFileName("/index.html");
+	return (1);
+	std::string fullpath = client->server->locations["/"]->root;
 	fullpath += client->request->getPath();
-	if (client->server->autoindex == 1)
+	if (client->server->locations["/"]->autoindex == 1)
 	{
 		std::cout << "path:|" << fullpath + "/index.html" << "|" << std::endl;
 		std::cout << "internet path:|" << client->request->getPath() << "|" << std::endl;
@@ -77,7 +80,7 @@ int file_or_directory_existing(t_client *client, Response *response)
 		file.open(fullpath);
 		if (file.is_open()){
 			std::cout << "FILEpath:|" << fullpath << "|" << std::endl;
-			response->setRoot(client->server->locations["/"]);
+			response->setRoot(client->server->locations["/"]->root);
 			// response->setFileName(client->request->getPath());
 			file.close();
 			return (3);

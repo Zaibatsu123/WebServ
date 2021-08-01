@@ -7,4 +7,4 @@ server
         root ./root/tmp/
         index aaa.html
         allow_methods POST
-    upload_file_to /root/
+    upload_file_to ./root/

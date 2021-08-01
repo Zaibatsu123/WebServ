@@ -40,15 +40,22 @@ typedef struct  s_client
 }               t_client;
 
 ssize_t response(t_client *client);
-std::vector<Server*> *parsingConfiguration(char *config_name);
 // ssize_t response(s_client client);
-std::string trim(std::string old_string);
-std::string trim_end(std::string old_string);
-std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str);
 bool requestFileValidator(Response * response);
 ssize_t sendall(int socket, std::string & buffer, int flags);
 int upload(const std::string & uplFileName, const char *data);
 std::string cgi(const std::string & cgiName, Response* response);
 bool requestContentSizeValidator(Response *response);
+
+//Config.cpp
+std::vector<Server*> *parsingConfiguration(char *config_name);
+
+// Utils.cpp
+std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str);
+std::string trim(std::string old_string);
+std::string trim_end(std::string old_string);
+std::string rslash_from_end(std::string string);
+std::string rduplicate_slashes(std::string string);
+
 
 #endif //OUTPUT_HPP
