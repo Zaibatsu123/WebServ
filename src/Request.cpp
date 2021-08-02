@@ -132,7 +132,13 @@ void Request::postrequest(std::vector<std::string> request)
 /*
  START
 */
-void Request::strrequest(std::vector<std::string> request){
+void Request::strrequest(std::vector<std::string> request)
+{
+	if (trim(request[0]).empty())
+	{
+		_err = 400;
+		return ;
+	}
 	if (trim(request[0]).compare(request[0].length() - 8, 8, "HTTP/1.1") == 0)
 		_protocol = "HTTP/1.1";
 	else
