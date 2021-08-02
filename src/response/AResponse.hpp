@@ -29,6 +29,7 @@ protected:
 	const long long _maxContent;
 
 	int 					_status;
+	int 					_head;
 	std::string				_root;
 	size_t					_fileSize;
 	std::string				_fileName;
@@ -47,6 +48,8 @@ public:
 
 	AResponse(long long maxContent, const std::string & root, const std::string & fileName);
 
+	void							setHead(int head);
+	int								getHead() const;
 	void 							setStatus(int n);
 	int 							getStatus() const;
 	void 							setRoot(const std::string &);
@@ -67,7 +70,9 @@ public:
 
 
 	virtual std::string	generateResponse(int res)	= 0;
+	virtual std::string	generateResponse()	= 0;
 	virtual std::string	generateHeader(int status)	= 0;
+	virtual std::string	generateHeader()	= 0;
 	virtual std::string	generateBody()				= 0;
 
 	long long 			getMaxContent();

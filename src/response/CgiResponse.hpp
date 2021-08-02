@@ -17,7 +17,9 @@ public:
 	~CgiResponse();
 
 	std::string	generateResponse(int res);
+	std::string	generateResponse();
 	std::string	generateHeader(int status);
+	std::string	generateHeader();
 	std::string	generateBody();
 };
 

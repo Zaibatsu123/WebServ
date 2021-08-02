@@ -10,21 +10,30 @@
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	AResponse* response;
-	response = new GoodResponse(0,"./root", client->request->getPath());
 	if (client->request->getErr() != 0){
-		delete response;
 		response = new BadResponse(0,"./root", client->request->getPath());
 		response->setStatus(400);
 	}
 	else{
-		if (client->request->getMethod() == "GET")
-			methodGet(client, response);
+		response = new GoodResponse(0,"./root", client->request->getPath());
+		if (client->request->getMethod() == "GET"){
+//			delete response;
+			response = methodGet(client, response);
+		}
 
 		if (client->request->getMethod() == "POST")
 			methodPost(client, response);
 
 		if (client->request->getMethod() == "DELETE")
 			methodDelete(response);
+
+		if (client->request->getMethod() == "HEAD"){
+			methodGet(client, response);
+			response->setHead(1);
+		}
+
+		if (client->request->getMethod() == "PUT")
+			response->setStatus(405);
 	}
 	std::cout << response->generateHeader(0) << std::endl;
 	std::string buffer = response->generateResponse(0);

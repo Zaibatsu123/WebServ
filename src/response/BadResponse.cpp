@@ -16,9 +16,34 @@ BadResponse::BadResponse(long long maxContent, const std::string &root, const st
 BadResponse::~BadResponse(){
 }
 
+std::string BadResponse::generateResponse() {
+	if (getHead())
+		return generateHeader();
+	return generateHeader() + generateBody();
+}
+
+std::string BadResponse::generateHeader() {
+	std::stringstream str;
+	str << _protocol << " "
+		<< _status << " "
+		<< _code[_status] << std::endl
+		<< "Server: Equal-Rights/0.1.23" << std::endl
+		<< "Date: " << _dateTime()
+		<< "Content-Type: " << _indicateFileType() << std::endl
+		<< "Content-Length: " << _calculateFileSize() << std::endl
+		<< "Connection: close" << std::endl
+		<< std::endl;
+	return str.str();
+}
+
 std::string BadResponse::generateResponse(int res) {
-	if (res > 0)
+	if (res > 0){
+		if (getHead())
+			return generateHeader(this->getBody().size());
 		return generateHeader(this->getBody().size()) + this->getBody().c_str();
+	}
+	if (getHead())
+		return generateHeader();
 	return generateHeader(0) + generateBody();
 }
 

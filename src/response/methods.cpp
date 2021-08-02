@@ -7,7 +7,7 @@
 
 #include "../../inc/output.hpp"
 
-ssize_t methodGet(s_client* client, AResponse* response){
+AResponse* methodGet(s_client* client, AResponse* response){
 	std::cout << "--> GET" << std::endl;
 
 	int res;
@@ -15,22 +15,26 @@ ssize_t methodGet(s_client* client, AResponse* response){
 	std::cout << "res checking" << res << std::endl;
 	if (res == 2){
 		std::string buffer = response->generateResponse(1);
-		ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
-		return (result);
+		sendall(client->socket, buffer, MSG_NOSIGNAL);
+		return (0);
 	}
-	else if(res == 404)
-		response->setStatus(404);
+	else if (res == 404){
+		AResponse* response1 = new BadResponse(0,"./root", client->request->getPath());
+		response1->setStatus(404);
+		return response1;
+	}
 
 
 	if (client->request->getPath().find(".php") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
-
+		AResponse* response1 = new CgiResponse();
 		std::string cgiString = cgi(CGI, response);
-		response->setFileSize(cgiString.length());
-		response->setRoot("");
-		response->setFileName("outputCGI.txt");
+		response1->setFileSize(cgiString.length());
+		response1->setRoot("");
+		response1->setFileName("outputCGI.txt");
+		return response1;
 	}
-	return 0;
+	return new GoodResponse(0,"./root", client->request->getPath());
 }
 
 void methodPost(s_client* client, AResponse* response){

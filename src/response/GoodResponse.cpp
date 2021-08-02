@@ -16,9 +16,22 @@ GoodResponse::GoodResponse(long long maxContent, const std::string &root, const 
 GoodResponse::~GoodResponse(){
 }
 
+std::string GoodResponse::generateResponse() {
+	return "";
+}
+
+std::string GoodResponse::generateHeader() {
+	return "";
+}
+
 std::string GoodResponse::generateResponse(int res) {
-	if (res > 0)
+	if (res > 0){
+		if (getHead())
+			return generateHeader(this->getBody().size());
 		return generateHeader(this->getBody().size()) + this->getBody().c_str();
+	}
+	if (getHead())
+		return generateHeader();
 	return generateHeader(0) + generateBody();
 }
 

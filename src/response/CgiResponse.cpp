@@ -16,33 +16,37 @@ CgiResponse::CgiResponse(long long maxContent, const std::string &root, const st
 CgiResponse::~CgiResponse(){
 }
 
+std::string CgiResponse::generateResponse() {
+	return "";
+}
+
+std::string CgiResponse::generateHeader() {
+	return "";
+}
+
 std::string CgiResponse::generateResponse(int res) {
-	if (res > 0)
+	if (res > 0){
+		if (getHead())
+			return generateHeader(this->getBody().size());
 		return generateHeader(this->getBody().size()) + this->getBody().c_str();
+	}
+	if (getHead())
+		return generateHeader();
 	return generateHeader(0) + generateBody();
 }
 
 std::string CgiResponse::generateHeader(int status) {
+	(void)status;
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << std::endl
 		<< "Server: Equal-Rights/0.1.23" << std::endl
-		<< "Date: " << _dateTime();
-
-	str << "Content-Type: " << _indicateFileType() << std::endl;
-
-	if (status > 0)
-		str << "Content-Length: "<< status << std::endl;
-	else
-		str << "Content-Length: " << _calculateFileSize() << std::endl;
-
-	if (_status == 200)
-		str << "Connection: keep-alive" << std::endl;
-	else
-		str << "Connection: close" << std::endl;
-
-	str << std::endl;
+		<< "Date: " << _dateTime()
+		<< "Content-Type: text/html" << std::endl
+		<< "Content-Length: " << _calculateFileSize() << std::endl
+		<< "Connection: keep-alive" << std::endl
+		<< std::endl;
 	return str.str();
 }
 
@@ -51,13 +55,7 @@ std::string CgiResponse::generateBody() {
 	std::ifstream		file;
 	std::stringstream	str;
 
-	if (_status != 200){
-		std::cout << "STATUS: " << _status << std::endl;
-		std::cout << _errorPage[_status] << std::endl;
-		file.open(_errorPage[_status], std::ifstream::in);
-	}
-	else
-		file.open((_root + _fileName).c_str(), std::ifstream::in);
+	file.open((_root + _fileName).c_str(), std::ifstream::in);
 
 	while (file.good()) {
 		std::getline(file, buffer);
@@ -66,5 +64,7 @@ std::string CgiResponse::generateBody() {
 			str << "\n";
 	}
 	file.close();
+	std::remove((_root + _fileName).c_str());
+	std::remove("outputMy.txt");
 	return str.str();
 }

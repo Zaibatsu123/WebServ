@@ -53,7 +53,7 @@ ssize_t						response(t_client *client);
 ssize_t						sendall(int socket, std::string & buffer, int flags);
 
 //methods.cpp
-ssize_t		methodGet(s_client* client, AResponse* response);
+AResponse*	methodGet(s_client* client, AResponse* response);
 void		methodPost(s_client* client, AResponse* response);
 void		methodDelete(AResponse* response);
 int			upload(const std::string & uplFileName, const char *data);
