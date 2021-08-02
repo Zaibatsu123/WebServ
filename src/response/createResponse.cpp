@@ -11,6 +11,7 @@ ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	AResponse* response;
 	response = new GoodResponse(0,"./root", client->request->getPath());
+	std::cout << "ERROR!!!!!!!!!!!!!!" << client->request->getErr() << std::endl;
 	if (client->request->getErr() != 0){
 		delete response;
 		response = new BadResponse(0,"./root", client->request->getPath());
