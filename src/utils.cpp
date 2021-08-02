@@ -121,3 +121,32 @@ std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::s
 	}
 	return (new_vector);
 }
+
+std::string rslash_from_end(std::string string)
+{
+    if (string.size() <= 1)
+        return (string);
+    char symbol = '/';
+    int i = string.size() - 1;
+    while (i > 1)
+    {
+        if (string[i] != symbol)
+            break;
+        i--;
+    }
+    return (string.substr(0, i + 1));
+}
+
+std::string rduplicate_slashes(std::string string)
+{
+    std::string temp_string = rslash_from_end(string);
+    if (temp_string.size() <= 1)
+        return (temp_string);
+    std::cout << temp_string << std::endl;
+    std::string clear_str = "/";
+    char temp = '/';
+    for (unsigned int i = 1; i < temp_string.size(); i++)
+        if (temp_string[i] != temp || temp_string[i-1] != temp )
+            clear_str.push_back(temp_string[i]);
+    return (clear_str);
+}

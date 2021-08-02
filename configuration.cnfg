@@ -5,4 +5,6 @@ server
     error_page 500 ./root/errorPages/503.html
     location /images/
         root ./root/tmp/
-    upload_file_to /root/
+        index aaa.html
+        allow_methods POST
+    upload_file_to ./root/
