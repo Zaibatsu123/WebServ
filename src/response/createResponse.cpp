@@ -10,16 +10,13 @@
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	AResponse* response;
-
 	response = new GoodResponse(0,"./root", client->request->getPath());
-
 	if (client->request->getErr() != 0){
 		delete response;
 		response = new BadResponse(0,"./root", client->request->getPath());
 		response->setStatus(400);
 	}
 	else{
-//		response = new GoodResponse(0,"./root", client->request->getPath());
 		if (client->request->getMethod() == "GET")
 			methodGet(client, response);
 
@@ -29,7 +26,6 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "DELETE")
 			methodDelete(response);
 	}
-
 	std::cout << response->generateHeader(0) << std::endl;
 	std::string buffer = response->generateResponse(0);
 

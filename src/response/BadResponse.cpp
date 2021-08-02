@@ -16,9 +16,7 @@ BadResponse::BadResponse(long long maxContent, const std::string &root, const st
 BadResponse::~BadResponse(){
 }
 
-std::string BadResponse::generateResponse(int res) {
-	if (res > 0)
-		return generateHeader(this->getBody().size()) + this->getBody().c_str();
+std::string BadResponse::generateResponse() {
 	return generateHeader(0) + generateBody();
 }
 
@@ -28,21 +26,11 @@ std::string BadResponse::generateHeader(int status) {
 		<< _status << " "
 		<< _code[_status] << std::endl
 		<< "Server: Equal-Rights/0.1.23" << std::endl
-		<< "Date: " << _dateTime();
-
-	str << "Content-Type: " << _indicateFileType() << std::endl;
-
-	if (status > 0)
-		str << "Content-Length: "<< status << std::endl;
-	else
-		str << "Content-Length: " << _calculateFileSize() << std::endl;
-
-	if (_status == 200)
-		str << "Connection: keep-alive" << std::endl;
-	else
-		str << "Connection: close" << std::endl;
-
-	str << std::endl;
+		<< "Date: " << _dateTime()
+		<< "Content-Type: " << _indicateFileType() << std::endl
+		<< "Content-Length: " << _calculateFileSize() << std::endl
+		<< "Connection: close" << std::endl
+		<< std::endl;
 	return str.str();
 }
 
@@ -51,13 +39,7 @@ std::string BadResponse::generateBody() {
 	std::ifstream		file;
 	std::stringstream	str;
 
-	if (_status != 200){
-		std::cout << "STATUS: " << _status << std::endl;
-		std::cout << _errorPage[_status] << std::endl;
-		file.open(_errorPage[_status], std::ifstream::in);
-	}
-	else
-		file.open((_root + _fileName).c_str(), std::ifstream::in);
+	file.open(_errorPage[_status], std::ifstream::in);
 
 	while (file.good()) {
 		std::getline(file, buffer);
