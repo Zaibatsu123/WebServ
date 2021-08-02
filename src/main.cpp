@@ -6,10 +6,11 @@
 //                                   //
 
 #include "../inc/output.hpp"
-#include "Response.hpp"
+#include "response/GoodResponse.hpp"
 #include <stdlib.h>
 #include "webserver.hpp"
 #include "Server.hpp"
+#include <map>
 
 void console_promt(std::vector<Server*> *servers){
 	std::cout << COLOR_GREY << "Loading complete." << COLOR_DEFAULT << std::endl;

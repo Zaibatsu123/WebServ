@@ -5,31 +5,39 @@
 //              7/9/21				 //
 //                                   //
 
-#include "Response.hpp"
+#include "AResponse.hpp"
 
-const std::string Response::_protocol = "HTTP/1.1";
+const std::string AResponse::_protocol = "HTTP/1.1";
 
-const std::string Response::_errorPageFolder = "./root/errorPages/";
+const std::string AResponse::_errorPageFolder = "./root/errorPages/";
 
-std::map<std::string, std::string> Response::_fileTypes = _createTypesMap();
+std::map<std::string, std::string> AResponse::_fileTypes = _createTypesMap();
 
-std::map<std::string, std::string> Response::_createTypesMap() {
+std::map<std::string, std::string> AResponse::_createTypesMap() {
 	std::map<std::string, std::string> m;
+	m.insert(std::pair<std::string, std::string>(".json", "application/json"));
+	m.insert(std::pair<std::string, std::string>(".zip", "application/zip"));
+	m.insert(std::pair<std::string, std::string>(".pdf", "application/pdf"));
 	m.insert(std::pair<std::string, std::string>(".html", "text/html"));
+	m.insert(std::pair<std::string, std::string>(".xml", "text/xml"));
 	m.insert(std::pair<std::string, std::string>(".css", "text/css"));
 	m.insert(std::pair<std::string, std::string>(".js", "text/javascript"));
 	m.insert(std::pair<std::string, std::string>(".jpg", "image/jpeg"));
 	m.insert(std::pair<std::string, std::string>(".jpeg", "image/jpeg"));
 	m.insert(std::pair<std::string, std::string>(".png", "image/png"));
-	m.insert(std::pair<std::string, std::string>(".ico", "image/ico"));
+	m.insert(std::pair<std::string, std::string>(".ico", "image/x-icon"));
+	m.insert(std::pair<std::string, std::string>(".gif", "image/gif"));
+	m.insert(std::pair<std::string, std::string>(".mpeg", "audio/mpeg"));
+	m.insert(std::pair<std::string, std::string>(".mp4", "video/mp4"));
+	m.insert(std::pair<std::string, std::string>(".webm", "video/webm"));
 	return m;
 }
 
-std::map<int, std::string> Response::_code = Response::_createMap();
+std::map<int, std::string> AResponse::_code = AResponse::_createMap();
 
-std::map<int, std::string> Response::_errorPage = Response::_createErrorPage();
+std::map<int, std::string> AResponse::_errorPage = AResponse::_createErrorPage();
 
-std::map<int, std::string> Response::_createMap() {
+std::map<int, std::string> AResponse::_createMap() {
 	std::map<int, std::string> m;
 	m.insert(std::pair<int, std::string>(200, "OK"));
 	m.insert(std::pair<int, std::string>(400, "Bad Request"));
@@ -45,7 +53,7 @@ std::map<int, std::string> Response::_createMap() {
 	return m;
 }
 
-std::map<int, std::string> Response::_createErrorPage() {
+std::map<int, std::string> AResponse::_createErrorPage() {
 	std::map<int, std::string> m;
 	m.insert(std::pair<int, std::string>(400, _errorPageFolder + "400.html"));
 	m.insert(std::pair<int, std::string>(403, _errorPageFolder + "403.html"));
@@ -61,85 +69,47 @@ std::map<int, std::string> Response::_createErrorPage() {
 	return m;
 }
 
-Response::Response() :
-	_maxContent(0),
-	_status(200),
-	_root(""),
-	_fileName(""),
-	_uplRoot(""),
-	_uplFileName(""){
+AResponse::AResponse() :
+		_maxContent(0),
+		_status(200),
+		_root(""),
+		_fileName(""),
+		_uplRoot(""),
+		_uplFileName(""){
 }
 
-Response::Response(long long maxContent, const std::string & root, const std::string & fileName) :
-	_maxContent(maxContent),
-	_status(200),
-	_root(root),
-	_fileName(fileName),
-	_uplRoot(root + "/tmp/"),
-	_uplFileName(""){
+AResponse::AResponse(long long maxContent, const std::string & root, const std::string & fileName) :
+		_maxContent(maxContent),
+		_status(200),
+		_root(root),
+		_fileName(fileName),
+		_uplRoot(root + "/tmp/"),
+		_uplFileName(""){
+	_allowedMethods.push_back("GET");
+	_allowedMethods.push_back("POST");
+	_allowedMethods.push_back("HEAD");
+	_allowedMethods.push_back("PUT");
+	_allowedMethods.push_back("DELETE");
 }
 
-Response::~Response(){
+AResponse::~AResponse(){
 }
 
-
-std::string Response::generateResponse(int res) {
-	if (res > 0)
-		return generateHeader(this->_body.size()) + this->_body.c_str();
-	return generateHeader(0) + generateBody();
+std::string AResponse::_dateTime() const{
+	time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	return ctime(&time);
 }
 
-std::string Response::generateHeader(int status) {
-	std::stringstream str;
-	str << _protocol << " "
-		<< _status << " "
-		<< _code[_status] << "\n"
-		<< "Connection: keep-alive\n"
-//		<< "Content-Type: " << _indicateFileType() << "\n"
-		<< "Content-Length: ";
-//		<< "Content-Length: " << _calculateFileSize(_root + _fileName) << "\n"
-
-		if (status > 0)
-			str << status << "\n";
-		else
-			str << _calculateFileSize() << "\n";
-		str << "\n";
-	return str.str();
-}
-
-std::string Response::generateBody() {
-	std::string			buffer;
-	std::ifstream		file;
-	std::stringstream	str;
-
-	if (_status != 200){
-		std::cout << "STATUS: " << _status << std::endl;
-		std::cout << _errorPage[_status] << std::endl;
-		file.open(_errorPage[_status], std::ifstream::in);
-	}
-	else
-		file.open((_root + _fileName).c_str(), std::ifstream::in);
-
-	while (file.good()) {
-		std::getline(file, buffer);
-		str << buffer;
-		if (file.good())
-			str << "\n";
-	}
-	file.close();
-	return str.str();
-}
-
-std::string Response::_indicateFileType() const{
+std::string AResponse::_indicateFileType() const{
 	std::map<std::string, std::string>::iterator it;
 	for (it = _fileTypes.begin(); it != _fileTypes.end(); ++it){
 		if (_fileName.find(it->first) != std::string::npos)
 			return it->second;
 	}
-	return "text/plain";
+	return "text/html";
 }
 
-size_t Response::_calculateFileSize() const{
+size_t AResponse::_calculateFileSize() const{
 	std::ifstream	srcFile;
 
 	if (_status != 200)
@@ -159,67 +129,77 @@ size_t Response::_calculateFileSize() const{
 	return size;
 }
 
-void Response::setStatus(int n) {
+void AResponse::setStatus(int n) {
 	_status = n;
 }
 
-int Response::getStatus() const {
+int AResponse::getStatus() const {
 	return _status;
 }
 
-void Response::setRoot(const std::string & root) {
+void AResponse::setRoot(const std::string & root) {
 	_root = root;
 }
 
-const std::string & Response::getRoot() const {
+const std::string & AResponse::getRoot() const {
 	return _root;
 }
 
-void Response::setFileName(const std::string & fileName) {
+void AResponse::setFileName(const std::string & fileName) {
 	_fileName = fileName;
 }
 
-const std::string & Response::getFileName() const {
+const std::string & AResponse::getFileName() const {
 	return _fileName;
 }
 
-void Response::setUplRoot(const std::string & root) {
+void AResponse::setUplRoot(const std::string & root) {
 	_uplRoot = root;
 }
 
-const std::string & Response::getUplRoot() const {
+const std::string & AResponse::getUplRoot() const {
 	return _uplRoot;
 }
 
-void Response::setUplFileName(const std::string & uplFileName) {
+void AResponse::setUplFileName(const std::string & uplFileName) {
 	_uplFileName = _uplRoot + uplFileName;
 }
 
-const std::string & Response::getUplFileName() const {
+const std::string & AResponse::getUplFileName() const {
 	return _uplFileName;
 }
 
-size_t Response::getFileSize() const
+size_t AResponse::getFileSize() const
 {
 	return _fileSize;
 }
 
-void Response::setFileSize(size_t fileSize)
+void AResponse::setFileSize(size_t fileSize)
 {
 	_fileSize = fileSize;
 }
 
-const std::string &Response::getBody() const
+const std::string &AResponse::getBody() const
 {
 	return _body;
 }
 
-void Response::setBody(const std::string &body)
+void AResponse::setBody(const std::string &body)
 {
 	_body = body;
 }
 
-long long Response::getMaxContent()
+long long AResponse::getMaxContent()
 {
 	return _maxContent;
+}
+
+const std::list<std::string> &AResponse::getAllowedMethods() const
+{
+	return _allowedMethods;
+}
+
+void AResponse::setAllowedMethods(const std::list<std::string> &allowedMethods)
+{
+	_allowedMethods = allowedMethods;
 }

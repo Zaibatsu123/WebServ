@@ -1,5 +1,5 @@
 #include "../inc/output.hpp"
-#include "Response.hpp"
+#include "response/GoodResponse.hpp"
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -100,7 +100,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
     std::string buffer;
     ssize_t     result = 0;
     std::ofstream outf;                                  // DELETE AFTER DEBUG
-    outf.open( "output_request", std::ios_base::app);    // DELETE AFTER DEBUG
+    outf.open( "output_request.txt", std::ios_base::app);    // DELETE AFTER DEBUG
 
     for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
     {

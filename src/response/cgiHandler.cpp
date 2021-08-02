@@ -5,7 +5,7 @@
 //              7/28/21				 //
 //                                   //
 
-#include "../inc/output.hpp"
+#include "../../inc/output.hpp"
 
 #define CHILD 0
 #define FAILURE -1
@@ -24,7 +24,7 @@ char** generateCgiEnv(){
 	}
 	env[0] = (char *)"REQUEST_METHOD=get";
 	env[1] = (char *)"SERVER_PROTOCOL=HTTP/1.1";
-	env[2] = (char *)"PATH_INFO=./root/info.php";
+	env[2] = (char *)"PATH_INFO=./root/cgi_tester";
 	env[3] = 0;
 	return env;
 }
@@ -37,7 +37,7 @@ void cgiChild(const std::string & cgiName) {
 	}
 
 	int in = open(CGI_INPUT_FILE, O_RDONLY, S_IRUSR | S_IWUSR);
-	int out = open(CGI_OUTPUT_FILE, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+	int out = open(CGI_OUTPUT_FILE, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
 
 	if(in == -1 || out == -1)
 		exit(2);
@@ -47,7 +47,7 @@ void cgiChild(const std::string & cgiName) {
 	exit(1);
 }
 
-std::string cgiParent(pid_t pid, Response* response){
+std::string cgiParent(pid_t pid, AResponse* response){
 	int					status;
 	std::stringstream	str;
 
@@ -66,8 +66,17 @@ std::string cgiParent(pid_t pid, Response* response){
 		}
 
 		std::string buf;
+		/*
+		** Skip Cgi-Header
+		*/
+		while (std::getline(inputCGI, buf)){
+			if (buf.length() == 0 ||  buf.at(0) == 13)
+				break;
+		}
 		while (std::getline(inputCGI, buf))
 			str << buf << std::endl;
+		inputCGI.close();
+		std::cout << str.str() << std::endl;
 	}
 	else if (status == EXIT_FAILURE){
 		std::cout << "execve error" << std::endl;
@@ -84,7 +93,7 @@ std::string cgiParent(pid_t pid, Response* response){
 
 
 
-std::string cgi(const std::string & cgiName, Response* response){
+std::string cgi(const std::string & cgiName, AResponse* response){
 
 	std::ofstream outMy(CGI_INPUT_FILE,std::ofstream::out);
 

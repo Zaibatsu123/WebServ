@@ -3,8 +3,8 @@ server
 server
     listen 127.0.0.1:9099
     error_page 500 ./root/errorPages/503.html
-    location /images/
-        root ./root/tmp/
-        index aaa.html
-        allow_methods POST
+    location /
+        root ./root/
+        index inde.html
+        auto_index on
     upload_file_to ./root/

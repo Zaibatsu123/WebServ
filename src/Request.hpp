@@ -16,7 +16,7 @@
 #include <sstream>
 
 class Request{
-private:
+public:
 	std::string _method;
 	std::string _path;
 	std::string _protocol;
