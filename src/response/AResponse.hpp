@@ -5,8 +5,8 @@
 //              7/9/21				 //
 //                                   //
 
-#ifndef RESPONSE_HPP
-#define RESPONSE_HPP
+#ifndef ARESPONSE_HPP
+#define ARESPONSE_HPP
 
 #include <iostream>
 #include <fstream>
@@ -15,8 +15,8 @@
 #include <map>
 #include <list>
 
-class Response{
-private:
+class AResponse{
+protected:
 	static const std::string					_protocol;
 	static const std::string					_errorPageFolder;
 	static std::map<int, std::string>			_errorPage;
@@ -42,10 +42,10 @@ private:
 	std::string _dateTime() const;
 
 public:
-	Response();
-	~Response();
+	AResponse();
+	virtual ~AResponse();
 
-	Response(long long maxContent, const std::string & root, const std::string & fileName);
+	AResponse(long long maxContent, const std::string & root, const std::string & fileName);
 
 	void 							setStatus(int n);
 	int 							getStatus() const;
@@ -66,12 +66,12 @@ public:
 
 
 
-	std::string			generateResponse(int res);
-	std::string			generateHeader(int status);
-	std::string			generateBody();
+	virtual std::string	generateResponse(int res)	= 0;
+	virtual std::string	generateHeader(int status)	= 0;
+	virtual std::string	generateBody()				= 0;
 
 	long long 			getMaxContent();
 };
 
 
-#endif //RESPONSE_HPP
+#endif //ARESPONSE_HPP

@@ -1,5 +1,5 @@
 #include "../inc/output.hpp"
-#include "Response.hpp"
+#include "response/GoodResponse.hpp"
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>

@@ -6,7 +6,7 @@
 //                                   //
 
 #include "../inc/output.hpp"
-#include "Response.hpp"
+#include "response/GoodResponse.hpp"
 #include <stdlib.h>
 #include "webserver.hpp"
 #include "Server.hpp"

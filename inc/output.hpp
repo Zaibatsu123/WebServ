@@ -21,7 +21,10 @@
 #include <sstream>
 #include "../src/Request.hpp"
 #include "../src/Server.hpp"
-#include "../src/Response.hpp"
+#include "../src/response/GoodResponse.hpp"
+#include "../src/response/BadResponse.hpp"
+#include "../src/response/CgiResponse.hpp"
+#include "../src/response/AutoIndexResponse.hpp"
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -29,7 +32,7 @@
 
 #define MSG_NOSIGNAL 0x2000
 
-#define CGI "./root/myCGI"
+#define CGI "./root/cgi_tester"
 
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"
@@ -45,16 +48,23 @@ typedef struct  s_client
     Request     *request;
 }               t_client;
 
-ssize_t response(t_client *client);
-std::vector<Server*> *parsingConfiguration(char *config_name);
-// ssize_t response(s_client client);
-std::string trim(std::string old_string);
-std::string trim_end(std::string old_string);
-std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str);
-bool requestFileValidator(Response * response);
-ssize_t sendall(int socket, std::string & buffer, int flags);
+ssize_t						response(t_client *client);
+std::vector<Server*>		*parsingConfiguration(char *config_name);
+std::string					trim(std::string old_string);
+std::string					trim_end(std::string old_string);
+std::vector<std::string>	splitvector(std::vector<std::string> old_vector, std::string str);
+bool						requestFileValidator(AResponse * response);
+ssize_t						sendall(int socket, std::string & buffer, int flags);
+int							upload(const std::string & uplFileName, const char *data);
+std::string					cgi(const std::string & cgiName, AResponse* response);
+bool						requestContentSizeValidator(AResponse *response);
+
+bool is_good(Request* request, AResponse* response);
+int file_or_directory_existing(t_client *client, AResponse *response);
+
+ssize_t methodGet(s_client* client, AResponse* response);
+void methodPost(s_client* client, AResponse* response);
+void methodDelete(AResponse* response);
 int upload(const std::string & uplFileName, const char *data);
-std::string cgi(const std::string & cgiName, Response* response);
-bool requestContentSizeValidator(Response *response);
 
 #endif //OUTPUT_HPP

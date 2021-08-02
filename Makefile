@@ -10,25 +10,40 @@ FLAGS			= -Wall -Wextra -Werror
 CC				= clang++
 VPATH			= src
 OBJPATH			= obj/
+RESPONSEPATH	= src/response/
 INC				= inc
 HEADER			=
 SRC				:=	main.cpp	\
-					createResponse.cpp \
-					cgiHandler.cpp \
-					Response.cpp \
+					\
 					webserver.cpp \
 					Config.cpp \
 					utils.cpp \
 					Request.cpp \
 					Server.cpp
 
+SRC_RESPONSE	:=	createResponse.cpp \
+                    cgiHandler.cpp \
+                    methods.cpp \
+                    GoodResponse.cpp \
+                    BadResponse.cpp \
+                    CgiResponse.cpp \
+                    AutoIndexResponse.cpp \
+                    autoIndex.cpp \
+                    AResponse.cpp
+
 OBJ				:= $(addprefix $(OBJPATH), $(SRC:.cpp=.o))
+
+OBJ_RESPONSE	:= $(addprefix $(OBJPATH), $(SRC_RESPONSE:.cpp=.o))
+
+$(OBJPATH)%.o: $(RESPONSEPATH)%.cpp $(HEADER)
+	mkdir -p obj
+	$(CC) $(FLAGS) -c $< -o $@ -I$(INC)
 
 $(OBJPATH)%.o: %.cpp $(HEADER)
 	mkdir -p obj
 	$(CC) $(FLAGS) -c $< -o $@ -I$(INC)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(OBJ_RESPONSE)
 	$(CC) $(FLAGS) $^ -o $@ -I$(INC)
 
 all: $(NAME)
