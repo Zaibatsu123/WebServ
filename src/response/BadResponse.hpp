@@ -16,7 +16,7 @@ public:
 	BadResponse(long long maxContent, const std::string & root, const std::string & fileName);
 	~BadResponse();
 
-	std::string	generateResponse();
+	std::string	generateResponse(int res);
 	std::string	generateHeader(int status);
 	std::string	generateBody();
 };
