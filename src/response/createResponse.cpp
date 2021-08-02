@@ -13,7 +13,7 @@ ssize_t response(s_client *client){
 
 	response = new GoodResponse(0,"./root", client->request->getPath());
 
-	if (is_good(client->request, response) || client->request->getErr() != 0){
+	if (client->request->getErr() != 0){
 		delete response;
 		response = new BadResponse(0,"./root", client->request->getPath());
 		response->setStatus(400);

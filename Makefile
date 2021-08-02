@@ -28,8 +28,9 @@ SRC_RESPONSE	:=	createResponse.cpp \
                     BadResponse.cpp \
                     CgiResponse.cpp \
                     AutoIndexResponse.cpp \
-                    autoIndex.cpp \
-                    AResponse.cpp
+                    AResponse.cpp \
+                    location_parse.cpp \
+
 
 OBJ				:= $(addprefix $(OBJPATH), $(SRC:.cpp=.o))
 
