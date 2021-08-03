@@ -5,6 +5,6 @@ server
     error_page 500 ./root/errorPages/503.html
     location /
         root ./root/
-        index inde.html
+        index index.html
         auto_index on
     upload_file_to ./root/
