@@ -19,8 +19,8 @@ h1 {
     color: palevioletred;
 }
 
-h2 {
-    color: navajowhite;
+.signs {
+    margin-top: 35%;
 }
 
 @font-face {
@@ -37,5 +37,5 @@ h2 {
     100% {
         font-variation-settings: "temp" 0;
     }
-    
+
 }
