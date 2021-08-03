@@ -146,7 +146,7 @@ AResponse* file_or_directory_existing(t_client *client)
         std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
         return new GoodResponse("./root", client->request->getPath());
     }
-	return new BadResponse(403, "./root");
+	return new BadResponse(404, "./root");
 }
 
 //int main(int argc, char **argv)

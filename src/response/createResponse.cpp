@@ -38,10 +38,12 @@ ssize_t sendall(int socket, std::string & buffer, int flags){
 
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
-	AResponse* response = NULL;
+	AResponse* response;
+
 	std::cout << "client check fail" << std::endl;
 	client->request->getMethod();
 	std::cout << "client check work" << std::endl;
+
 	if (client->request->getErr() != 0){
 		response = new BadResponse(400, "./root");
 	}
