@@ -13,7 +13,7 @@
 class AutoIndexResponse : public AResponse {
 public:
 	AutoIndexResponse();
-	AutoIndexResponse(long long maxContent, const std::string & root, const std::string & fileName);
+	AutoIndexResponse(const std::string & content);
 	~AutoIndexResponse();
 
 	std::string	generateResponse(int res);

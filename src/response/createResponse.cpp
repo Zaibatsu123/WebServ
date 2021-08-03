@@ -58,10 +58,10 @@ ssize_t response(s_client *client){
 		}
 
 		if (client->request->getMethod() == "DELETE")
-			response = methodDelete(response);
+			response = methodDelete(client);
 
 		if (client->request->getMethod() == "PUT")
-			response = methodPut(response);
+			response = methodPut(client);
 	}
 	std::cout << response->generateHeader(0) << std::endl;
 	std::string buffer = response->generateResponse(0);

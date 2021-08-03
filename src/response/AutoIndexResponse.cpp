@@ -10,7 +10,8 @@
 AutoIndexResponse::AutoIndexResponse() : AResponse() {
 }
 
-AutoIndexResponse::AutoIndexResponse(long long maxContent, const std::string &root, const std::string &fileName) : AResponse(maxContent, root,fileName){
+AutoIndexResponse::AutoIndexResponse(const std::string & content) : AResponse(0, "",""){
+	_body = content;
 }
 
 AutoIndexResponse::~AutoIndexResponse(){

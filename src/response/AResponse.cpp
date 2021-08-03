@@ -40,6 +40,7 @@ std::map<int, std::string> AResponse::_errorPage = AResponse::_createErrorPage()
 std::map<int, std::string> AResponse::_createMap() {
 	std::map<int, std::string> m;
 	m.insert(std::pair<int, std::string>(200, "OK"));
+	m.insert(std::pair<int, std::string>(201, "Created"));
 	m.insert(std::pair<int, std::string>(400, "Bad Request"));
 	m.insert(std::pair<int, std::string>(403, "Forbidden"));
 	m.insert(std::pair<int, std::string>(404, "Not Found"));

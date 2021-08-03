@@ -55,8 +55,8 @@ ssize_t						sendall(int socket, std::string & buffer, int flags);
 //methods.cpp
 AResponse*	methodGet(s_client* client, AResponse* response);
 AResponse*	methodPost(s_client* client, AResponse* response);
-AResponse*	methodDelete(AResponse* response);
-AResponse*	methodPut(AResponse* response);
+AResponse*	methodDelete(s_client* client);
+AResponse*	methodPut(s_client* client);
 int			upload(const std::string & uplFileName, const char *data);
 
 //cgiHandler.cpp
@@ -67,7 +67,7 @@ std::vector<Server*>		*parsingConfiguration(char *config_name);
 std::string					trim(std::string old_string);
 std::string					trim_end(std::string old_string);
 std::vector<std::string>	splitvector(std::vector<std::string> old_vector, std::string str);
-int							file_or_directory_existing(t_client *client, AResponse *response);
+AResponse*					file_or_directory_existing(t_client *client, AResponse *response);
 
 //Config.cpp
 std::vector<Server*> *parsingConfiguration(char *config_name);
