@@ -143,37 +143,45 @@ void Request::postrequest(std::vector<std::string> request)
 */
 void Request::strrequest(std::vector<std::string> request)
 {
-	if (request.size() == 0 || trim(request[0]).empty())
+	if (request.size() == 0)
 	{
 		_err = 400;
 		return ;
 	}
-	if (trim(request[0]).compare(request[0].length() - 8, 8, "HTTP/1.1") == 0)
+	size_t i = 0; 
+	while (i < request.size())
+	{
+		if ((trim(request[i]).empty()))
+			i++;
+		else 
+			break;
+	}	
+	if (trim(request[i]).compare(request[i].length() - 8, 8, "HTTP/1.1") == 0)
 		_protocol = "HTTP/1.1";
 	else
 	{
 		_err = 505;
 		return ;
 	}
-	size_t n = std::count(request[0].begin(), request[0].end(), '/');
+	size_t n = std::count(request[i].begin(), request[i].end(), '/');
 	if (n == 0)
 	{
 		_err = 400;
 		return ;
 	}
-	if (request[0].compare(0, 3, "GET") == 0)
-		this->methodpath("GET", trim(request[0].substr(3, request[0].length() - 12)));
-	else if (request[0].compare(0, 4, "POST") == 0)
+	if (request[i].compare(0, 3, "GET") == 0)
+		this->methodpath("GET", trim(request[i].substr(3, request[i].length() - 12)));
+	else if (request[i].compare(0, 4, "POST") == 0)
 	{
-		this->methodpath("POST", trim(request[0].substr(4, request[0].length() - 13)));
+		this->methodpath("POST", trim(request[i].substr(4, request[i].length() - 13)));
 		postrequest(request);
 	}
-	else if (request[0].compare(0, 6, "DELETE") == 0)
-		this->methodpath("DELETE", trim(request[0].substr(6, request[0].length() - 15)));
-	else if (request[0].compare(0, 4, "HEAD") == 0)
-		this->methodpath("HEAD", trim(request[0].substr(4, request[0].length() - 13)));
-	else if (request[0].compare(0, 3, "PUT") == 0)
-		this->methodpath("PUT", trim(request[0].substr(3, request[0].length() - 12)));
+	else if (request[i].compare(0, 6, "DELETE") == 0)
+		this->methodpath("DELETE", trim(request[i].substr(6, request[i].length() - 15)));
+	else if (request[i].compare(0, 4, "HEAD") == 0)
+		this->methodpath("HEAD", trim(request[i].substr(4, request[i].length() - 13)));
+	else if (request[i].compare(0, 3, "PUT") == 0)
+		this->methodpath("PUT", trim(request[i].substr(3, request[i].length() - 12)));
 	else
 	{
 		_err = 501;

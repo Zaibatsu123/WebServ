@@ -61,7 +61,7 @@ std::vector<std::string> getarray(std::string req)
 		if (req.find("\n", index2 + 1) == std::string::npos)
 			break ; 
 		index2 = req.find("\n", index2 + 1);
-		if (index1 > req.size() || index2 - index1 > req.size())
+		if (index1 > int(req.size()) || index2 - index1 > int(req.size()))
 			break;
 		str = trim(req.substr(index1, index2 - index1));
 		index1 = index2 + 1;
