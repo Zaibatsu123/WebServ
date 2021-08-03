@@ -29,14 +29,14 @@ char** generateCgiEnv(){
 	return env;
 }
 
-void cgiChild(const std::string & cgiName) {
+void cgiChild(const std::string & cgiName, const std::string & pathToFile) {
 
 	char **env = generateCgiEnv();
 	if (env == NULL){
 		exit(2);
 	}
 
-	int in = open(CGI_INPUT_FILE, O_RDONLY, S_IRUSR | S_IWUSR);
+	int in = open(pathToFile.c_str(), O_RDONLY, S_IRUSR | S_IWUSR);
 	int out = open(CGI_OUTPUT_FILE, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
 
 	if(in == -1 || out == -1)
@@ -47,22 +47,21 @@ void cgiChild(const std::string & cgiName) {
 	exit(1);
 }
 
-std::string cgiParent(pid_t pid, AResponse* response){
-	int					status;
+int cgiParent(pid_t pid){
+	int					res;
 	std::stringstream	str;
 
-	waitpid(pid, &status, 0);
+	waitpid(pid, &res, 0);
 
-	if (WIFEXITED(status))
-		status = WEXITSTATUS(status);
+	if (WIFEXITED(res))
+		res = WEXITSTATUS(res);
 
-	if (status == EXIT_SUCCESS){
+	if (res == EXIT_SUCCESS){
 		std::ifstream inputCGI(CGI_OUTPUT_FILE, std::ifstream::in);
 
 		if (!inputCGI.is_open()){
 			std::cout << "cannot write to outputMY" << std::endl;
-			response->setStatus(500);
-			return response->generateBody();
+			return 500;
 		}
 
 		std::string buf;
@@ -76,44 +75,36 @@ std::string cgiParent(pid_t pid, AResponse* response){
 		while (std::getline(inputCGI, buf))
 			str << buf << std::endl;
 		inputCGI.close();
-		std::cout << str.str() << std::endl;
 	}
-	else if (status == EXIT_FAILURE){
+	else if (res == EXIT_FAILURE){
 		std::cout << "execve error" << std::endl;
-		response->setStatus(502);
-		return response->generateBody();
+		return 502;
 	}
 	else {
 		std::cout << "child error" << std::endl;
-		response->setStatus(500);
-		return response->generateBody();
+		return 500;
 	}
-	return str.str();
+	return 0;
 }
 
 
 
-std::string cgi(const std::string & cgiName, AResponse* response){
+int cgi(const std::string & cgiName, const std::string & pathToFile){
 
 	std::ofstream outMy(CGI_INPUT_FILE,std::ofstream::out);
 
 	if (!outMy.is_open()){
 		std::cout << "cannot write to outputMY" << std::endl;
-		response->setStatus(500);
-		return response->generateBody();
+		return 500;
 	}
-
-	outMy << response->generateBody();
-	outMy.close();
 
 	pid_t pid = fork();
 	if (pid == FAILURE){
 		std::cout << "fork error" << std::endl;
-		response->setStatus(500);
-		return response->generateBody();
+		return 500;
 	}
 	else if (pid == CHILD){
-		cgiChild(cgiName);
+		cgiChild(cgiName, pathToFile);
 	}
-	return cgiParent(pid, response);
+	return cgiParent(pid);
 }

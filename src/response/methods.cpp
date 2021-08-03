@@ -7,45 +7,43 @@
 
 #include "../../inc/output.hpp"
 
-AResponse* methodGet(s_client* client, AResponse* response){
+AResponse* methodGet(s_client* client){
 	std::cout << "--> GET" << std::endl;
 
 	if (client->request->getPath().find(".php") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
-		AResponse* response1 = new CgiResponse();
-		//TODO: buffer string not used
-		std::string cgiString = cgi(CGI, response);
-		response1->setFileSize(cgiString.length());
-		response1->setRoot("");
-		response1->setFileName("outputCGI.txt");
-		return response1;
+
+		int status = cgi(CGI, "./root" + client->request->getPath());
+
+		if (status)
+			return new BadResponse(status, "./root");
+
+		return new CgiResponse("", "outputCGI.txt");
 	}
 
-	AResponse* resp;
-	resp = file_or_directory_existing(client, response);
+	AResponse* resp = file_or_directory_existing(client);
 
 	return resp;
 }
 
 
 
-AResponse* methodPost(s_client* client, AResponse*){
+AResponse* methodPost(s_client* client){
 	std::cout << "--> POST" << std::endl;
 
 	if (client->request->getBodyCnt().length() == 0){
 		std::cout << "--> Error: Empty body <--" << std::endl;
 		return new BadResponse(405, "./root");
 	}
-	else{
 
-		int ret = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
-		if (ret == EXIT_FAILURE){
-			std::cout << "--> Error: Cannot create file <--" << std::endl;
-			return new BadResponse(500, "./root");
-		}
-		else
-			return new GoodResponse("./root", "/uploadSuccess.html");
+	int status = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
+
+	if (status){
+		std::cout << "--> Error: Cannot create file <--" << std::endl;
+		return new BadResponse(status, "./root");
 	}
+
+	return new GoodResponse("./root", "/uploadSuccess.html");
 }
 
 
@@ -93,10 +91,10 @@ int upload(const std::string & uplFileName, const char *data) {
 	dstFile.open(uplFileName.c_str(), std::ofstream::out);
 
 	if (!dstFile.is_open())
-		return EXIT_FAILURE;
+		return 500;
 
 	dstFile << std::string(data);
 	dstFile.close();
 
-	return EXIT_SUCCESS;
+	return 0;
 }
