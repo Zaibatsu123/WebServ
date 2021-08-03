@@ -111,6 +111,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
             do {
                 std::memset(read_buffer, 0, 1024);
                 result = recv((*i).socket, read_buffer, 1024, 0);
+                std::cout << "Bytes read:|" << result << "|" << std::endl;
                 if (static_cast<int>(result) == -1)
                 {
                     perror("Somthing goes wrong, when receiving message");

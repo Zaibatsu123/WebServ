@@ -1,6 +1,4 @@
 server
-    listen 127.0.0.1:8099
-server
     listen 127.0.0.1:9099
     error_page 500 ./root/errorPages/503.html
     location /

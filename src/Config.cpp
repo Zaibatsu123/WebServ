@@ -99,6 +99,11 @@ Server  *error_pages(Server *temp, std::string str, int i)
 Server  *listen(Server *temp, std::string str, int i)
 {
 	t_socket *ts = new t_socket;
+	if (str.find(":") == std::string::npos)
+	{
+		delete ts;
+		return (NULL);
+	}
 	std::string ip =  trim(str.substr(11, str.find(":") - 11));
 	ts->address = new char[strlen(ip.c_str()) + 1];
 	memcpy(ts->address, ip.c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);

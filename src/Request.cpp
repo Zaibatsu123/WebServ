@@ -53,6 +53,11 @@ void Request::methodpath(std::string method, std::string path)
 void Request::getheaders(std::vector<std::string> request)
 {
 	std::string str;
+	// if (trim(request[1]).empty())
+	// {
+	// 	_err = 400;
+	// 	return ;
+	// }	
 	str = request[1];
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
 	if (str.compare(0, 5, "host:") == 0)
@@ -67,7 +72,9 @@ void Request::post_fname_body(std::vector<std::string> request)
 	
 	if (request.size() == 0)
 		return;
-	int fn =  request[0].find("filename=");
+	if (request[0].find("filename=") == std::string::npos )
+		return;
+	int fn = request[0].find("filename=");
 	_filename = request[0].substr(fn + 10, request[0].length() - fn - 11);
 	for (size_t j = 0; j < request.size(); ++j)
 	{
@@ -103,6 +110,8 @@ void Request::postrequest(std::vector<std::string> request)
 				_content_length = trim(str.substr(16, str.length() - 16));
 			else if (str.compare(0, 14, "content-type: ") == 0)
 			{
+				if (request[i].find("boundary=") == std::string::npos)
+					break;
 				int bn = request[i].find("boundary=");
 				_content_type = trim(str.substr(14, str.length() - 14));
 				_boundary = "--" + request[i ].substr(bn + 9, request[i].length() - bn - 9);
@@ -134,7 +143,7 @@ void Request::postrequest(std::vector<std::string> request)
 */
 void Request::strrequest(std::vector<std::string> request)
 {
-	if (trim(request[0]).empty())
+	if (request.size() == 0 || trim(request[0]).empty())
 	{
 		_err = 400;
 		return ;

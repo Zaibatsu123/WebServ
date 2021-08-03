@@ -1,0 +1,24 @@
+Received request________________________
+GET / HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+POST / HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Transfer-Encoding: chunked
+Content-Type: test/file
+Accept-Encoding: gzip
+
+0
+
+End request________________________
+Received request________________________
+HEAD / HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+
+End request________________________
