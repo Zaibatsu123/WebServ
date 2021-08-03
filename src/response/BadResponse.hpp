@@ -13,12 +13,10 @@
 class BadResponse : public AResponse {
 public:
 	BadResponse();
-	BadResponse(int status, long long maxContent, const std::string & root);
+	BadResponse(int status, const std::string & root);
 	~BadResponse();
 
-	std::string	generateResponse(int res);
 	std::string	generateResponse();
-	std::string	generateHeader(int status);
 	std::string	generateHeader();
 	std::string	generateBody();
 };

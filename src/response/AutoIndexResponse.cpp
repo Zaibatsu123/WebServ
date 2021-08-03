@@ -10,7 +10,7 @@
 AutoIndexResponse::AutoIndexResponse() : AResponse() {
 }
 
-AutoIndexResponse::AutoIndexResponse(const std::string & content) : AResponse(0, "",""){
+AutoIndexResponse::AutoIndexResponse(const std::string & content) : AResponse("",""){
 	_body = content;
 }
 
@@ -18,20 +18,12 @@ AutoIndexResponse::~AutoIndexResponse(){
 }
 
 std::string AutoIndexResponse::generateResponse() {
-	return "";
+	if (getHead())
+		return generateHeader();
+	return generateHeader() + getBody();
 }
 
 std::string AutoIndexResponse::generateHeader() {
-	return "";
-}
-
-std::string AutoIndexResponse::generateResponse(int) {
-	if (getHead())
-		return generateHeader(getBody().size());
-	return generateHeader(getBody().size()) + getBody().c_str();
-}
-
-std::string AutoIndexResponse::generateHeader(int status) {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
@@ -39,7 +31,7 @@ std::string AutoIndexResponse::generateHeader(int status) {
 		<< "Server: Equal-Rights/0.1.23" << std::endl
 		<< "Date: " << _dateTime()
 		<< "Content-Type: text/html" << std::endl
-		<< "Content-Length: "<< status << std::endl
+		<< "Content-Length: "<< getBody().size() << std::endl
 		<< "Connection: keep-alive" << std::endl
 		<< std::endl;
 	return str.str();

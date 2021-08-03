@@ -10,27 +10,19 @@
 CgiResponse::CgiResponse() : AResponse() {
 }
 
-CgiResponse::CgiResponse(long long maxContent, const std::string &root, const std::string &fileName) : AResponse(maxContent, root,fileName){
+CgiResponse::CgiResponse(const std::string &root, const std::string &fileName) : AResponse(root, fileName){
 }
 
 CgiResponse::~CgiResponse(){
 }
 
 std::string CgiResponse::generateResponse() {
-	return "";
+	if (getHead())
+		return generateHeader();
+	return generateHeader() + generateBody();
 }
 
 std::string CgiResponse::generateHeader() {
-	return "";
-}
-
-std::string CgiResponse::generateResponse(int) {
-	if (getHead())
-		return generateHeader();
-	return generateHeader(0) + generateBody();
-}
-
-std::string CgiResponse::generateHeader(int) {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "

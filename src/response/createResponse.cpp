@@ -36,15 +36,14 @@ ssize_t sendall(int socket, std::string & buffer, int flags){
 	return result;
 }
 
-
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	AResponse* response;
 	if (client->request->getErr() != 0){
-		response = new BadResponse(400, 0,"./root");
+		response = new BadResponse(400, "./root");
 	}
 	else{
-		response = new GoodResponse(0,"./root", client->request->getPath());
+		response = new GoodResponse("./root", client->request->getPath());
 		if (client->request->getMethod() == "GET"){
 			response = methodGet(client, response);
 		}
@@ -63,8 +62,8 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-	std::cout << response->generateHeader(0) << std::endl;
-	std::string buffer = response->generateResponse(0);
+	std::cout << response->generateHeader() << std::endl;
+	std::string buffer = response->generateResponse();
 
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
 

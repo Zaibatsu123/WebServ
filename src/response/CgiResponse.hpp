@@ -13,12 +13,10 @@
 class CgiResponse : public AResponse {
 public:
 	CgiResponse();
-	CgiResponse(long long maxContent, const std::string & root, const std::string & fileName);
+	CgiResponse(const std::string & root, const std::string & fileName);
 	~CgiResponse();
 
-	std::string	generateResponse(int res);
 	std::string	generateResponse();
-	std::string	generateHeader(int status);
 	std::string	generateHeader();
 	std::string	generateBody();
 };

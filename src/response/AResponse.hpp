@@ -26,8 +26,6 @@ protected:
 	static std::map<std::string, std::string>	_fileTypes;
 	static std::map<std::string, std::string>	_createTypesMap();
 
-	const long long _maxContent;
-
 	int 					_status;
 	int 					_head;
 	std::string				_root;
@@ -46,7 +44,7 @@ public:
 	AResponse();
 	virtual ~AResponse();
 
-	AResponse(long long maxContent, const std::string & root, const std::string & fileName);
+	AResponse(const std::string & root, const std::string & fileName);
 
 	void							setHead(int head);
 	int								getHead() const;
@@ -69,13 +67,10 @@ public:
 
 
 
-	virtual std::string	generateResponse(int res)	= 0;
 	virtual std::string	generateResponse()	= 0;
-	virtual std::string	generateHeader(int status)	= 0;
 	virtual std::string	generateHeader()	= 0;
-	virtual std::string	generateBody()				= 0;
+	virtual std::string	generateBody()		= 0;
 
-	long long 			getMaxContent();
 };
 
 

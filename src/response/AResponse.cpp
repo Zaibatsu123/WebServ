@@ -71,7 +71,6 @@ std::map<int, std::string> AResponse::_createErrorPage() {
 }
 
 AResponse::AResponse() :
-		_maxContent(0),
 		_status(200),
 		_head(0),
 		_root(""),
@@ -80,8 +79,7 @@ AResponse::AResponse() :
 		_uplFileName(""){
 }
 
-AResponse::AResponse(long long maxContent, const std::string & root, const std::string & fileName) :
-		_maxContent(maxContent),
+AResponse::AResponse(const std::string & root, const std::string & fileName) :
 		_status(200),
 		_head(0),
 		_root(root),
@@ -190,11 +188,6 @@ const std::string &AResponse::getBody() const
 void AResponse::setBody(const std::string &body)
 {
 	_body = body;
-}
-
-long long AResponse::getMaxContent()
-{
-	return _maxContent;
 }
 
 const std::list<std::string> &AResponse::getAllowedMethods() const
