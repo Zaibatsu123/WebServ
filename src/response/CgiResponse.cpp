@@ -24,19 +24,13 @@ std::string CgiResponse::generateHeader() {
 	return "";
 }
 
-std::string CgiResponse::generateResponse(int res) {
-	if (res > 0){
-		if (getHead())
-			return generateHeader(this->getBody().size());
-		return generateHeader(this->getBody().size()) + this->getBody().c_str();
-	}
+std::string CgiResponse::generateResponse(int) {
 	if (getHead())
 		return generateHeader();
 	return generateHeader(0) + generateBody();
 }
 
-std::string CgiResponse::generateHeader(int status) {
-	(void)status;
+std::string CgiResponse::generateHeader(int) {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "

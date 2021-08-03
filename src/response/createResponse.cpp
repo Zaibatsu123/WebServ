@@ -7,45 +7,6 @@
 
 #include "../../inc/output.hpp"
 
-ssize_t response(s_client *client){
-	std::cout << "--------------------> Response part <------------ " << std::endl;
-	AResponse* response;
-	if (client->request->getErr() != 0){
-		response = new BadResponse(0,"./root", client->request->getPath());
-		response->setStatus(400);
-	}
-	else{
-		response = new GoodResponse(0,"./root", client->request->getPath());
-		if (client->request->getMethod() == "GET"){
-//			delete response;
-			response = methodGet(client, response);
-		}
-
-		if (client->request->getMethod() == "POST")
-			methodPost(client, response);
-
-		if (client->request->getMethod() == "DELETE")
-			methodDelete(response);
-
-		if (client->request->getMethod() == "HEAD"){
-			methodGet(client, response);
-			response->setHead(1);
-		}
-
-		if (client->request->getMethod() == "PUT")
-			response->setStatus(405);
-	}
-	std::cout << response->generateHeader(0) << std::endl;
-	std::string buffer = response->generateResponse(0);
-
-	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
-
-	delete response;
-	delete client->request;
-	std::cout << "--------------------> Response END <------------ " << std::endl;
-	return result;
-}
-
 ssize_t sendall(int socket, std::string & buffer, int flags){
 	ssize_t result;
 	int it = 1;
@@ -75,39 +36,41 @@ ssize_t sendall(int socket, std::string & buffer, int flags){
 	return result;
 }
 
-//bool requestFileValidator(AResponse * response){
-//	std::ifstream	srcFile;
-//	srcFile.open((response->getRoot() + response->getFileName()).c_str(), std::ifstream::in);
-//
-//	//TODO: delete when evaluate
-//	std::cout << response->getRoot() + response->getFileName() << std::endl;
-//
-//	if (!srcFile.is_open()){
-//		response->setStatus(404);
-//		return false;
-//	}
-//	srcFile.close();
-//	return true;
-//}
-//
-//bool requestContentSizeValidator(AResponse *response){
-//	std::ifstream	srcFile;
-//	srcFile.open((response->getRoot() + response->getFileName()).c_str(), std::ifstream::in);
-//
-//	long long size;
-//
-//	srcFile.seekg (0, srcFile.end);
-//	size = srcFile.tellg();
-//	srcFile.seekg (0, srcFile.beg);
-//	srcFile.close();
-//
-//	if (response->getMaxContent() && size > response->getMaxContent()){
-//		response->setStatus(413);
-//		return false;
-//	}
-//	return true;
-//}
 
+ssize_t response(s_client *client){
+	std::cout << "--------------------> Response part <------------ " << std::endl;
+	AResponse* response;
+	if (client->request->getErr() != 0){
+		response = new BadResponse(400, 0,"./root");
+	}
+	else{
+		response = new GoodResponse(0,"./root", client->request->getPath());
+		if (client->request->getMethod() == "GET"){
+			response = methodGet(client, response);
+		}
 
+		if (client->request->getMethod() == "POST")
+			response = methodPost(client, response);
 
+		if (client->request->getMethod() == "HEAD"){
+			response = methodGet(client, response);
+			response->setHead(1);
+		}
+
+		if (client->request->getMethod() == "DELETE")
+			response = methodDelete(response);
+
+		if (client->request->getMethod() == "PUT")
+			response = methodPut(response);
+	}
+	std::cout << response->generateHeader(0) << std::endl;
+	std::string buffer = response->generateResponse(0);
+
+	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
+
+	delete response;
+	delete client->request;
+	std::cout << "--------------------> Response END <------------ " << std::endl;
+	return result;
+}
 

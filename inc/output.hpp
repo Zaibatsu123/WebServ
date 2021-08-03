@@ -54,8 +54,9 @@ ssize_t						sendall(int socket, std::string & buffer, int flags);
 
 //methods.cpp
 AResponse*	methodGet(s_client* client, AResponse* response);
-void		methodPost(s_client* client, AResponse* response);
-void		methodDelete(AResponse* response);
+AResponse*	methodPost(s_client* client, AResponse* response);
+AResponse*	methodDelete(AResponse* response);
+AResponse*	methodPut(AResponse* response);
 int			upload(const std::string & uplFileName, const char *data);
 
 //cgiHandler.cpp

@@ -13,7 +13,7 @@
 class BadResponse : public AResponse {
 public:
 	BadResponse();
-	BadResponse(long long maxContent, const std::string & root, const std::string & fileName);
+	BadResponse(int status, long long maxContent, const std::string & root);
 	~BadResponse();
 
 	std::string	generateResponse(int res);
