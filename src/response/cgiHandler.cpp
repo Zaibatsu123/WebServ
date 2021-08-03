@@ -72,8 +72,11 @@ int cgiParent(pid_t pid){
 			if (buf.length() == 0 ||  buf.at(0) == 13)
 				break;
 		}
-		while (std::getline(inputCGI, buf))
-			str << buf << std::endl;
+		while (std::getline(inputCGI, buf)){
+			str << buf;
+			if (inputCGI.good())
+				str << "\n";
+		}
 		inputCGI.close();
 	}
 	else if (res == EXIT_FAILURE){

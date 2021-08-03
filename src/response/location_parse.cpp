@@ -110,7 +110,6 @@ std::string autoindex(const char *directory, t_client *client)
 AResponse* file_or_directory_existing(t_client *client)
 {
 	std::ifstream		file;
-    DIR                 *dir = NULL;
 	t_location 			*location = NULL;
 	std::string			path = client->request->getPath();
 
@@ -122,7 +121,7 @@ AResponse* file_or_directory_existing(t_client *client)
 	std::cout << "directory: " << directory << std::endl;
 	std::cout << "path: " << path << std::endl;
 	std::cout << "full: " << fullpath << std::endl;
-    if ((dir = opendir(fullpath.c_str())) != NULL)
+    if (opendir(fullpath.c_str()) != NULL)
     {
         std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
         file.open(fullpath + location->index);
@@ -134,7 +133,7 @@ AResponse* file_or_directory_existing(t_client *client)
         if (location->autoindex == 1)
         {
             std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
-			std::string str = autoindex(fullpath.c_str(), client);
+            std::string str = autoindex(fullpath.c_str(), client);
             return new AutoIndexResponse(str);
         }
 
@@ -146,39 +145,5 @@ AResponse* file_or_directory_existing(t_client *client)
         std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
         return new GoodResponse("./root", client->request->getPath());
     }
-	return new BadResponse(404, "./root");
+    return new BadResponse(404, "./root");
 }
-
-//int main(int argc, char **argv)
-//{
-//    Server          server;
-//    t_location      *location;
-//    Response        response;
-//    t_client        client;
-//    Request         *request = new Request;
-//
-//    if (argc < 2)
-//        return (1);
-//    request->_path = rslash_from_end(argv[1]);
-//    client.request = request;
-//    client.server = &server;
-//
-//    location = new t_location;
-//    location->root = "/Users/jjerrod/projects/";
-//    location->autoindex = 1;
-//    location->index = "index.html";
-//    server.locations.insert(std::make_pair("/", location));
-//    location = new t_location;
-//    location->root = "/images";
-//    server.locations.insert(std::make_pair("/projects/WebServ/root", location));
-//    location = new t_location;
-//    location->root = "/images/secret";
-//    server.locations.insert(std::make_pair("/images/poop", location));
-//    location = new t_location;
-//    location->root = "/FBI";
-//    server.locations.insert(std::make_pair("/images/poop/secret", location));
-//
-//    std::cout << "PATH:|" << request->_path << "|" << std::endl;
-//    std::cout << file_or_directory_existing(&client, &response) << std::endl;
-//    return (0);
-//}

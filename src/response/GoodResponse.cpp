@@ -28,16 +28,11 @@ std::string GoodResponse::generateHeader() {
 		<< _status << " "
 		<< _code[_status] << std::endl
 		<< "Server: Equal-Rights/0.1.23" << std::endl
-		<< "Date: " << _dateTime();
-
-	str << "Content-Type: " << _indicateFileType() << std::endl;
-
-	str << "Content-Length: " << _calculateFileSize() << std::endl;
-
-	str << "Connection: keep-alive" << std::endl;
-
-//	if (_head == 1)
-		str << std::endl;
+		<< "Date: " << _dateTime()
+		<< "Content-Type: " << _indicateFileType() << std::endl
+		<< "Content-Length: " << _calculateFileSize() << std::endl
+		<< "Connection: keep-alive" << std::endl
+		<< std::endl;
 	return str.str();
 }
 
