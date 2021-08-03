@@ -36,7 +36,8 @@ std::string GoodResponse::generateHeader() {
 
 	str << "Connection: keep-alive" << std::endl;
 
-	str << std::endl;
+//	if (_head == 1)
+		str << std::endl;
 	return str.str();
 }
 

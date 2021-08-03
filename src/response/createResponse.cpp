@@ -39,6 +39,9 @@ ssize_t sendall(int socket, std::string & buffer, int flags){
 ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	AResponse* response;
+	std::cout << "client check fail" << std::endl;
+	client->request->getMethod();
+	std::cout << "client check work" << std::endl;
 	if (client->request->getErr() != 0){
 		response = new BadResponse(400, "./root");
 	}
@@ -52,8 +55,10 @@ ssize_t response(s_client *client){
 			response = methodPost(client, response);
 
 		if (client->request->getMethod() == "HEAD"){
+			std::cout << "--> HEAD" << std::endl;
 			response = methodGet(client, response);
 			response->setHead(1);
+//			response->setStatus(204);
 		}
 
 		if (client->request->getMethod() == "DELETE")
@@ -67,8 +72,8 @@ ssize_t response(s_client *client){
 
 	ssize_t result = sendall(client->socket, buffer, MSG_NOSIGNAL);
 
-	delete response;
-	delete client->request;
+//	delete response;
+//	delete client->request;
 	std::cout << "--------------------> Response END <------------ " << std::endl;
 	return result;
 }
