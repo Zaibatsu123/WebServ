@@ -42,8 +42,8 @@ AResponse* methodPost(s_client* client){
 		std::cout << "--> Error: Cannot create file <--" << std::endl;
 		return new BadResponse(status, "./root");
 	}
-
-	return new GoodResponse("./root", "/uploadSuccess.html");
+	t_location *location = get_location(client->request->getPath(), &client->server->locations);
+	return new GoodResponse(location->root, "/uploadSuccess.html");
 }
 
 

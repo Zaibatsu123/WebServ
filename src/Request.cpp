@@ -155,36 +155,45 @@ void Request::strrequest(std::vector<std::string> request)
 			i++;
 		else 
 			break;
-	}	
-	if (trim(request[i]).compare(request[i].length() - 8, 8, "HTTP/1.1") == 0)
-		_protocol = "HTTP/1.1";
-	else
-	{
-		_err = 505;
-		return ;
 	}
-	size_t n = std::count(request[i].begin(), request[i].end(), '/');
-	if (n == 0)
+	try
 	{
+		if (trim(request[i]).compare(request[i].length() - 8, 8, "HTTP/1.1") == 0)
+			_protocol = "HTTP/1.1";
+		else
+		{
+			_err = 505;
+			return ;
+		}
+		size_t n = std::count(request[i].begin(), request[i].end(), '/');
+		if (n == 0)
+		{
+			_err = 400;
+			return ;
+		}
+		if (request[i].compare(0, 3, "GET") == 0)
+			this->methodpath("GET", trim(request[i].substr(3, request[i].length() - 12)));
+		else if (request[i].compare(0, 4, "POST") == 0)
+		{
+			this->methodpath("POST", trim(request[i].substr(4, request[i].length() - 13)));
+			postrequest(request);
+		}
+		else if (request[i].compare(0, 6, "DELETE") == 0)
+			this->methodpath("DELETE", trim(request[i].substr(6, request[i].length() - 15)));
+		else if (request[i].compare(0, 4, "HEAD") == 0)
+			this->methodpath("HEAD", trim(request[i].substr(4, request[i].length() - 13)));
+		else if (request[i].compare(0, 3, "PUT") == 0)
+			this->methodpath("PUT", trim(request[i].substr(3, request[i].length() - 12)));
+		else
+		{
+			_err = 501;
+			return ;
+		}
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
 		_err = 400;
-		return ;
-	}
-	if (request[i].compare(0, 3, "GET") == 0)
-		this->methodpath("GET", trim(request[i].substr(3, request[i].length() - 12)));
-	else if (request[i].compare(0, 4, "POST") == 0)
-	{
-		this->methodpath("POST", trim(request[i].substr(4, request[i].length() - 13)));
-		postrequest(request);
-	}
-	else if (request[i].compare(0, 6, "DELETE") == 0)
-		this->methodpath("DELETE", trim(request[i].substr(6, request[i].length() - 15)));
-	else if (request[i].compare(0, 4, "HEAD") == 0)
-		this->methodpath("HEAD", trim(request[i].substr(4, request[i].length() - 13)));
-	else if (request[i].compare(0, 3, "PUT") == 0)
-		this->methodpath("PUT", trim(request[i].substr(3, request[i].length() - 12)));
-	else
-	{
-		_err = 501;
 		return ;
 	}
 	getheaders(request);

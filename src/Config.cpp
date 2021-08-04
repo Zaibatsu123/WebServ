@@ -182,7 +182,10 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 		return (NULL);
 	}
 	if (temp != NULL)
-		temp->locations[(loc.substr(13, loc.length() - 13))] = lctn;
+	{
+		std::string ll = "/" + (loc.substr(14, loc.length() - 15));
+		temp->locations[ll] = lctn;
+	}
 	return (temp);
 }
 
@@ -317,8 +320,8 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 					}
 			}
 	delete configuration;
-	// if (servers != NULL)
-	// 	print_serv(servers);
+	if (servers != NULL)
+		print_serv(servers);
 	return (servers);
 }
 

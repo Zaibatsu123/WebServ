@@ -67,7 +67,7 @@ int creating_socket_servers(std::vector<Server*> *servers)
     return (EXIT_SUCCESS);
 }
 
-int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std::list<t_client> *clients)
+int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std::list<t_client *> *clients)
 {
     int         new_client_socket = -1;
     t_client    *new_client = NULL;
@@ -87,14 +87,14 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std:
                 new_client->request = NULL;
                 new_client->server = (*i);
                 fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
-                clients->push_back(*new_client);
+                clients->push_back(new_client);
                 std::cout << "Connected new client" << std::endl;
                 new_client = NULL;
             }
     return (EXIT_SUCCESS);
 }
 
-int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
+int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 {
 	char        read_buffer[1025];
     std::string buffer;
@@ -102,58 +102,57 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client> *clients)
     std::ofstream outf;                                  // DELETE AFTER DEBUG
     outf.open( "output_request.txt", std::ios_base::app);    // DELETE AFTER DEBUG
 
-    for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
+    for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
-        std::cout << "Check for request fd:" << (*i).socket << " status: " << FD_ISSET((*i).socket, read_fds) << std::endl;
-        if (FD_ISSET((*i).socket, read_fds))
+        std::cout << "Check for request fd:" << (*i)->socket << " status: " << FD_ISSET((*i)->socket, read_fds) << std::endl;
+        if (FD_ISSET((*i)->socket, read_fds))
         {
             std::stringstream str;
-            do {
-                std::memset(read_buffer, 0, 1024);
-                result = recv((*i).socket, read_buffer, 1024, 0);
-                std::cout << "Bytes read:|" << result << "|" << std::endl;
-                if (static_cast<int>(result) == -1)
-                {
-                    perror("Somthing goes wrong, when receiving message");
-                    break;
-                }
-                //TODO: delete sleep for delay after send
-                usleep(1000);
-                read_buffer[result] = '\0';
-                str << read_buffer;
-                if (result < 1024)
-                    break;
-            } while (result > 0);
-            if (result > 0)
+            std::memset(read_buffer, 0, 1024);
+            result = recv((*i)->socket, read_buffer, 1024, 0);
+            std::cout << "Bytes read:|" << result << "|" << std::endl;
+            if (static_cast<int>(result) == -1)
             {
+                perror("Somthing goes wrong, when receiving message");
+                break;
+            }
+            read_buffer[result] = '\0';
+            str << read_buffer;
+            (*i)->buffer += str.str();
+            if ((*i)->buffer.find("\15\12\15\12") != std::string::npos)
+            {
+                std::cout << "Got full head" << std::endl;
                 outf << "Received request________________________" << std::endl;
-                outf << str.str(); // DELETE AFTER DEBUG
+                outf << (*i)->buffer; // DELETE AFTER DEBUG
                 outf << "End request________________________" << std::endl;
-                (*i).buffer = str.str();
-                (*i).request = start((*i).buffer);
-                (*i).status = 1;
+                (*i)->request = start((*i)->buffer);
+                (*i)->status = 1;
             }
             else if (result <= 0)
             {
                 i = clients->erase(i);
                 std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
             }
+            std::cout << "Received request________________________" << std::endl;
+            std::cout << str.str() << std::endl;
+            std::cout << "End request________________________" << std::endl;
         }
     }
     outf.close();  // DELETE AFTER DEBUG
     return (EXIT_SUCCESS);
 }
 
-int check_outcoming_responces(fd_set *write_fds, std::list<t_client> *clients)
+int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients)
 {
     ssize_t result = 0;
     int exit_status = EXIT_SUCCESS;
-    for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
+    for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
-        std::cout << "Check ready for responce fd:" << (*i).socket << std::endl;
-        if (FD_ISSET((*i).socket, write_fds))
+        std::cout << "Check ready for responce fd:" << (*i)->socket << std::endl;
+        if (FD_ISSET((*i)->socket, write_fds) && (*i)->status)
         {
-            result = response(&(*i));
+            std::cout << "STATUS = " << (*i)->status << std::endl;
+            result = response(*i);
             if (result == -1)
             {
                 std::cerr << "send failed: " << strerror(errno) << std::endl;
@@ -161,14 +160,15 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client> *clients)
             }
             // close((*i).socket);
             // i = clients->erase(i);
-            (*i).status = 0;
+            (*i)->buffer = "";
+            (*i)->status = 0;
             std::cout << "Sended responce" << std::endl;
         }
     }
     return (exit_status);
 }
 
-int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client> *clients, fd_set *read_fds, fd_set *write_fds)
+int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client *> *clients, fd_set *read_fds, fd_set *write_fds)
 {
     int max_fd = -1;
     FD_ZERO(read_fds);
@@ -180,14 +180,14 @@ int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client> *c
             if ((*j).socket > max_fd)
                 max_fd = (*j).socket;
         }
-    for (std::list<t_client>::iterator i = clients->begin(); i != clients->end(); i++)
+    for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
-        std::cout << "Adding to read/write sets fd:" << (*i).socket << std::endl;
-        FD_SET((*i).socket, read_fds);
-        if ((*i).status == 1)
-            FD_SET((*i).socket, write_fds);
-        if ((*i).socket > max_fd)
-            max_fd = (*i).socket;
+        std::cout << "Adding to read/write sets fd:" << (*i)->socket << std::endl;
+        FD_SET((*i)->socket, read_fds);
+        if ((*i)->status == 1)
+            FD_SET((*i)->socket, write_fds);
+        if ((*i)->socket > max_fd)
+            max_fd = (*i)->socket;
     }
     return (max_fd);
 }
@@ -196,7 +196,7 @@ int master_process(std::vector<Server*> *servers){
     int result = 0;
     int max_fd = 0;
     fd_set read_fds,write_fds;
-    std::list<t_client> clients;
+    std::list<t_client *> clients;
 
     if (creating_socket_servers(servers) == EXIT_FAILURE)
         return (EXIT_FAILURE);
