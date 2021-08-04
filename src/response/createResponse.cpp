@@ -41,11 +41,11 @@ ssize_t response(s_client *client){
 	AResponse* response;
 
 	std::cout << "client check crushed ⛔️ <--" << std::endl;
-	client->request->getMethod();
+	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 	std::cout << "client check restored ✅ -->" << std::endl;
 
 	if (client->request->getErr() != 0){
-		response = new BadResponse(400, "./root");
+		response = new BadResponse(400, location->root);
 	}
 	else{
 		if (client->request->getMethod() == "GET"){
@@ -56,15 +56,19 @@ ssize_t response(s_client *client){
 			response = methodPost(client);
 
 		if (client->request->getMethod() == "HEAD"){
-			response = new BadResponse(405, "./root");
+//			response->setHead(1);
+			response = new BadResponse(405, location->root);
 		}
 
 		if (client->request->getMethod() == "DELETE")
 			response = methodDelete(client);
 
-		if (client->request->getMethod() == "PUT")
-			response = methodPut(client);
+		if (client->request->getMethod() == "PUT"){
+//			response = methodPut(client);
+			response = new BadResponse(405, location->root);
+		}
 	}
+
 	std::cout << response->generateHeader() << std::endl;
 	std::string buffer = response->generateResponse();
 

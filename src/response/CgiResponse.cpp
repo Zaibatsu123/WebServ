@@ -10,7 +10,18 @@
 CgiResponse::CgiResponse() : AResponse() {
 }
 
-CgiResponse::CgiResponse(const std::string &root, const std::string &fileName) : AResponse(root, fileName){
+CgiResponse::CgiResponse(const std::string &fileName) : AResponse("", fileName){
+}
+
+CgiResponse::CgiResponse(const CgiResponse &rhi){
+	*this = rhi;
+}
+
+CgiResponse & CgiResponse::operator=(const CgiResponse &rhi){
+	if (this == &rhi)
+		return *this;
+	AResponse::operator=(rhi);
+	return *this;
 }
 
 CgiResponse::~CgiResponse(){

@@ -1629,3 +1629,1108 @@ Content-Disposition: form-data; name="Submit"
 Submit
 ------WebKitFormBoundaryErn25cn5L6ZIKVzZ--
 End request________________________
+Received request________________________
+GET /index.html HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/upload
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /style.css HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /main.js HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: script
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg.jpg HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/style.css
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /test.php HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /upload.html HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+POST /upload HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Content-Length: 289
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:9099
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryapBW9jRnzlMqbMEz
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/upload.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+------WebKitFormBoundaryapBW9jRnzlMqbMEz
+Content-Disposition: form-data; name="myfile"; filename=""
+Content-Type: application/octet-stream
+
+End request________________________
+Received request________________________
+
+------WebKitFormBoundaryapBW9jRnzlMqbMEz
+Content-Disposition: form-data; name="Submit"
+
+Submit
+------WebKitFormBoundaryapBW9jRnzlMqbMEz--
+End request________________________
+Received request________________________
+GET /bg2.png HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /index.html HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/upload
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /style.css HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /main.js HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: script
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg.jpg HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/style.css
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg2.png HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET / HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+POST / HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Transfer-Encoding: chunked
+Content-Type: test/file
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+0
+
+End request________________________
+Received request________________________
+HEAD / HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+
+End request________________________
+Received request________________________
+GET /directory HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/youpi.bad_extension HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/youpi.bla HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/oulalala HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/nop HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/nop/ HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/nop/other.pouic HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/nop/other.pouac HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /directory/Yeah HTTP/1.1
+Host: localhost:9099
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+End request________________________
+Received request________________________
+GET /index.html HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/upload
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /style.css HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /main.js HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: script
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg.jpg HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/style.css
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg2.png HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /test.php HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /index.html HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/upload
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /style.css HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /main.js HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: script
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg.jpg HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/style.css
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg2.png HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /upload.html HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/index.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+POST /upload HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Content-Length: 289
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:9099
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryUZ5JmqgpiaHzD7Pc
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/upload.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+------WebKitFormBoundaryUZ5JmqgpiaHzD7Pc
+Content-Disposition: form-data; name="myfile"; filename=""
+Content-Type: application/octet-stream
+
+End request________________________
+Received request________________________
+
+------WebKitFormBoundaryUZ5JmqgpiaHzD7Pc
+Content-Disposition: form-data; name="Submit"
+
+Submit
+------WebKitFormBoundaryUZ5JmqgpiaHzD7Pc--
+End request________________________
+Received request________________________
+GET /upload.html HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Purpose: prefetch
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+POST /upload HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Content-Length: 537
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:9099
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryUsdcMimcSuLOZiq2
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/upload.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+------WebKitFormBoundaryUsdcMimcSuLOZiq2
+Content-Disposition: form-data; name="myfile"; filename="create_minikube.sh"
+Content-Type: text/x-sh
+End request________________________
+Received request________________________
+
+#!/bin/bash
+
+# mv ~/.brew ~/goinfre/.brew
+# ln -s ~/goinfre/.brew ~/.brew
+# mv ~/.minikube ~/goinfre/.minikube
+mkdir -p ~/goinfre/com.docker.docker/Data
+mkdir -p ~/goinfre/.minikube
+# ln -s ~/goinfre/.minikube ~/.minikube
+# brew install minikube
+------WebKitFormBoundaryUsdcMimcSuLOZiq2
+Content-Disposition: form-data; name="Submit"
+
+Submit
+------WebKitFormBoundaryUsdcMimcSuLOZiq2--
+End request________________________
+Received request________________________
+GET / HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /style.css HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /main.js HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: script
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg2.png HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /test.php HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /info.php HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Purpose: prefetch
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /teqwewqeqwe.faa HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /test.phpp HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Purpose: prefetch
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET / HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /style.css HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /main.js HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: script
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg.jpg HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/style.css
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg2.png HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET / HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /style.css HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /main.js HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: script
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /bg.jpg HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/style.css
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /test.php HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /test.php HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/test.php
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /test.php HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9099/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________
+Received request________________________
+GET /favicon.ico HTTP/1.1
+Host: localhost:9099
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Yandex";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.1108 Yowser/2.5 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:9099/test.php
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru,en;q=0.9
+
+End request________________________

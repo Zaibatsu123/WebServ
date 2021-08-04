@@ -14,6 +14,8 @@ class BadResponse : public AResponse {
 public:
 	BadResponse();
 	BadResponse(int status, const std::string & root);
+	BadResponse(const BadResponse & rhi);
+	BadResponse & operator=(const BadResponse & rhi);
 	~BadResponse();
 
 	std::string	generateResponse();

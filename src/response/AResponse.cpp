@@ -94,6 +94,22 @@ AResponse::AResponse(const std::string & root, const std::string & fileName) :
 	_allowedMethods.push_back("DELETE");
 }
 
+AResponse::AResponse(const AResponse &rhi){
+	*this = rhi;
+}
+
+AResponse & AResponse::operator=(const AResponse &rhi){
+	if (this == &rhi)
+		return *this;
+	_status = rhi._status;
+	_head = rhi._head;
+	_root = rhi._root;
+	_fileName = rhi._fileName;
+	_uplRoot = rhi._uplRoot;
+	_uplFileName = rhi._uplFileName;
+	return *this;
+}
+
 AResponse::~AResponse(){
 }
 

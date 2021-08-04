@@ -9,16 +9,24 @@
 
 AResponse* methodGet(s_client* client){
 	std::cout << "--> GET" << std::endl;
+	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
 	if (client->request->getPath().find(".php") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
 
-		int status = cgi(CGI, "./root" + client->request->getPath());
+		int status = cgi(CGI, location->root + client->request->getPath());
 
 		if (status)
-			return new BadResponse(status, "./root");
+			return new BadResponse(status, location->root);
 
-		return new CgiResponse("", "outputCGI.txt");
+		AResponse *a = new CgiResponse("outputCGI.txt");
+		if (a){
+
+			AResponse *b = new CgiResponse("");
+			b = a;
+			std::cout << b->getFileName() << std::endl;
+		}
+		return new CgiResponse("outputCGI.txt");
 	}
 
 	AResponse* resp = file_or_directory_existing(client);
@@ -30,19 +38,19 @@ AResponse* methodGet(s_client* client){
 
 AResponse* methodPost(s_client* client){
 	std::cout << "--> POST" << std::endl;
+	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
 	if (client->request->getBodyCnt().length() == 0){
 		std::cout << "--> Error: Empty body <--" << std::endl;
-		return new BadResponse(405, "./root");
+		return new BadResponse(405, location->root);
 	}
 
 	int status = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
 
 	if (status){
 		std::cout << "--> Error: Cannot create file <--" << std::endl;
-		return new BadResponse(status, "./root");
+		return new BadResponse(status, location->root);
 	}
-	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 	return new GoodResponse(location->root, "/uploadSuccess.html");
 }
 
@@ -50,29 +58,33 @@ AResponse* methodPost(s_client* client){
 
 AResponse*	methodDelete(s_client* client){
 	std::cout << "--> DELETE" << std::endl;
+	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
-	std::ifstream file("./root" + client->request->getPath());
+	std::ifstream file(location->root + client->request->getPath());
 	if (!file.is_open())
-		return new BadResponse(404, "./root");
+		return new BadResponse(404, location->root);
 	file.close();
 
-	int res = std::remove(("./root" + client->request->getPath()).c_str());
+	int res = std::remove((location->root + client->request->getPath()).c_str());
 	if (res == -1)
-		return new BadResponse(500, "./root");
+		return new BadResponse(500, location->root);
 
-	return new GoodResponse("./root", "/deleted.html");
+	return new GoodResponse(location->root, "/deleted.html");
 }
 
 
 
 AResponse*	methodPut(s_client* client){
-	std::ofstream file("./root" + client->request->getPath());
+	std::cout << "---> PUT" << std::endl;
+	t_location *location = get_location(client->request->getPath(), &client->server->locations);
+
+	std::ofstream file(location->root + client->request->getPath());
 	std::cout << client->request->getPath() << std::endl;
 	if (!file.is_open())
-		return new BadResponse(500, "./root");
+		return new BadResponse(500, location->root);
 	file << client->request->getBodyCnt();
 	file.close();
-	AResponse* res = new GoodResponse("./root", "");
+	AResponse* res = new GoodResponse(location->root, "");
 	res->setStatus(201);
 	return res;
 }

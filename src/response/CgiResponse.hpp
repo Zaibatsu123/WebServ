@@ -13,7 +13,9 @@
 class CgiResponse : public AResponse {
 public:
 	CgiResponse();
-	CgiResponse(const std::string & root, const std::string & fileName);
+	CgiResponse(const std::string & fileName);
+	CgiResponse(const CgiResponse & rhi);
+	CgiResponse & operator=(const CgiResponse & rhi);
 	~CgiResponse();
 
 	std::string	generateResponse();

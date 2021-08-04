@@ -42,6 +42,8 @@ protected:
 
 public:
 	AResponse();
+	AResponse(const AResponse& rhi);
+	AResponse & operator=(const AResponse & rhi);
 	virtual ~AResponse();
 
 	AResponse(const std::string & root, const std::string & fileName);
