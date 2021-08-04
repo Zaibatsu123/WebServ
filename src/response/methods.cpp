@@ -44,7 +44,10 @@ AResponse* methodPost(s_client* client, AResponse*){
 			return new BadResponse(500, "./root");
 		}
 		else
-			return new GoodResponse("./root", "/uploadSuccess.html");
+		{
+			t_location *location = get_location(client->request->getPath(), &client->server->locations);
+			return new GoodResponse(location->root, "/uploadSuccess.html");
+		}
 	}
 }
 

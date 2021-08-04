@@ -70,13 +70,20 @@ t_location *get_location(std::string root, std::map<std::string, t_location *> *
         return (NULL);
     do
     {
+        std::cout << "SEARCHING ROOT:|" << root << "|" << std::endl;
         if ((i = locations->find(root)) != locations->end())
+        {
+            std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
             return (i->second);
+        }
         root = rrepeats_from_end(alter_trim_end(root, "/"));
     }
     while (root.size() != 1);
     if ((i = locations->find(root)) != locations->end())
+    {
+        std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
         return (i->second);
+    }
     return (NULL);
 }
 
@@ -126,7 +133,7 @@ AResponse* file_or_directory_existing(t_client *client, AResponse *response)
     if ((dir = opendir(fullpath.c_str())) != NULL)
     {
         std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
-        file.open(fullpath + location->index);
+        file.open(fullpath + "/" + location->index);
         if (file.is_open())
         {
 			response->setRoot(fullpath);
@@ -141,7 +148,7 @@ AResponse* file_or_directory_existing(t_client *client, AResponse *response)
             return new AutoIndexResponse(str);
         }
 
-        return new BadResponse(403, "./root");
+        return new BadResponse(404, "./root");
     }
     file.open(fullpath);
     if (file.is_open())

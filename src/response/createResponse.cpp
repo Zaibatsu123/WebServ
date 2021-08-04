@@ -56,9 +56,7 @@ ssize_t response(s_client *client){
 
 		if (client->request->getMethod() == "HEAD"){
 			std::cout << "--> HEAD" << std::endl;
-			response = methodGet(client, response);
-			response->setHead(1);
-//			response->setStatus(204);
+			response = new BadResponse(405, "./root");
 		}
 
 		if (client->request->getMethod() == "DELETE")
