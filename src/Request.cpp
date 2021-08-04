@@ -64,12 +64,15 @@ void Request::getheaders(std::vector<std::string> request)
 		_host = trim(str.substr(5, str.length() - 5));
 }
 
-// void Request::getrequest(std::vector<std::string> request){
-// }
 
-void Request::post_fname_body(std::vector<std::string> request)
+void Request::postbody(std::string body_request) 
 {
 	
+	std::vector<std::string> body;
+	std::vector<std::string> request;
+
+	body = getarray(body_request);
+	request = splitvector(body, _boundary);
 	if (request.size() == 0)
 		return;
 	if (request[0].find("filename=") == std::string::npos )
@@ -78,7 +81,7 @@ void Request::post_fname_body(std::vector<std::string> request)
 	_filename = request[0].substr(fn + 10, request[0].length() - fn - 11);
 	for (size_t j = 0; j < request.size(); ++j)
 	{
-		if (request[j].compare(0, 14, "Content-Type: ") == 0)
+		if (!request[j].empty() && request[j].length() > 14 && request[j].compare(0, 14, "Content-Type: ") == 0)
 			_content_type = trim(request[j].substr(14, request[j].length() - 14));
 		if (request[j].empty() && j + 1 < request.size())
 		{
@@ -94,7 +97,7 @@ void Request::post_fname_body(std::vector<std::string> request)
 	}
 }
 
-void Request::postrequest(std::vector<std::string> request) 
+void Request::postheaders(std::vector<std::string> request) 
 {
 	// std::ofstream outf;                                  // DELETE AFTER DEBUG
     // outf.open( "hhh.txt", std::ios_base::app);
@@ -106,28 +109,15 @@ void Request::postrequest(std::vector<std::string> request)
 		{
 			str = request[i];
 			transform(str.begin(), str.end(), str.begin(), ::tolower);
-			if (str.compare(0, 16, "content-length: ") == 0)
+			if (!str.empty() && str.length() > 16 && str.compare(0, 16, "content-length: ") == 0)
 				_content_length = trim(str.substr(16, str.length() - 16));
-			else if (str.compare(0, 14, "content-type: ") == 0)
+			else if (!str.empty() &&  str.length() > 14 && str.compare(0, 14, "content-type: ") == 0)
 			{
 				if (request[i].find("boundary=") == std::string::npos)
 					break;
 				int bn = request[i].find("boundary=");
 				_content_type = trim(str.substr(14, str.length() - 14));
 				_boundary = "--" + request[i ].substr(bn + 9, request[i].length() - bn - 9);
-			}
-			else if (str.empty() && i + 1 < request.size())
-			{
-				post_fname_body(splitvector(request, _boundary));
-				for (size_t j = i + 1; j < request.size(); ++j)
-				{
-					std::cout << "\033[1;46m222\033[0m" << request[j] << std::endl;
-					if (j != request.size() - 1)
-						_body += request[j] + "\n";
-					else 
-						_body += request[j];
-				}
-				break;
 			}
 		}
 	// outf << "BODY CONTENT\n" << _body_content << std::endl;
@@ -176,7 +166,7 @@ void Request::strrequest(std::vector<std::string> request)
 		else if (request[i].compare(0, 4, "POST") == 0)
 		{
 			this->methodpath("POST", trim(request[i].substr(4, request[i].length() - 13)));
-			postrequest(request);
+			postheaders(request);
 		}
 		else if (request[i].compare(0, 6, "DELETE") == 0)
 			this->methodpath("DELETE", trim(request[i].substr(6, request[i].length() - 15)));

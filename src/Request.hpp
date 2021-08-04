@@ -52,8 +52,8 @@ public:
 	void strrequest(std::vector<std::string> request);
 	void getheaders(std::vector<std::string> request);
 	void methodpath(std::string method, std::string path);
-	// void getrequest(std::vector<std::string> request);
-	void postrequest(std::vector<std::string> request);
+	void postheaders(std::vector<std::string> request);
+	void postbody(std::string body_request);
 	void post_fname_body(std::vector<std::string> request);
 
 };

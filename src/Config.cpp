@@ -104,17 +104,17 @@ Server  *listen(Server *temp, std::string str, int i)
 		delete ts;
 		return (NULL);
 	}
-	std::string ip =  trim(str.substr(11, str.find(":") - 11));
-	ts->address = new char[strlen(ip.c_str()) + 1];
-	memcpy(ts->address, ip.c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
-	ts->address[strlen(ip.c_str())] = '\0';
 	try
 	{
+		std::string ip =  trim(str.substr(11, str.find(":") - 11));
+		ts->address = new char[strlen(ip.c_str()) + 1];
+		memcpy(ts->address, ip.c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
+		ts->address[strlen(ip.c_str())] = '\0';
 		ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "Configuration file:" << i + 1 << " Incorrect port" << std::endl;
+		std::cerr << "Configuration file:" << i + 1 << " Incorrect ip or port" << std::endl;
 		delete ts;
 		return (NULL);
 	}
