@@ -40,9 +40,9 @@ ssize_t response(s_client *client){
 	std::cout << "--------------------> Response part <------------ " << std::endl;
 	AResponse* response;
 
-	std::cout << "client check fail <--" << std::endl;
+	std::cout << "client check crushed ⛔️ <--" << std::endl;
 	client->request->getMethod();
-	std::cout << "client check work -->" << std::endl;
+	std::cout << "client check restored ✅ -->" << std::endl;
 
 	if (client->request->getErr() != 0){
 		response = new BadResponse(400, "./root");
