@@ -34,7 +34,7 @@ AResponse* methodPost(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
 	if (client->request->getBodyCnt().length() == 0){
-		std::cout << "--> Error: Empty body <--" << std::endl;
+		std::cout << "--> POST: Error: client sent invalid chunked body" << std::endl;
 		return new BadResponse(405, location->root);
 	}
 
@@ -71,11 +71,19 @@ AResponse*	methodPut(s_client* client){
 	std::cout << "---> PUT" << std::endl;
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
-	std::ofstream file(location->root + client->request->getPath());
+	std::cout << "PUT FileName" << std::endl;
+	std::cout << location->root + client->request->getPath() << std::endl;
+	std::cout << "PUT Data" << std::endl;
+	std::cout << client->request->getBodyCnt() << std::endl;
 
+//	if (client->request->getBodyCnt().length() == 0){
+//		std::cout << "--> PUT: Error: client sent invalid chunked body" << std::endl;
+//		return new BadResponse(405, location->root);
+//	}
+
+	std::ofstream file(location->root + client->request->getPath());
 	if (!file.is_open())
 		return new BadResponse(500, location->root);
-
 	file << client->request->getBodyCnt();
 	file.close();
 

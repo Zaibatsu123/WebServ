@@ -96,7 +96,7 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std:
 
 int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 {
-	char        read_buffer[1025];
+	char        read_buffer[1048576];
     std::string buffer;
     ssize_t     result = 0;
     std::ofstream outf;                                  // DELETE AFTER DEBUG
@@ -108,8 +108,8 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
         if (FD_ISSET((*i)->socket, read_fds))
         {
             std::stringstream str;
-            std::memset(read_buffer, 0, 1024);
-            result = recv((*i)->socket, read_buffer, 1024, 0);
+            std::memset(read_buffer, 0, 1048576);
+            result = recv((*i)->socket, read_buffer, 1048576, 0);
             std::cout << "Bytes read:|" << result << "|" << std::endl;
             if (static_cast<int>(result) == -1)
             {
@@ -118,15 +118,30 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
             }
             read_buffer[result] = '\0';
             str << read_buffer;
+			recvAcceptor(str.str());
             (*i)->buffer += str.str();
-            if ((*i)->buffer.find("\15\12\15\12") != std::string::npos)
+			size_t pos = (*i)->buffer.find("\15\12\15\12");
+            if ((*i)->status != 2 &&  pos != std::string::npos)
             {
-                std::cout << "Got full head" << std::endl;
+				(*i)->head = (*i)->buffer.substr(0, pos);
+				if ((*i)->buffer.size() > pos + 3)
+					(*i)->body = (*i)->buffer.substr(pos + 4);
+				(*i)->buffer = ""; // need to cleat
+				std::cout << "Got full head" << std::endl;
                 outf << "Received request________________________" << std::endl;
                 outf << (*i)->buffer; // DELETE AFTER DEBUG
                 outf << "End request________________________" << std::endl;
-                (*i)->request = start((*i)->buffer);
-                (*i)->status = 1;
+                (*i)->request = start((*i)->head);
+                if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT")
+					(*i)->status = 2;
+                else
+                	(*i)->status = 1;
+            }
+            else if ((*i)->status == 2 && (*i)->buffer.find((*i)->request->_boundary + "--") != std::string::npos){
+				(*i)->status = 1;
+				(*i)->body += (*i)->buffer;
+				(*i)->buffer = "";
+//				(*i)->request.get
             }
             else if (result <= 0)
             {

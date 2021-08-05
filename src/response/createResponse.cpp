@@ -64,11 +64,12 @@ ssize_t response(s_client *client){
 			response = methodDelete(client);
 
 		if (client->request->getMethod() == "PUT"){
-//			response = methodPut(client);
-			response = new BadResponse(405, location->root);
+			response = methodPut(client);
+//			response = new BadResponse(201, location->root);
 		}
 	}
-
+//	response = new GoodResponse("", "");
+//	response->setStatus(100);
 	std::cout << response->generateHeader() << std::endl;
 	std::string buffer = response->generateResponse();
 

@@ -39,13 +39,15 @@
 #define COLOR_GREEN "\e[32m"
 #define COLOR_GREY "\e[37m"
 
-typedef struct  s_client 
+typedef struct  s_client
 {
     Server      *server;
     int         socket;
     int         status;
     std::string buffer;
-    Request     *request;
+	std::string head;
+	std::string body;
+	Request     *request;
 }               t_client;
 
 //createResponse.cpp
@@ -58,6 +60,9 @@ AResponse*	methodPost(s_client* client);
 AResponse*	methodDelete(s_client* client);
 AResponse*	methodPut(s_client* client);
 int			upload(const std::string & uplFileName, const char *data);
+
+//requestAcceptor
+std::string recvAcceptor(const std::string & buffer);
 
 //cgiHandler.cpp
 int cgi(const std::string & cgiName, const std::string & pathToFile);
