@@ -141,7 +141,8 @@ AResponse* file_or_directory_existing(t_client *client)
         {
             std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
             std::string str = autoindex(fullpath.c_str(), client);
-            return new AutoIndexResponse(str);
+			return new BadResponse(404, location->root);
+//            return new AutoIndexResponse(str);
         }
 
         return new BadResponse(404, "./root");
