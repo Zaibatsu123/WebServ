@@ -118,7 +118,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
             }
             read_buffer[result] = '\0';
             str << read_buffer;
-			recvAcceptor(str.str());
+//			recvAcceptor(str.str());
             (*i)->buffer += str.str();
 			size_t pos = (*i)->buffer.find("\15\12\15\12");
             if ((*i)->status != 2 &&  pos != std::string::npos)
@@ -126,31 +126,35 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 				(*i)->head = (*i)->buffer.substr(0, pos);
 				if ((*i)->buffer.size() > pos + 3)
 					(*i)->body = (*i)->buffer.substr(pos + 4);
-				(*i)->buffer = ""; // need to cleat
 				std::cout << "Got full head" << std::endl;
-                outf << "Received request________________________" << std::endl;
-                outf << (*i)->buffer; // DELETE AFTER DEBUG
-                outf << "End request________________________" << std::endl;
                 (*i)->request = start((*i)->head);
-                if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT")
+                if (!(*i)->request->_boundary.empty() && ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT")){
+					std::cout << "----> Request HAVE POST" << std::endl;
+					std::cout << "----> Boundary: " << std::endl;
+					std::cout << (*i)->request->_boundary << std::endl;
 					(*i)->status = 2;
+                }
                 else
                 	(*i)->status = 1;
             }
             else if ((*i)->status == 2 && (*i)->buffer.find((*i)->request->_boundary + "--") != std::string::npos){
+				std::cout << "----> Got full BODY" << std::endl;
 				(*i)->status = 1;
 				(*i)->body += (*i)->buffer;
-				(*i)->buffer = "";
-//				(*i)->request.get
+				(*i)->request->postbody((*i)->body);
             }
             else if (result <= 0)
             {
                 i = clients->erase(i);
                 std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
             }
-            std::cout << "Received request________________________" << std::endl;
-            std::cout << str.str() << std::endl;
-            std::cout << "End request________________________" << std::endl;
+            else{
+				(*i)->body += (*i)->buffer;
+				outf << "Received request________________________" << std::endl;
+				outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
+				outf << "End request________________________" << std::endl;
+				(*i)->buffer = "";
+            }
         }
     }
     outf.close();  // DELETE AFTER DEBUG
@@ -164,7 +168,7 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients)
     for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
         std::cout << "Check ready for responce fd:" << (*i)->socket << std::endl;
-        if (FD_ISSET((*i)->socket, write_fds) && (*i)->status)
+        if (FD_ISSET((*i)->socket, write_fds) && (*i)->status == 1)
         {
             std::cout << "STATUS = " << (*i)->status << std::endl;
             result = response(*i);
@@ -230,6 +234,7 @@ int master_process(std::vector<Server*> *servers){
         if (check_outcoming_responces(&read_fds, &clients) == EXIT_FAILURE)
             std::cout << "Something wrong when responce sending!" << std::endl;
         std::cout << "Cycle ended" << std::endl;
+		usleep(100000);
 	}
     return (EXIT_SUCCESS);
 }
