@@ -48,6 +48,7 @@ typedef struct  s_client
 	std::string head;
 	std::string body;
 	Request     *request;
+	std::string responseBuffer;
 }               t_client;
 
 //createResponse.cpp

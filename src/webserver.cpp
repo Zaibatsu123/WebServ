@@ -179,8 +179,8 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients)
             }
             // close((*i).socket);
             // i = clients->erase(i);
-            (*i)->buffer = "";
-            (*i)->status = 0;
+            (*i)->buffer.clear();
+//            (*i)->status = 0;
             std::cout << "Sended responce" << std::endl;
         }
     }
@@ -234,7 +234,7 @@ int master_process(std::vector<Server*> *servers){
         if (check_outcoming_responces(&read_fds, &clients) == EXIT_FAILURE)
             std::cout << "Something wrong when responce sending!" << std::endl;
         std::cout << "Cycle ended" << std::endl;
-		usleep(100000);
+		usleep(1000);
 	}
     return (EXIT_SUCCESS);
 }
