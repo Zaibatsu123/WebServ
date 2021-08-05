@@ -83,6 +83,7 @@ std::string trim(std::string old_string);
 std::string trim_end(std::string old_string);
 std::string rslash_from_end(std::string string);
 std::string rduplicate_slashes(std::string string);
+std::vector<std::string> getarray(std::string req);
 
 std::string alter_trim_end(std::string old_string, std::string elems);
 std::string rrepeats_from_end(std::string string);
