@@ -168,6 +168,7 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients)
     for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
         std::cout << "Check ready for responce fd:" << (*i)->socket << std::endl;
+		std::cout << "----------------FDSet: " << FD_ISSET((*i)->socket, write_fds) << " status: " << (*i)->status << std::endl;
         if (FD_ISSET((*i)->socket, write_fds) && (*i)->status == 1)
         {
             std::cout << "STATUS = " << (*i)->status << std::endl;
@@ -224,7 +225,7 @@ int master_process(std::vector<Server*> *servers){
         std::cout << "Cycle started" << max_fd << std::endl;
         if ((max_fd = adding_sockets_to_sets(servers, &clients, &read_fds, &write_fds)) == -1)
             std::cout << "Something wrong when work with sets!" << std::endl;
-        if ((result = select(max_fd + 1, &read_fds, NULL, NULL, NULL)) == -1)
+        if ((result = select(max_fd + 1, &read_fds, &write_fds, NULL, NULL)) == -1)
             std::cout << "Select error: " << strerror(errno) << std::endl;
         std::cout << "After select:" << result << std::endl;
         if (connecting_new_clients(&read_fds, servers, &clients) == EXIT_FAILURE)

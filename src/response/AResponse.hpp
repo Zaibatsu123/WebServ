@@ -38,7 +38,6 @@ protected:
 
 	size_t		_calculateFileSize() const;
 	std::string	_indicateFileType() const;
-	std::string _dateTime() const;
 
 public:
 	AResponse();

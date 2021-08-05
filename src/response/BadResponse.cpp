@@ -40,7 +40,6 @@ std::string BadResponse::generateHeader() {
 		<< _status << " "
 		<< _code[_status] << std::endl
 		<< "Server: Equal-Rights/0.1.23" << std::endl
-		<< "Date: " << _dateTime()
 		<< "Content-Type: " << _indicateFileType() << std::endl
 		<< "Content-Length: " << _calculateFileSize() << std::endl
 //		TODO: need alive or close?

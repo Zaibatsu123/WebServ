@@ -113,11 +113,6 @@ AResponse & AResponse::operator=(const AResponse &rhi){
 AResponse::~AResponse(){
 }
 
-std::string AResponse::_dateTime() const{
-	time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	return ctime(&time);
-}
-
 std::string AResponse::_indicateFileType() const{
 	std::map<std::string, std::string>::iterator it;
 	for (it = _fileTypes.begin(); it != _fileTypes.end(); ++it){
