@@ -14,6 +14,8 @@ class GoodResponse : public AResponse {
 public:
 	GoodResponse();
 	GoodResponse(const std::string & root, const std::string & fileName);
+	GoodResponse(const GoodResponse & rhi);
+	GoodResponse & operator=(const GoodResponse & rhi);
 	~GoodResponse();
 
 	std::string	generateResponse();

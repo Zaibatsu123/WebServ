@@ -13,6 +13,17 @@ GoodResponse::GoodResponse() : AResponse() {
 GoodResponse::GoodResponse(const std::string &root, const std::string &fileName) : AResponse(root,fileName){
 }
 
+GoodResponse::GoodResponse(const GoodResponse &rhi){
+	*this = rhi;
+}
+
+GoodResponse & GoodResponse::operator=(const GoodResponse &rhi){
+	if (this == &rhi)
+		return *this;
+	AResponse::operator=(rhi);
+	return *this;
+}
+
 GoodResponse::~GoodResponse(){
 }
 

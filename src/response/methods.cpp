@@ -19,13 +19,6 @@ AResponse* methodGet(s_client* client){
 		if (status)
 			return new BadResponse(status, location->root);
 
-		AResponse *a = new CgiResponse("outputCGI.txt");
-		if (a){
-
-			AResponse *b = new CgiResponse("");
-			b = a;
-			std::cout << b->getFileName() << std::endl;
-		}
 		return new CgiResponse("outputCGI.txt");
 	}
 
@@ -79,11 +72,13 @@ AResponse*	methodPut(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
 	std::ofstream file(location->root + client->request->getPath());
-	std::cout << client->request->getPath() << std::endl;
+
 	if (!file.is_open())
 		return new BadResponse(500, location->root);
+
 	file << client->request->getBodyCnt();
 	file.close();
+
 	AResponse* res = new GoodResponse(location->root, "");
 	res->setStatus(201);
 	return res;

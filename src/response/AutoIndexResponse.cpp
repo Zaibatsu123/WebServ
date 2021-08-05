@@ -14,6 +14,17 @@ AutoIndexResponse::AutoIndexResponse(const std::string & content) : AResponse(""
 	_body = content;
 }
 
+AutoIndexResponse::AutoIndexResponse(const AutoIndexResponse &rhi){
+	*this = rhi;
+}
+
+AutoIndexResponse & AutoIndexResponse::operator=(const AutoIndexResponse &rhi){
+	if (this == &rhi)
+		return *this;
+	AResponse::operator=(rhi);
+	return *this;
+}
+
 AutoIndexResponse::~AutoIndexResponse(){
 }
 

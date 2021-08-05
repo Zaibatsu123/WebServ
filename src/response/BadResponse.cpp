@@ -14,6 +14,17 @@ BadResponse::BadResponse(int status, const std::string &root) : AResponse(root,"
 	_status = status;
 }
 
+BadResponse::BadResponse(const BadResponse &rhi){
+	*this = rhi;
+}
+
+BadResponse & BadResponse::operator=(const BadResponse &rhi){
+	if (this == &rhi)
+		return *this;
+	AResponse::operator=(rhi);
+	return *this;
+}
+
 BadResponse::~BadResponse(){
 }
 

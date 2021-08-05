@@ -14,6 +14,8 @@ class AutoIndexResponse : public AResponse {
 public:
 	AutoIndexResponse();
 	AutoIndexResponse(const std::string & content);
+	AutoIndexResponse(const AutoIndexResponse & rhi);
+	AutoIndexResponse & operator=(const AutoIndexResponse & rhi);
 	~AutoIndexResponse();
 
 	std::string	generateResponse();
