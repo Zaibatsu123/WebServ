@@ -1,0 +1,352 @@
+Start configuration reading
+---------===SERVER===---------num: 1
+---------===Sockets===---------
+Running on http://127.0.0.1:9099/ (Press CTRL+C to quit)
+---------===locations===---------size1
+location: /
+second: youpi.bad_extension
+autoindex: 1 root: ./root
+index: youpi.bad_extension methods: 0
+---------======---------
+[37mLoading complete.[0m
+[32mWelcome to Equal Rights WebServer.[0m
+[31mWARNING: This is development server. Do not use it in a production deployment.[0m
+Use a production WSGI server instead.[0m
+Running on http://127.0.0.1:9099/ (Press CTRL+C to quit)
+Cycle started0
+After select:1
+Connected new client
+Check for request fd:5 status: 0
+Check ready for responce fd:5SET STATUS: 0, status:0
+Cycle ended
+Cycle started4
+Adding to read/write sets fd:5
+After select:1
+Connected new client
+Check for request fd:5 status: 0
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 0, status:0
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started5
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|714|
+Got full head
+GET /upload.html HTTP/1.1
+Host: 127.0.0.1:9099
+Connection: keep-alive
+sec-ch-ua: "Chromium";v="88", "Google Chrome";v="88", ";Not A Brand";v="99"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://127.0.0.1:9099/upload
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7710
+/upload.html
+[1;46m0[0m
+-----------> Try to find boundary! --
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:1
+STATUS = 1
+--------------------> Response part <------------ 
+Data size to send:	0
+client check crushed ⛔️ <--
+SEARCHING ROOT:|/upload.html|
+ROOT FINDED:|/|
+client check restored ✅ -->
+--> GET
+SEARCHING ROOT:|/upload.html|
+ROOT FINDED:|/|
+AUTOINDEX ENTER
+SEARCHING ROOT:|/upload.html|
+ROOT FINDED:|/|
+directory: ./root
+path: /upload.html
+full: ./root/upload.html
+File is finded with name:|./root/upload.html|
+HTTP/1.1 200 OK
+Server: Equal-Rights/0.1.23
+Date: Thu Aug  5 21:31:01 2021
+Content-Type: text/html
+Content-Length: 566
+Connection: keep-alive
+
+
+---- Pack:
+Data Left:	      709
+Send Result:	      709
+All data send. Clear buffer.
+--------------------> Response END <------------ 
+Sended responce
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|66418|
+Got full head
+POST /upload HTTP/1.1
+Host: 127.0.0.1:9099
+Connection: keep-alive
+Content-Length: 10755653
+Cache-Control: max-age=0
+sec-ch-ua: "Chromium";v="88", "Google Chrome";v="88", ";Not A Brand";v="99"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+Origin: http://127.0.0.1:9099
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryJ8Py7ERqtYWqxzDA
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://127.0.0.1:9099/upload.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7878
+/upload
+[1;46m1[0m
+[1;46m0[0m
+----> Request HAVE POST
+----> Boundary: 
+------WebKitFormBoundaryJ8Py7ERqtYWqxzDA
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|589824|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|638976|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:2
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 32
+Bytes read:|515653|
+-----------> Try to find boundary! ------WebKitFormBoundaryJ8Py7ERqtYWqxzDA--
+----> Got full BODY
+--------->3 BODY SIZE: 10822071
+--------->4 BODY SIZE: 65747
+Check for request fd:6 status: 0
+Check ready for responce fd:5SET STATUS: 32, status:1
+STATUS = 1
+--------------------> Response part <------------ 
+Data size to send:	0
+client check crushed ⛔️ <--
+SEARCHING ROOT:|/upload|
+ROOT FINDED:|/|
+client check restored ✅ -->
+--> POST
+SEARCHING ROOT:|/upload|
+ROOT FINDED:|/|
+---------> 1 BODY SIZE: 65747
+---------> BODY SIZE: 65747
+upload to: Tolstoy Leo. War and Peace - royallib.com.txt
+HTTP/1.1 200 OK
+Server: Equal-Rights/0.1.23
+Date: Thu Aug  5 21:31:07 2021
+Content-Type: text/html
+Content-Length: 453
+Connection: keep-alive
+
+
+---- Pack:
+Data Left:	      596
+Send Result:	      596
+All data send. Clear buffer.
+--------------------> Response END <------------ 
+Sended responce
+Check ready for responce fd:6SET STATUS: 0, status:0
+Cycle ended
+Cycle started6
+Adding to read/write sets fd:5
+Adding to read/write sets fd:6
+After select:1
+Check for request fd:5 status: 0
+Check for request fd:6 status: 64
+Bytes read:|0|
+Error occured when receive message from client!Operation timed out

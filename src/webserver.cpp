@@ -94,6 +94,31 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std:
     return (EXIT_SUCCESS);
 }
 
+char	*ft_strnstr(char *haystack, char *needle, size_t len)
+{
+	size_t a;
+	size_t b;
+
+	a = 0;
+	b = 0;
+	if (strlen(needle) == 0)
+		return (haystack);
+	while (a < len)
+	{
+		if (haystack[a] == needle[b])
+		{
+			while ((haystack[a + b] == needle[b]) &&
+					((int)a + (int)b < (int)strlen(haystack)))
+				++b;
+			if ((int)b == (int)strlen(needle) && (a + b <= len))
+				return (&haystack[a]);
+		}
+		b = 0;
+		++a;
+	}
+	return (NULL);
+}
+
 int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 {
 	char        read_buffer[1048576];
@@ -118,7 +143,6 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
             }
             read_buffer[result] = '\0';
             str << read_buffer;
-//			recvAcceptor(str.str());
             (*i)->buffer += str.str();
 			size_t pos = (*i)->buffer.find("\15\12\15\12");
             if ((*i)->status != 2 &&  pos != std::string::npos)
@@ -137,24 +161,31 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
                 else
                 	(*i)->status = 1;
             }
-            else if ((*i)->status == 2 && (*i)->buffer.find((*i)->request->_boundary + "--") != std::string::npos){
-				std::cout << "----> Got full BODY" << std::endl;
-				(*i)->status = 1;
-				(*i)->body += (*i)->buffer;
-				(*i)->request->postbody((*i)->body);
-            }
             else if (result <= 0)
             {
                 i = clients->erase(i);
                 std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
             }
+            std::string temp = (*i)->request->_boundary + "--";
+            std::cout << "-----------> " << "Try to find boundary! " << temp << std::endl;
+            if ((*i)->status == 2 && (*i)->buffer.find((*i)->request->_boundary + "--") != std::string::npos){
+				std::cout << "----> Got full BODY" << std::endl;
+				(*i)->status = 1;
+				(*i)->body += (*i)->buffer;
+                std::cout << "--------->3 BODY SIZE: " << (*i)->body.size() << std::endl;
+				(*i)->request->postbody((*i)->body);
+                std::cout << "--------->4 BODY SIZE: " << (*i)->request->_body_content.size() << std::endl;
+            }
             else{
 				(*i)->body += (*i)->buffer;
-				outf << "Received request________________________" << std::endl;
-				outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
-				outf << "End request________________________" << std::endl;
+                outf << "Received request________________________" << std::endl;
+                outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
+                outf << "End request________________________" << std::endl;
 				(*i)->buffer = "";
             }
+            outf << "Received request________________________" << std::endl;
+            outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
+            outf << "End request________________________" << std::endl;
         }
     }
     outf.close();  // DELETE AFTER DEBUG
@@ -163,12 +194,14 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 
 int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients)
 {
+    (void)write_fds;
     ssize_t result = 0;
     int exit_status = EXIT_SUCCESS;
     for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
-        std::cout << "Check ready for responce fd:" << (*i)->socket << std::endl;
-        if (FD_ISSET((*i)->socket, write_fds) && (*i)->status == 1)
+        //FD_ISSET((*i)->socket, write_fds);
+        std::cout << "Check ready for responce fd:" << (*i)->socket << "SET STATUS: " << FD_ISSET((*i)->socket, write_fds) << ", status:" << (*i)->status << std::endl;
+        if ((*i)->status == 1)
         {
             std::cout << "STATUS = " << (*i)->status << std::endl;
             result = response(*i);
@@ -224,7 +257,7 @@ int master_process(std::vector<Server*> *servers){
         std::cout << "Cycle started" << max_fd << std::endl;
         if ((max_fd = adding_sockets_to_sets(servers, &clients, &read_fds, &write_fds)) == -1)
             std::cout << "Something wrong when work with sets!" << std::endl;
-        if ((result = select(max_fd + 1, &read_fds, NULL, NULL, NULL)) == -1)
+        if ((result = select(max_fd + 1, &read_fds, &write_fds, NULL, NULL)) == -1)
             std::cout << "Select error: " << strerror(errno) << std::endl;
         std::cout << "After select:" << result << std::endl;
         if (connecting_new_clients(&read_fds, servers, &clients) == EXIT_FAILURE)

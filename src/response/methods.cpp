@@ -37,7 +37,7 @@ AResponse* methodPost(s_client* client){
 		std::cout << "--> POST: Error: client sent invalid chunked body" << std::endl;
 		return new BadResponse(405, location->root);
 	}
-
+	std::cout << "---------> 1 BODY SIZE: " << client->request->getBodyCnt().size() << std::endl;
 	int status = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
 
 	if (status){
@@ -100,7 +100,7 @@ int upload(const std::string & uplFileName, const char *data) {
 		std::cout << "--> Error: Empty File <--" << std::endl;
 		return EXIT_FAILURE;
 	}
-
+	std::cout << "---------> BODY SIZE: " << strlen(data) << std::endl;
 	std::cout << "upload to: " << uplFileName << std::endl;
 	std::ofstream dstFile;
 	dstFile.open(uplFileName.c_str(), std::ofstream::out);
