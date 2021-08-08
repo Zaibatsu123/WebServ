@@ -55,6 +55,7 @@ ssize_t response(s_client *client){
 	std::cout << "client check crushed ⛔️ <--" << std::endl;
 	client->request->getMethod();
 	client->request->getErr();
+	std::cout << "kek" << std::endl;
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 	if (location == NULL){
 		std::cout << " ---> Broken location <---" << std::endl;

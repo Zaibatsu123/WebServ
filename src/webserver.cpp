@@ -84,6 +84,7 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std:
                 new_client = new t_client;
                 new_client->socket = new_client_socket;
                 new_client->status = 0;
+                new_client->getRequestHead = 0;
                 new_client->responseNotSend = false;
                 new_client->request = NULL;
                 new_client->server = (*i);
@@ -95,9 +96,29 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std:
     return (EXIT_SUCCESS);
 }
 
+std::string readRequest(s_client* client, ssize_t *status){
+	std::stringstream	str;
+	ssize_t				result = 0;
+	char				read_buffer[MiB];
+	std::string			buffer;
+
+	std::memset(read_buffer, 0, MiB);
+	result = recv(client->socket, read_buffer, MiB, 0);
+	*status = result;
+	std::cout << "Bytes read:|" << result << "|" << std::endl;
+	if (static_cast<int>(result) == -1)
+	{
+		perror("Somthing goes wrong, when receiving message");
+		return "";
+	}
+	read_buffer[result] = '\0';
+	buffer = read_buffer;
+	return buffer;
+}
+
 int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 {
-	char        read_buffer[1048576];
+//	char        read_buffer[MiB];
     std::string buffer;
     ssize_t     result = 0;
     std::ofstream outf;                                  // DELETE AFTER DEBUG
@@ -108,54 +129,116 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
         std::cout << "Check for request fd:" << (*i)->socket << " status: " << FD_ISSET((*i)->socket, read_fds) << std::endl;
         if (FD_ISSET((*i)->socket, read_fds))
         {
-            std::stringstream str;
-            std::memset(read_buffer, 0, 1048576);
-            result = recv((*i)->socket, read_buffer, 1048576, 0);
-            std::cout << "Bytes read:|" << result << "|" << std::endl;
-            if (static_cast<int>(result) == -1)
-            {
-                perror("Somthing goes wrong, when receiving message");
-                break;
-            }
-            read_buffer[result] = '\0';
-            str << read_buffer;
-//			recvAcceptor(str.str());
-            (*i)->buffer += str.str();
-			size_t pos = (*i)->buffer.find("\15\12\15\12");
-            if ((*i)->status != 2 &&  pos != std::string::npos)
-            {
-				(*i)->head = (*i)->buffer.substr(0, pos);
-				if ((*i)->buffer.size() > pos + 3)
-					(*i)->body = (*i)->buffer.substr(pos + 4);
-				std::cout << "Got full head" << std::endl;
-                (*i)->request = start((*i)->head);
-                if (!(*i)->request->_boundary.empty() && ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT")){
-					std::cout << "----> Request HAVE POST" << std::endl;
-					std::cout << "----> Boundary: " << std::endl;
-					std::cout << (*i)->request->_boundary << std::endl;
-					(*i)->status = 2;
-                }
-                else
-                	(*i)->status = 1;
-            }
-            else if ((*i)->status == 2 && (*i)->buffer.find((*i)->request->_boundary + "--") != std::string::npos){
-				std::cout << "----> Got full BODY" << std::endl;
-				(*i)->status = 1;
-				(*i)->body += (*i)->buffer;
-				(*i)->request->postbody((*i)->body);
-            }
-            else if (result <= 0)
-            {
+			(*i)->buffer += readRequest(*i, &result);
+			if (result <= 0){
                 i = clients->erase(i);
                 std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
             }
-            else{
+			if ((*i)->getRequestHead == 0){
+				std::cout << " --> Read Head" << std::endl;
+				size_t pos = (*i)->buffer.find("\15\12\15\12");
+				if (pos == std::string::npos){
+					(*i)->head += (*i)->buffer;
+					continue;
+				}
+				std::cout << " --> Got full head" << std::endl;
+				(*i)->head += (*i)->buffer.substr(0, pos); // TODO: substr direct to start()
+				std::cout << std::endl << "================== Response HEAD =====================" << std::endl;
+				std::cout << (*i)->head << std::endl;
+				std::cout << "================== Response HEAD =====================" << std::endl << std::endl;
+				(*i)->request = start((*i)->head);
+				if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT"){
+					std::cout << " --> Request have body" << std::endl;
+//					(*i)->status = 2;
+					(*i)->getRequestHead = 1;
+					if ((*i)->buffer.length() > (*i)->head.length() + 4)
+						(*i)->body = (*i)->buffer.substr(pos + 5);
+					if ((*i)->request->_boundary.empty())
+						(*i)->needle = "0\15\12\15\12";
+					else
+						(*i)->needle = (*i)->request->_boundary + "--";
+				}
+				else{
+					std::cout << " --> Request have not body" << std::endl;
+					(*i)->getRequestHead = 0;
+					(*i)->status = 1;
+				}
+				(*i)->buffer.clear();
+				(*i)->head.clear();
+//				continue;
+			}
+			if ((*i)->getRequestHead == 1){
+				std::cout << " --> Read Body" << std::endl;
 				(*i)->body += (*i)->buffer;
-				outf << "Received request________________________" << std::endl;
-				outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
-				outf << "End request________________________" << std::endl;
-				(*i)->buffer = "";
-            }
+				size_t pos = (*i)->body.find((*i)->needle);
+				if (pos == std::string::npos){
+					std::cout << std::endl << "========================== Response BODY ==============================" << std::endl;
+					std::cout << (*i)->body << std::endl;
+					std::cout << "========================== Response BODY ==============================" << std::endl << std::endl;
+					std::cout << "Body size: " << (*i)->body.length() << std::endl;
+					continue;
+				}
+				std::cout << "Got full body" << std::endl;
+				(*i)->getRequestHead = 0;
+				(*i)->status = 1;
+				(*i)->body = (*i)->body.substr(0, pos + (*i)->needle.length());
+				std::cout << std::endl << "========================== Response BODY ==============================" << std::endl;
+				std::cout << (*i)->body << std::endl;
+				std::cout << "========================== Response BODY ==============================" << std::endl << std::endl;
+				(*i)->request->postbody((*i)->body);
+				if ((*i)->buffer.size() > pos + 5)
+					(*i)->head = (*i)->body.substr(pos + (*i)->needle.length() + 1);
+				(*i)->buffer.clear();
+				(*i)->body.clear();
+			}
+//            std::stringstream str;
+//            std::memset(read_buffer, 0, MiB);
+//            result = recv((*i)->socket, read_buffer, MiB, 0);
+//            std::cout << "Bytes read:|" << result << "|" << std::endl;
+//            if (static_cast<int>(result) == -1)
+//            {
+//                perror("Somthing goes wrong, when receiving message");
+//                break;
+//            }
+//            read_buffer[result] = '\0';
+//            str << read_buffer;
+////			recvAcceptor(str.str());
+//            (*i)->buffer += str.str();
+//			size_t pos = (*i)->buffer.find("\15\12\15\12");
+//            if ((*i)->status != 2 &&  pos != std::string::npos)
+//            {
+//				(*i)->head = (*i)->buffer.substr(0, pos);
+//				if ((*i)->buffer.size() > pos + 3)
+//					(*i)->body = (*i)->buffer.substr(pos + 4);
+//				std::cout << "Got full head" << std::endl;
+//                (*i)->request = start((*i)->head);
+//                if (!(*i)->request->_boundary.empty() && ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT")){
+//					std::cout << "----> Request HAVE POST" << std::endl;
+//					std::cout << "----> Boundary: " << std::endl;
+//					std::cout << (*i)->request->_boundary << std::endl;
+//					(*i)->status = 2;
+//                }
+//                else
+//                	(*i)->status = 1;
+//            }
+//            else if ((*i)->status == 2 && (*i)->buffer.find((*i)->request->_boundary + "--") != std::string::npos){
+//				std::cout << "----> Got full BODY" << std::endl;
+//				(*i)->status = 1;
+//				(*i)->body += (*i)->buffer;
+//				(*i)->request->postbody((*i)->body);
+//            }
+//            else if (result <= 0)
+//            {
+//                i = clients->erase(i);
+//                std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
+//            }
+//            else{
+//				(*i)->body += (*i)->buffer;
+//				outf << "Received request________________________" << std::endl;
+//				outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
+//				outf << "End request________________________" << std::endl;
+//				(*i)->buffer = "";
+//            }
         }
     }
     outf.close();  // DELETE AFTER DEBUG

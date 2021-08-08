@@ -74,8 +74,8 @@ Request *start(std::string str_req)
 {
 	Request *request = new Request;
 	std::vector<std::string> vect_req;
-	std::cout  << str_req << str_req.length()<< std::endl;
-	try 
+//	std::cout  << str_req << str_req.length()<< std::endl;
+	try
 	{
 		vect_req = getarray(str_req);
 	}

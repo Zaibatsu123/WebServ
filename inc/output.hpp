@@ -34,8 +34,8 @@
 
 #define CGI "./root/cgi_tester"
 
-
-#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
+#define MiB 1048576
+//#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
 
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"
@@ -47,9 +47,11 @@ typedef struct  s_client
     Server      *server;
     int         socket;
     int         status;
+    int         getRequestHead;
     std::string buffer;
 	std::string head;
 	std::string body;
+	std::string needle;
 	Request     *request;
 	std::string responseBuffer;
 	bool 		responseNotSend;

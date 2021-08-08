@@ -43,6 +43,7 @@ std::string GoodResponse::generateHeader() {
 //		str	<< "Transfer-Encoding: chunked" << "\r\n";
 	str	<< "Content-Type: " << _indicateFileType() << "\r\n"
 		<< "Content-Length: " << _calculateFileSize() << "\r\n"
+		<< "Accept-Encoding: identity" << "\r\n"
 		<< "Connection: keep-alive" << "\r\n"
 		<< "\r\n";
 	return str.str();
