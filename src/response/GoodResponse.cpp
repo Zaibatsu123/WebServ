@@ -37,12 +37,14 @@ std::string GoodResponse::generateHeader() {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
-		<< _code[_status] << std::endl
-		<< "Server: Equal-Rights/0.1.23" << std::endl
-		<< "Content-Type: " << _indicateFileType() << std::endl
-		<< "Content-Length: " << _calculateFileSize() << std::endl
-		<< "Connection: keep-alive" << std::endl
-		<< std::endl;
+		<< _code[_status] << "\r\n"
+		<< "Server: Equal-Rights/0.1.23" << "\r\n";
+//	if (getFileName().find(".jpg") != std::string::npos || getFileName().find(".png") != std::string::npos)
+//		str	<< "Transfer-Encoding: chunked" << "\r\n";
+	str	<< "Content-Type: " << _indicateFileType() << "\r\n"
+		<< "Content-Length: " << _calculateFileSize() << "\r\n"
+		<< "Connection: keep-alive" << "\r\n"
+		<< "\r\n";
 	return str.str();
 }
 

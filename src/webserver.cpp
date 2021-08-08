@@ -84,6 +84,7 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std:
                 new_client = new t_client;
                 new_client->socket = new_client_socket;
                 new_client->status = 0;
+                new_client->responseNotSend = false;
                 new_client->request = NULL;
                 new_client->server = (*i);
                 fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
@@ -232,7 +233,7 @@ int master_process(std::vector<Server*> *servers){
             std::cout << "Something wrong when new client accepting!" << std::endl;
         if (check_incoming_requests(&read_fds, &clients) == EXIT_FAILURE)
             std::cout << "Something wrong when request receiving!" << std::endl;
-        if (check_outcoming_responces(&read_fds, &clients) == EXIT_FAILURE)
+        if (check_outcoming_responces(&write_fds, &clients) == EXIT_FAILURE)
             std::cout << "Something wrong when responce sending!" << std::endl;
         std::cout << "Cycle ended" << std::endl;
 		usleep(1000);

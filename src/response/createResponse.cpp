@@ -7,62 +7,38 @@
 
 #include "../../inc/output.hpp"
 
-ssize_t sendall(int socket, std::string & buffer, int flags){
-	ssize_t result;
-	int it = 1;
-	do {
-		if ((result = send(socket, buffer.c_str(),buffer.length(), flags)) == -1)
-			std::cout << "SEND ERROR: " << result << strerror(errno) << std::endl;
-		if (static_cast<int>(result) == -1)
+ssize_t sendall(s_client* client){
+	ssize_t result = 0;
+
+	if (client->responseNotSend){
+		result = send(client->socket, client->responseBuffer.c_str(), client->responseBuffer.length(), MSG_NOSIGNAL);
+
+		if (static_cast<int>(result) == -1 || static_cast<int>(result) == 0){
 			perror("");
+			return result;
+		}
 		std::cout
-				<< "---- Pack: " << it++ << "\n"
-				<< "Data Left:\t" << buffer.length() << "\n"
+				<< "---- Pack: " << "\n"
+				<< "Data Left:\t" << client->responseBuffer.length() << "\n"
 				<< "Send Result:\t" << result
 				<< std::endl;
 
 		//TODO: delete sleep for delay after send
 		usleep(1000);
 
-		if (result == static_cast<ssize_t>(buffer.length()))
-			break;
+		if (result == static_cast<ssize_t>(client->responseBuffer.length())){
+			std::cout << "All data was send. Clear buffer." << std::endl;
+			client->responseBuffer.clear();
+			client->responseNotSend = false;
+			client->status = 0;
+			return result;
+		}
 		try{
-			buffer = buffer.substr(result);
+			client->responseBuffer = client->responseBuffer.substr(result);
 		}
 		catch (std::exception & e){
 			std::cout << e.what() << std::endl;
 		}
-	} while (result);
-	return result;
-}
-
-ssize_t sendall2(s_client *client){
-	ssize_t result;
-
-	result = send(client->socket, client->responseBuffer.c_str(), client->responseBuffer.length(), MSG_NOSIGNAL);
-
-	std::cout << "---- Pack:" << std::endl;
-	std::cout << "Data Left:\t" << std::setw(9) << client->responseBuffer.length() << std::endl;
-	std::cout << "Send Result:\t" << std::setw(9) << result << std::endl;
-	if (result == static_cast<ssize_t>(client->responseBuffer.length())) {
-		std::cout << "All data send. Clear buffer." << std::endl;
-		client->responseBuffer.clear();
-		client->status = 0;
-		client->buffer.clear();
-	}
-	else if (result > 0 && result < static_cast<ssize_t>(client->responseBuffer.length())){
-		std::cout << "Not all data send. Save buffer." << std::endl;
-		client->responseBuffer = client->responseBuffer.substr(result);
-		client->status = 1;
-	}
-	else if (result == 0){
-		std::cout << "I have no data to send. Clear buffer." << std::endl;
-		client->responseBuffer.clear();
-		client->status = 0;
-		client->buffer.clear();
-	}
-	else if (result < 0){
-		std::perror("Send: ");
 	}
 	return result;
 }
@@ -72,11 +48,8 @@ ssize_t response(s_client *client){
 	AResponse* response;
 	ssize_t result;
 
-	std::cout << "Data size to send:\t" << client->responseBuffer.length() << std::endl;
-	if (!client->responseBuffer.empty()){
-		std::cout << "--> Response have data to send" << std::endl;
-		usleep(1000);
-		return sendall2(client);
+	if (client->responseNotSend){
+		return sendall(client);
 	}
 
 	std::cout << "client check crushed ⛔️ <--" << std::endl;
@@ -110,16 +83,131 @@ ssize_t response(s_client *client){
 		}
 	}
 
-	std::cout << response->generateHeader() << std::endl;
+	std::cout << response->generateHeader();
+
 	client->responseBuffer = response->generateResponse();
+	client->responseNotSend = true;
 
-
-	result = sendall2(client);
-//	result = sendall(client->socket, buffer, MSG_NOSIGNAL);
+	client->buffer.clear();
+	result = sendall(client);
 
 	delete response;
-	delete client->request;
+//	delete client->request;
 	std::cout << "--------------------> Response END <------------ " << std::endl;
 	return result;
 }
 
+//ssize_t sendall(s_client* client){
+//	ssize_t result = 0;
+//	std::string currentBuf;
+//	std::string tmp;
+//	size_t bufferSize = 262144;
+//
+//	if (client->responseNotSend){
+//		currentBuf = client->responseBuffer;
+//		result = send(client->socket, currentBuf.c_str(), currentBuf.length(), 0);
+//		std::cout << "---- Pack:" << std::endl;
+//		std::cout << "Data Left:\t\t" << std::setw(10) << client->responseBuffer.length() << std::endl;
+//		std::cout << "Send Result:\t" << std::setw(10) << result << std::endl;
+//
+//		if (result == static_cast<ssize_t>(client->responseHead.length())) {
+//			std::cout << "All data send. Clear header." << std::endl;
+//			client->responseBuffer.clear();
+//			client->headerWasNotSend = false;
+//		}
+//		else if (result > 0 && result < static_cast<ssize_t>(client->responseHead.length())){
+//			std::cout << "Not all header send. Save buffer." << std::endl;
+//			client->responseBuffer = client->responseBuffer.substr(result);
+//			client->status = 1;
+//		}
+//		else if (result == 0){
+//			std::cout << "I have no header to send. Clear buffer." << std::endl;
+//			client->responseBuffer.clear();
+//			client->headerWasNotSend = false;
+//		}
+//		else if (result < 0){
+//			std::perror("Send: ");
+////			client->headerWasSend = 1;
+////			client->status = 0;
+//		}
+//	}
+//}
+//
+//ssize_t sendall2(s_client *client){
+//	ssize_t result = 0;
+//	std::string currentBuf;
+//	std::string tmp;
+//	size_t bufferSize = 262144;
+//
+//	if (client->headerWasNotSend){
+//		currentBuf = client->responseHead;
+//		result = send(client->socket, currentBuf.c_str(), currentBuf.length(), 0);
+//		std::cout << "---- Header Pack:" << std::endl;
+//		std::cout << "Data Left:\t" << std::setw(10) << client->responseHead.length() << std::endl;
+//		std::cout << "Send Result:\t" << std::setw(10) << result << std::endl;
+//
+//		if (result == static_cast<ssize_t>(client->responseHead.length())) {
+//			std::cout << "All header send. Clear header." << std::endl;
+//			client->responseHead.clear();
+//			if (client->responseBody.empty())
+//				client->status = 0;
+//			client->headerWasNotSend = false;
+//		}
+//		else if (result > 0 && result < static_cast<ssize_t>(client->responseHead.length())){
+//			std::cout << "Not all header send. Save buffer." << std::endl;
+//			client->responseHead = client->responseHead.substr(result);
+//			client->status = 1;
+//		}
+//		else if (result == 0){
+//			std::cout << "I have no header to send. Clear buffer." << std::endl;
+//			client->responseHead.clear();
+//			if (client->responseBody.empty())
+//				client->status = 0;
+//			client->headerWasNotSend = false;
+//		}
+//		else if (result < 0){
+//			std::perror("Send: ");
+////			client->headerWasSend = 1;
+////			client->status = 0;
+//		}
+//	}
+//	else if (client->bodyWasNotSend){
+//		if (client->responseBody.length() > bufferSize){
+////			tmp = client->responseBody.substr(0, bufferSize);
+////			currentBuf = SSTR(tmp.length());
+//			currentBuf += client->responseBody.substr(0, bufferSize);
+//		}
+//		else
+//			currentBuf = client->responseBody;
+//
+//		result = send(client->socket, currentBuf.c_str(), currentBuf.length(), MSG_NOSIGNAL);
+//
+//		std::cout << "---- Pack:" << std::endl;
+//		std::cout << "Data Left:\t" << std::setw(10) << client->responseHead.length() + client->responseBody.length() << std::endl;
+//		std::cout << "Send Result:\t" << std::setw(10) << result << std::endl;
+//
+//		if (result == static_cast<ssize_t>(client->responseBody.length())) {
+//			std::cout << "All Body send. Clear Body." << std::endl;
+//			client->responseBody.clear();
+//			client->status = 0;
+//			client->bodyWasNotSend = false;
+//		}
+//		else if (result > 0 && result < static_cast<ssize_t>(client->responseBody.length())){
+//			std::cout << "Not all Body send. Save buffer." << std::endl;
+//			client->responseBody = client->responseBody.substr(result);
+//			client->status = 1;
+//		}
+//		else if (result == 0){
+//			std::cout << "I have no Body to send. Clear buffer." << std::endl;
+//			client->responseBody.clear();
+//			client->status = 0;
+//			client->bodyWasNotSend = false;
+//		}
+//		else if (result < 0){
+//			std::perror("Send: ");
+////			client->status = 0;
+////			client->headerWasSend = 1;
+//		}
+//	}
+//	return result;
+//}

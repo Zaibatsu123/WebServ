@@ -34,6 +34,9 @@
 
 #define CGI "./root/cgi_tester"
 
+
+#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
+
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"
 #define COLOR_GREEN "\e[32m"
@@ -49,6 +52,7 @@ typedef struct  s_client
 	std::string body;
 	Request     *request;
 	std::string responseBuffer;
+	bool 		responseNotSend;
 }               t_client;
 
 //createResponse.cpp
