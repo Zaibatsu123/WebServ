@@ -56,10 +56,20 @@ ssize_t response(s_client *client){
 	client->request->getMethod();
 	client->request->getErr();
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
+	if (location == NULL){
+		std::cout << " ---> Broken location <---" << std::endl;
+		client->status = 0;
+		return -1;
+	}
 	std::cout << "client check restored ✅ -->" << std::endl;
 
 	if (client->request->getErr() != 0){
+		std::cout << "Request error" << std::endl;
+		client->responseBuffer = "la la la";
+		std::string a = location->root;
+		std::cout << "Request error 2" << std::endl;
 		response = new BadResponse(400, location->root);
+		std::cout << "Request error 3" << std::endl;
 	}
 	else{
 		if (client->request->getMethod() == "GET"){
@@ -82,8 +92,9 @@ ssize_t response(s_client *client){
 //			response = new BadResponse(201, location->root);
 		}
 	}
-
+	std::cout << " -->" << std::endl;
 	std::cout << response->generateHeader();
+	std::cout << " -->" << std::endl;
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;

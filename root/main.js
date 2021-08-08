@@ -7,6 +7,7 @@ body.style.backgroundImage = `url(${image[rand]})`;
 
 const signs = document.getElementsByClassName("signs");
 const links = document.getElementsByTagName("a");
+const fonts = document.getElementsByTagName("h1");
 
 if (rand === 1){
     for (let link of links) {
@@ -15,6 +16,8 @@ if (rand === 1){
     for (let sign of signs) {
         sign.style.color = "navajowhite";
     }
+    for (let font of fonts) {
+    }
 }
 else {
     for (let link of links) {
@@ -22,6 +25,8 @@ else {
     }
     for (let sign of signs) {
         sign.style.color = "darkblue";
+    }
+    for (let font of fonts) {
     }
 }
 
