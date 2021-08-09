@@ -78,7 +78,6 @@ int cgi(const std::string & cgiName, const std::string & pathToFile);
 std::vector<Server*>		*parsingConfiguration(char *config_name);
 std::string					trim(std::string old_string);
 std::string					trim_end(std::string old_string);
-std::vector<std::string>	splitvector(std::vector<std::string> old_vector, std::string str);
 AResponse*					file_or_directory_existing(t_client *client);
 
 //Config.cpp
@@ -91,6 +90,7 @@ std::string trim_end(std::string old_string);
 std::string rslash_from_end(std::string string);
 std::string rduplicate_slashes(std::string string);
 std::vector<std::string> getarray(std::string req);
+int count_str(std::string input_str, std::string str);
 
 std::string alter_trim_end(std::string old_string, std::string elems);
 std::string rrepeats_from_end(std::string string);

@@ -151,8 +151,8 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 					std::cout << " --> Request have body" << std::endl;
 //					(*i)->status = 2;
 					(*i)->getRequestHead = 1;
-					if ((*i)->buffer.length() > (*i)->head.length() + 4)
-						(*i)->body = (*i)->buffer.substr(pos + 5);
+					if ((*i)->buffer.length() > (*i)->head.length() + 3)
+						(*i)->body = (*i)->buffer.substr(pos + 4);
 					if ((*i)->request->_boundary.empty())
 						(*i)->needle = "0\15\12\15\12";
 					else
@@ -167,14 +167,17 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 				(*i)->head.clear();
 //				continue;
 			}
-			if ((*i)->getRequestHead == 1){
+			if ((*i)->getRequestHead == 1)
+            {
 				std::cout << " --> Read Body" << std::endl;
 				(*i)->body += (*i)->buffer;
 				size_t pos = (*i)->body.find((*i)->needle);
-				if (pos == std::string::npos){
-					std::cout << std::endl << "========================== Response BODY ==============================" << std::endl;
+				if (pos == std::string::npos)
+                {
+					std::cout << std::endl << "========================== Response BODY ==============================1" << std::endl;
 					std::cout << (*i)->body << std::endl;
-					std::cout << "========================== Response BODY ==============================" << std::endl << std::endl;
+                    // outf << (*i)->body<< std::endl; // DELETE AFTER DEBUG
+					std::cout << "========================== Response BODY ==============================1" << std::endl << std::endl;
 					std::cout << "Body size: " << (*i)->body.length() << std::endl;
 					continue;
 				}
@@ -182,9 +185,9 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 				(*i)->getRequestHead = 0;
 				(*i)->status = 1;
 				(*i)->body = (*i)->body.substr(0, pos + (*i)->needle.length());
-				std::cout << std::endl << "========================== Response BODY ==============================" << std::endl;
+				std::cout << std::endl << "========================== Response BODY ==============================2" << std::endl;
 				std::cout << (*i)->body << std::endl;
-				std::cout << "========================== Response BODY ==============================" << std::endl << std::endl;
+				std::cout << "========================== Response BODY ==============================2" << std::endl << std::endl;
 				(*i)->request->postbody((*i)->body);
 				if ((*i)->buffer.size() > pos + 5)
 					(*i)->head = (*i)->body.substr(pos + (*i)->needle.length() + 1);
@@ -234,9 +237,9 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 //            }
 //            else{
 //				(*i)->body += (*i)->buffer;
-//				outf << "Received request________________________" << std::endl;
-//				outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
-//				outf << "End request________________________" << std::endl;
+				// outf << "Received request________________________" << std::endl;
+				// outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
+				// outf << "End request________________________" << std::endl;
 //				(*i)->buffer = "";
 //            }
         }

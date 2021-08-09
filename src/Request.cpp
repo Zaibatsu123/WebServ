@@ -26,6 +26,8 @@ Request::Request(){
 	_filename = "uploadFilename";
 	_conection = "keep-alive";
 	_err = 0;
+	_transfer_code = "";
+	_accept_code = "";
 }
 
 Request::~Request(){
@@ -43,6 +45,8 @@ std::string Request::getCLength() const    {return _content_length; }
 std::string  Request::getBody() const	{return _body; };
 std::string Request::getBodyCnt() const	{return _body_content; };
 std::string Request::getFilename() const 	{return _filename; };
+std::string Request::getTransferCode() const 	{return _transfer_code; };
+std::string Request::getAcceptCode() const 	{return _accept_code; };
 
 void Request::methodpath(std::string method, std::string path)
 {
@@ -73,18 +77,11 @@ void Request::postbody(std::string body_request)
 
 	std::cout << "\033[1;46mFR4G-TP is born\033[0m\n" << std::endl;
 	body = getarray(body_request);
-	// if (body_request.find(_boundary) == std::string::npos)
-	// 	return;
-	// if ((body_request.find(_boundary)) > 3)
-	// {
-	// 	std::cout << "\033[1;42m3 boundary\033[0m\n" << std::endl;
+	size_t n = count_str(body_request, _boundary);
+	if (n > 1)
 		request = splitvector(body, _boundary);
-	// }
-	// else 
-	// {
-	// 	std::cout << "\033[1;42m1 boundary\033[0m\n" << std::endl;
-	// 	request = body;
-	// }
+	else 
+		request = body;
 	if (request.size() == 0)
 		return;
 	if (request[0].find("filename=") == std::string::npos )
@@ -111,8 +108,8 @@ void Request::postbody(std::string body_request)
 
 void Request::postheaders(std::vector<std::string> request) 
 {
-	// std::ofstream outf;                                  // DELETE AFTER DEBUG
-    // outf.open( "hhh.txt", std::ios_base::app);
+	std::ofstream outf;                                  // DELETE AFTER DEBUG
+    outf.open( "hhh.txt", std::ios_base::app);
 	
 	std::string str;
 	std::cout << "\033[1;46m1\033[0m" << std::endl;
@@ -129,15 +126,20 @@ void Request::postheaders(std::vector<std::string> request)
 					break;
 				int bn = request[i].find("boundary=");
 				_content_type = trim(str.substr(14, str.length() - 14));
-				_boundary = "--" + request[i ].substr(bn + 9, request[i].length() - bn - 9);
+				_boundary = "--" + request[i].substr(bn + 9, request[i].length() - bn - 9);
 			}
+			else if (!str.empty() && str.length() > 17 && str.compare(0, 17, "Accept-Encoding: ") == 0)
+				_accept_code = trim(str.substr(17, str.length() - 17));
+			else if (!str.empty() && str.length() > 19 && str.compare(0, 19, "Transfer-Encoding: ") == 0)
+				_transfer_code = trim(str.substr(19, str.length() - 19));
 		}
 	// outf << "BODY CONTENT\n" << _body_content << std::endl;
 	// outf << "FILENAME: " << _filename << std::endl;
 	// outf << "BODY\n" << _body << std::endl;
-	// outf << "CONTENT TYPE: " << _content_type << std::endl;
+	outf << "Accept-Encoding: " << _accept_code << std::endl;
+	outf << "Transfer-Encoding: " << _content_length << std::endl;
 	// outf << "BOUNDARY: " << _boundary << std::endl;
-	// outf.close();
+	outf.close();
 }
 
 /*
