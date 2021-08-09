@@ -71,8 +71,20 @@ void Request::postbody(std::string body_request)
 	std::vector<std::string> body;
 	std::vector<std::string> request;
 
+	std::cout << "\033[1;46mFR4G-TP is born\033[0m\n" << std::endl;
 	body = getarray(body_request);
-	request = splitvector(body, _boundary);
+	// if (body_request.find(_boundary) == std::string::npos)
+	// 	return;
+	// if ((body_request.find(_boundary)) > 3)
+	// {
+	// 	std::cout << "\033[1;42m3 boundary\033[0m\n" << std::endl;
+		request = splitvector(body, _boundary);
+	// }
+	// else 
+	// {
+	// 	std::cout << "\033[1;42m1 boundary\033[0m\n" << std::endl;
+	// 	request = body;
+	// }
 	if (request.size() == 0)
 		return;
 	if (request[0].find("filename=") == std::string::npos )
