@@ -141,6 +141,33 @@ std::string readRequest(s_client* client, ssize_t *status){
 	return buffer;
 }
 
+// void parse_927(std::string boundary, std::string body)
+// {
+//     std::ofstream file;
+//     std::cout << boundary << std::endl;
+//     std::cout << "========================== Response BODY ==============================" << std::endl;
+//     std::cout << body << std::endl;
+//     std::cout << "========================== Response BODY ==============================" << std::endl << std::endl;
+//     int z = body.size() - 150;
+//     while (z < (int)body.size()){
+//         std::cout << "Symbol №:|" << z << "|"<< body.c_str()[z] << std::endl;
+//         ++z;
+//     }
+//     int a = body.find("Content-Type: image/jpeg");
+//     std::cout << a << std::endl;
+//     std::string temp;
+//     temp = body.substr(137);
+//     a = temp.find(boundary);
+//     std::cout << a << std::endl;
+//     temp = temp.substr(0, temp.size() - (temp.size() - a));
+//     // temp = body.substr(137, );
+//     std::cout << "final size:" << temp.size() << std::endl;
+//     file.open("927.jpg");
+//     file << temp;
+//     file.close();
+//     exit(1);
+// }
+
 int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients, std::ofstream *logs)
 {
     std::string buffer;
@@ -156,7 +183,7 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients, st
         {
 			(*i)->buffer += readRequest(*i, &result);
             std::cout << "BUFFER_SIZE:|" << (*i)->buffer.size() << "|" << std::endl;
-			if (result < 0){
+			if (result <= 0){
                 i = clients->erase(i);
                 *logs << "Error occured when receive message from client!" << strerror(errno) << std::endl;
             }
@@ -227,7 +254,11 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients, st
 				*logs << std::endl << "========================== Response BODY ==============================" << std::endl;
 				*logs << (*i)->body << std::endl;
 				*logs << "========================== Response BODY ==============================" << std::endl << std::endl;
-				(*i)->request->postbody((*i)->body);
+                std::cout << "!!!" << (*i)->body.size() << std::endl;
+                // if ((*i)->body.size() == 6589)
+                //     parse_927((*i)->request->_boundary, (*i)->body);
+                // else
+				    (*i)->request->postbody((*i)->body);
 				if ((*i)->buffer.size() > pos + 5)
 					(*i)->head = (*i)->body.substr(pos + (*i)->needle.length() + 1);
 				(*i)->buffer.clear();
@@ -305,8 +336,9 @@ int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients,
                 exit_status = EXIT_FAILURE;
             }
             (*i)->buffer.clear();
-//            (*i)->status = 0;
+            (*i)->status = 0;
             *logs << "            ----> Response sended for socket:|" << (*i)->socket << "|" << std::endl;
+            // i = clients->erase(i);
         }
     }
     return (exit_status);
@@ -361,7 +393,7 @@ int master_process(std::vector<Server*> *servers){
         if (check_outcoming_responces(&write_fds, &clients, &logs) == EXIT_FAILURE)
             std::cout << "Something wrong when responce sending!" << std::endl;
         logs << "-> Cycle ended" << std::endl;
-		usleep(1000);
+		// usleep(1000);
 	}
     return (EXIT_SUCCESS);
 }

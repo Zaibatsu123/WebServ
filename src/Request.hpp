@@ -10,6 +10,7 @@
 #define REQUEST_HPP
 
 #include <iostream>
+#include <list>
 #include <map>
 #include <vector>
 #include <fstream>

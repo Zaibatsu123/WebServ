@@ -16,7 +16,6 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <vector>
-#include "Request.hpp"
 #include "../inc/output.hpp"
 #include  "Server.hpp"
 #include <dirent.h>
