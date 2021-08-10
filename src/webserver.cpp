@@ -7,6 +7,26 @@
 
 Request *start(std::string str_req);
 
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char        *string;
+	size_t		a;
+	size_t		b;
+
+	a = 0;
+	b = 0;
+	string = (char *)malloc(sizeof(char) * (strlen((char *)s1) + strlen((char *)s2)) + 1);
+	if (string == NULL)
+		return (NULL);
+	while (b < strlen((char *)s1))
+		string[a++] = s1[b++];
+	b = 0;
+	while (b < strlen((char *)s2))
+		string[a++] = s2[b++];
+	string[a] = '\0';
+	return (string);
+}
+
 int rebind(int listen_socket) //устраняем залипание сокета после некорректного завершения работы сервака
 {
 	int opt = 1;
@@ -67,11 +87,12 @@ int creating_socket_servers(std::vector<Server*> *servers)
     return (EXIT_SUCCESS);
 }
 
-int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std::list<t_client *> *clients)
+int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std::list<t_client *> *clients, std::ofstream *logs)
 {
     int         new_client_socket = -1;
     t_client    *new_client = NULL;
 
+    *logs << "    -->|CONNECTING CLIENTS|" << std::endl;
     for (std::vector<Server*>::iterator i = servers->begin(); i != servers->end(); i++)
         for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
             if (FD_ISSET((*j).socket, read_fds))
@@ -90,7 +111,7 @@ int connecting_new_clients(fd_set *read_fds, std::vector<Server*> *servers, std:
                 new_client->server = (*i);
                 fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
                 clients->push_back(new_client);
-                std::cout << "Connected new client" << std::endl;
+                *logs << "        ---> Connected new client with socket number:|" << new_client->socket << "|" << std::endl;
                 new_client = NULL;
             }
     return (EXIT_SUCCESS);
@@ -112,44 +133,48 @@ std::string readRequest(s_client* client, ssize_t *status){
 		return "";
 	}
 	read_buffer[result] = '\0';
-	buffer = read_buffer;
+    std::cout << "LEN OF READED BYTES STRING:|" << strlen(read_buffer) << "|" << std::endl;
+    int a = 0;
+    while(a < result)
+        buffer.push_back(read_buffer[a++]);
+    std::cout << "A:|" << a << "|" << std::endl;
 	return buffer;
 }
 
-int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
+int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients, std::ofstream *logs)
 {
-//	char        read_buffer[MiB];
     std::string buffer;
     ssize_t     result = 0;
     std::ofstream outf;                                  // DELETE AFTER DEBUG
     outf.open( "output_request.txt", std::ios_base::app);    // DELETE AFTER DEBUG
 
+    *logs << "    -->|RECEIVING REQUESTS|" << std::endl;
     for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
-        std::cout << "Check for request fd:" << (*i)->socket << " status: " << FD_ISSET((*i)->socket, read_fds) << std::endl;
+        *logs << "        ---> |Check for request socket with number:|" << (*i)->socket << "|, status:|" << FD_ISSET((*i)->socket, read_fds) << "|" << std::endl;
         if (FD_ISSET((*i)->socket, read_fds))
         {
 			(*i)->buffer += readRequest(*i, &result);
+            std::cout << "BUFFER_SIZE:|" << (*i)->buffer.size() << "|" << std::endl;
 			if (result <= 0){
                 i = clients->erase(i);
-                std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
+                *logs << "Error occured when receive message from client!" << strerror(errno) << std::endl;
             }
 			if ((*i)->getRequestHead == 0){
-				std::cout << " --> Read Head" << std::endl;
+				*logs << "            ---> Read Head" << std::endl;
 				size_t pos = (*i)->buffer.find("\15\12\15\12");
 				if (pos == std::string::npos){
 					(*i)->head += (*i)->buffer;
 					continue;
 				}
-				std::cout << " --> Got full head" << std::endl;
+				*logs << "            ---> Got full head" << std::endl;
 				(*i)->head += (*i)->buffer.substr(0, pos); // TODO: substr direct to start()
-				std::cout << std::endl << "================== Response HEAD =====================" << std::endl;
-				std::cout << (*i)->head << std::endl;
-				std::cout << "================== Response HEAD =====================" << std::endl << std::endl;
+				*logs << std::endl << "================== Response HEAD =====================" << std::endl;
+				*logs << (*i)->head << std::endl;
+				*logs << "================== Response HEAD =====================" << std::endl << std::endl;
 				(*i)->request = start((*i)->head);
 				if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT"){
-					std::cout << " --> Request have body" << std::endl;
-//					(*i)->status = 2;
+					*logs << "            ---> Request have body" << std::endl;
 					(*i)->getRequestHead = 1;
 					if ((*i)->buffer.length() > (*i)->head.length() + 3)
 						(*i)->body = (*i)->buffer.substr(pos + 4);
@@ -159,36 +184,56 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
 						(*i)->needle = (*i)->request->_boundary + "--";
 				}
 				else{
-					std::cout << " --> Request have not body" << std::endl;
+					*logs << "            ---> Request have not body" << std::endl;
 					(*i)->getRequestHead = 0;
 					(*i)->status = 1;
 				}
+                std::cout << "BODY_SIZE:|" << (*i)->body.size() << "|" << std::endl;
 				(*i)->buffer.clear();
 				(*i)->head.clear();
 //				continue;
 			}
-			if ((*i)->getRequestHead == 1)
-            {
-				std::cout << " --> Read Body" << std::endl;
+			if ((*i)->getRequestHead == 1){
+				*logs << "            ---> Read Body" << std::endl;
 				(*i)->body += (*i)->buffer;
 				size_t pos = (*i)->body.find((*i)->needle);
-				if (pos == std::string::npos)
-                {
-					std::cout << std::endl << "========================== Response BODY ==============================1" << std::endl;
-					std::cout << (*i)->body << std::endl;
-                    // outf << (*i)->body<< std::endl; // DELETE AFTER DEBUG
-					std::cout << "========================== Response BODY ==============================1" << std::endl << std::endl;
-					std::cout << "Body size: " << (*i)->body.length() << std::endl;
+                std::cout << "Content lengt:" << (*i)->request->getCLength() << "BODY SIZE: " << strlen((*i)->body.c_str()) << std::endl;
+                // if (std::stoi((*i)->request->getCLength()) != 0 && std::stoi((*i)->request->getCLength()) == (int)(*i)->body.size()){
+                //     *logs << "Got full body" << std::endl;
+                //     (*i)->getRequestHead = 0;
+                //     (*i)->status = 1;
+                //     (*i)->body = (*i)->body.substr(0, pos + (*i)->needle.length());
+                //     *logs << std::endl << "========================== Response BODY ==============================" << std::endl;
+                //     *logs << (*i)->body << std::endl;
+                //     *logs << "========================== Response BODY ==============================" << std::endl << std::endl;
+                //     (*i)->request->postbody((*i)->body);
+                //     if ((*i)->buffer.size() > pos + 5)
+                //         (*i)->head = (*i)->body.substr(pos + (*i)->needle.length() + 1);
+                //     (*i)->buffer.clear();
+                //     (*i)->body.clear();
+                // }
+				if (pos == std::string::npos){
+					*logs << std::endl << "========================== Response BODY ==============================" << std::endl;
+					*logs << (*i)->body << std::endl;
+					*logs << "========================== Response BODY ==============================" << std::endl << std::endl;
+					*logs << "Body size: " << (*i)->body.size() << std::endl;
+                    (*i)->buffer.clear();
 					continue;
 				}
-				std::cout << "Got full body" << std::endl;
+				*logs << "Got full body" << std::endl;
 				(*i)->getRequestHead = 0;
 				(*i)->status = 1;
 				(*i)->body = (*i)->body.substr(0, pos + (*i)->needle.length());
-				std::cout << std::endl << "========================== Response BODY ==============================2" << std::endl;
-				std::cout << (*i)->body << std::endl;
-				std::cout << "========================== Response BODY ==============================2" << std::endl << std::endl;
-				(*i)->request->postbody((*i)->body);
+				*logs << std::endl << "========================== Response BODY ==============================2" << std::endl;
+				*logs << (*i)->body << std::endl;
+                *logs << "STATUS:|" << (*i)->request->getTransferCode() << "|" << std::endl;
+                 *logs << "METHOD:|" << (*i)->request->getMethod() << "|" << std::endl;
+				*logs << "========================== Response BODY ==============================2" << std::endl << std::endl;
+
+				if ((*i)->request->getTransferCode() == "chunked")
+                    (*i)->request->body_chunk((*i)->body);
+                else
+                    (*i)->request->postbody((*i)->body);
 				if ((*i)->buffer.size() > pos + 5)
 					(*i)->head = (*i)->body.substr(pos + (*i)->needle.length() + 1);
 				(*i)->buffer.clear();
@@ -248,34 +293,32 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients)
     return (EXIT_SUCCESS);
 }
 
-int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients)
+int check_outcoming_responces(fd_set *write_fds, std::list<t_client *> *clients, std::ofstream *logs)
 {
     ssize_t result = 0;
     int exit_status = EXIT_SUCCESS;
+    *logs << "    --> Check outcoming responses" <<std::endl;
     for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
-        std::cout << "Check ready for responce fd:" << (*i)->socket << std::endl;
-		std::cout << "----------------FDSet: " << FD_ISSET((*i)->socket, write_fds) << " status: " << (*i)->status << std::endl;
+        *logs << "        ---> Check ready for responce socket number:" << "|" << (*i)->socket << "|" << std::endl;
+		*logs << "        ---> Checking FDSet: " << FD_ISSET((*i)->socket, write_fds) << " with status: " << (*i)->status << std::endl;
         if (FD_ISSET((*i)->socket, write_fds) && (*i)->status == 1)
         {
-            std::cout << "STATUS = " << (*i)->status << std::endl;
-            result = response(*i);
+            result = response(*i, logs);
             if (result == -1)
             {
                 std::cerr << "send failed: " << strerror(errno) << std::endl;
                 exit_status = EXIT_FAILURE;
             }
-            // close((*i).socket);
-            // i = clients->erase(i);
             (*i)->buffer.clear();
 //            (*i)->status = 0;
-            std::cout << "Sended responce" << std::endl;
+            *logs << "            ----> Response sended for socket:|" << (*i)->socket << "|" << std::endl;
         }
     }
     return (exit_status);
 }
 
-int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client *> *clients, fd_set *read_fds, fd_set *write_fds)
+int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client *> *clients, fd_set *read_fds, fd_set *write_fds, std::ofstream *logs)
 {
     int max_fd = -1;
     FD_ZERO(read_fds);
@@ -289,7 +332,7 @@ int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client *> 
         }
     for (std::list<t_client *>::iterator i = clients->begin(); i != clients->end(); i++)
     {
-        std::cout << "Adding to read/write sets fd:" << (*i)->socket << std::endl;
+        *logs << "    --> Adding to read/write sets fd socket with number:|" << (*i)->socket << "|" << std::endl;
         FD_SET((*i)->socket, read_fds);
         if ((*i)->status == 1)
             FD_SET((*i)->socket, write_fds);
@@ -302,26 +345,28 @@ int adding_sockets_to_sets(std::vector<Server*> *servers, std::list<t_client *> 
 int master_process(std::vector<Server*> *servers){
     int result = 0;
     int max_fd = 0;
+    std::ofstream logs;
     fd_set read_fds,write_fds;
     std::list<t_client *> clients;
 
+    logs.open("logs", std::ios::trunc);
     if (creating_socket_servers(servers) == EXIT_FAILURE)
         return (EXIT_FAILURE);
 	while (true)
 	{
-        std::cout << "Cycle started" << max_fd << std::endl;
-        if ((max_fd = adding_sockets_to_sets(servers, &clients, &read_fds, &write_fds)) == -1)
+        logs << "-> Cycle started" << std::endl;
+        if ((max_fd = adding_sockets_to_sets(servers, &clients, &read_fds, &write_fds, &logs)) == -1)
             std::cout << "Something wrong when work with sets!" << std::endl;
         if ((result = select(max_fd + 1, &read_fds, &write_fds, NULL, NULL)) == -1)
             std::cout << "Select error: " << strerror(errno) << std::endl;
         std::cout << "After select:" << result << std::endl;
-        if (connecting_new_clients(&read_fds, servers, &clients) == EXIT_FAILURE)
+        if (connecting_new_clients(&read_fds, servers, &clients, &logs) == EXIT_FAILURE)
             std::cout << "Something wrong when new client accepting!" << std::endl;
-        if (check_incoming_requests(&read_fds, &clients) == EXIT_FAILURE)
+        if (check_incoming_requests(&read_fds, &clients, &logs) == EXIT_FAILURE)
             std::cout << "Something wrong when request receiving!" << std::endl;
-        if (check_outcoming_responces(&write_fds, &clients) == EXIT_FAILURE)
+        if (check_outcoming_responces(&write_fds, &clients, &logs) == EXIT_FAILURE)
             std::cout << "Something wrong when responce sending!" << std::endl;
-        std::cout << "Cycle ended" << std::endl;
+        logs << "-> Cycle ended" << std::endl;
 		usleep(1000);
 	}
     return (EXIT_SUCCESS);

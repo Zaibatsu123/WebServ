@@ -74,7 +74,6 @@ Request *start(std::string str_req)
 {
 	Request *request = new Request;
 	std::vector<std::string> vect_req;
-//	std::cout  << str_req << str_req.length()<< std::endl;
 	try
 	{
 		vect_req = getarray(str_req);
@@ -100,11 +99,13 @@ int count_str(std::string input_str, std::string str)
 	size_t foundIndex = 0;
 
 	std::string strFinal = input_str;
-	if (input_str.find(str) == std::string::npos)
+	if (input_str.find(str) == std::string::npos || alnumsymb(input_str))
 		return(cnt);
 	while (foundIndex != std::string::npos)
 	{
 		strFinal = strFinal.substr(foundIndex + 1);
+		if (alnumsymb(strFinal))
+			break;
 		foundIndex = strFinal.find(str);
 		cnt += 1;
 	}

@@ -1,5 +1,0 @@
-server
-    listen  127.0.0.1:9099
-    location /
-        root /Users/jjerrod/projects/WebServ/root/
-        index index.html

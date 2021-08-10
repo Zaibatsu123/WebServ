@@ -59,6 +59,7 @@ public:
 	void postheaders(std::vector<std::string> request);
 	void postbody(std::string body_request);
 	void post_fname_body(std::vector<std::string> request);
+	void body_chunk(std::string body_request);
 
 };
 

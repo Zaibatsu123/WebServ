@@ -58,7 +58,7 @@ typedef struct  s_client
 }               t_client;
 
 //createResponse.cpp
-ssize_t						response(t_client *client);
+ssize_t						response(t_client *client, std::ofstream *logs);
 ssize_t						sendall(int socket, std::string & buffer, int flags);
 
 //methods.cpp

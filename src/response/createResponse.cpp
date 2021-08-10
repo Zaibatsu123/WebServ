@@ -43,8 +43,8 @@ ssize_t sendall(s_client* client){
 	return result;
 }
 
-ssize_t response(s_client *client){
-	std::cout << "--------------------> Response part <------------ " << std::endl;
+ssize_t response(s_client *client, std::ofstream *logs){
+	*logs << "======================> Response part <====================== " << std::endl;
 	AResponse* response;
 	ssize_t result;
 
@@ -52,25 +52,24 @@ ssize_t response(s_client *client){
 		return sendall(client);
 	}
 
-	std::cout << "client check crushed ⛔️ <--" << std::endl;
+	// *logs << "            ---->"  << "client check crushed ⛔️ <--" << std::endl;
 	client->request->getMethod();
 	client->request->getErr();
-	std::cout << "kek" << std::endl;
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 	if (location == NULL){
-		std::cout << " ---> Broken location <---" << std::endl;
+		*logs << "            ---->"  << " ---> Broken location <---" << std::endl;
 		client->status = 0;
 		return -1;
 	}
-	std::cout << "client check restored ✅ -->" << std::endl;
+	// std::cout << "            ---->" << "client check restored ✅ -->" << std::endl;
 
 	if (client->request->getErr() != 0){
-		std::cout << "Request error" << std::endl;
+		*logs << "            ---->"   << "Request error" << std::endl;
 		client->responseBuffer = "la la la";
 		std::string a = location->root;
-		std::cout << "Request error 2" << std::endl;
+		*logs << "            ---->"  << "Request error 2" << std::endl;
 		response = new BadResponse(400, location->root);
-		std::cout << "Request error 3" << std::endl;
+		*logs << "            ---->"   << "Request error 3" << std::endl;
 	}
 	else{
 		if (client->request->getMethod() == "GET"){
@@ -93,10 +92,29 @@ ssize_t response(s_client *client){
 //			response = new BadResponse(201, location->root);
 		}
 	}
-	std::cout << " -->" << std::endl;
-	std::cout << response->generateHeader();
-	std::cout << " -->" << std::endl;
-
+	// int temp = 0;
+	// std::string headerlog = response->generateHeader();
+	// std::string temp2;
+	*logs << response->generateHeader() << std::endl;
+	// temp = headerlog.find('\n');
+	// std::cout << "First head:" << headerlog.find('\n') << "ENDHEADERLOG!!" << std::endl;
+	// temp2 = headerlog.substr(0, temp);
+	// std::cout << "Second head:" << temp2 << "ENDHEADERLOG!!" << std::endl;
+	// headerlog = headerlog.substr(temp + 1);
+	// // temp = headerlog.find('\n');
+	// std::cout << "Third head:" << headerlog << "ENDHEADERLOG!!" << std::endl;
+	// std::cout << "HEADERLOG:" << headerlog.substr(0, temp) << "ENDHEADERLOG!!" << std::endl;
+	// std::cout << "HEADERLOG:" << headerlog << "ENDHEADERLOG!!" << std::endl;
+	// std::cout << "HEADERLOG:" << headerlog << "ENDHEADERLOG!!" << std::endl;
+	// while (headerlog.find('\n') != std::string::npos)
+	// {
+	// 	temp = headerlog.find('\n');
+	// 	*logs << "            " << headerlog.substr(0, temp);
+	// 	std::cout << headerlog.substr(0, temp) << std::endl;
+	// 	headerlog = headerlog.substr(temp);
+	// }
+	// temp = headerlog.find('\0');
+	// *logs << "            " << headerlog.substr(0, temp);
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
 
@@ -105,7 +123,7 @@ ssize_t response(s_client *client){
 
 	delete response;
 //	delete client->request;
-	std::cout << "--------------------> Response END <------------ " << std::endl;
+	*logs << "======================> Response END <====================== " << std::endl;
 	return result;
 }
 
