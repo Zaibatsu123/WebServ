@@ -38,7 +38,7 @@ AResponse* methodPost(s_client* client){
 		return new BadResponse(405, location->root);
 	}
 
-	int status = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
+	int status = upload(client->request->getFilename(), client);
 
 	if (status){
 		std::cout << "--> Error: Cannot create file <--" << std::endl;
@@ -93,13 +93,12 @@ AResponse*	methodPut(s_client* client){
 }
 
 
+int upload(const std::string & uplFileName, s_client* client) {
 
-int upload(const std::string & uplFileName, const char *data) {
-
-	if (!data || !std::strlen(data) || !uplFileName.length()){
-		std::cout << "--> Error: Empty File <--" << std::endl;
-		return EXIT_FAILURE;
-	}
+	// if (!client->request->getBodyCnt() || !std::strlen(data) || !uplFileName.length()){
+	// 	std::cout << "--> Error: Empty File <--" << std::endl;
+	// 	return EXIT_FAILURE;
+	// }
 
 	std::cout << "upload to: " << uplFileName << std::endl;
 	std::ofstream dstFile;
@@ -108,7 +107,7 @@ int upload(const std::string & uplFileName, const char *data) {
 	if (!dstFile.is_open())
 		return 500;
 
-	dstFile << std::string(data);
+	dstFile << std::string(client->request->getBodyCnt());
 	dstFile.close();
 
 	return 0;

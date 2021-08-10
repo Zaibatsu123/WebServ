@@ -144,6 +144,18 @@ std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::s
 	return (new_vector);
 }
 
+std::string content(std::string string, std::string boundary)
+{
+	std::string content;
+	size_t pos1 = string.find("\15\12\15\12") + 4;
+	size_t pos2 = string.find(boundary, pos1);
+	if (pos1 == std::string::npos || pos2 == std::string::npos)
+		return("");
+	content = string.substr(pos1, pos2 - pos1 - 2);
+	std::cout << "|" << content << "|" << std::endl;
+	return(content);
+}
+
 std::string rslash_from_end(std::string string)
 {
     if (string.size() <= 1)

@@ -76,12 +76,7 @@ void Request::body_chunk(std::string body_request)
 	for (size_t j = 0; j < body.size(); ++j)
 	{
 		if (j % 2 == 1)
-		{
-			if (j != body.size() - 1)
-				_body_content += body[j] + "\n";
-			else 
-				_body_content += body[j];
-		}
+			_body_content += body[j];
 	}
 }
 
@@ -91,6 +86,8 @@ void Request::postbody(std::string body_request)
 	std::vector<std::string> body;
 	std::vector<std::string> request;
 
+	std::ofstream outf;                                  // DELETE AFTER DEBUG
+    outf.open( "hhh.txt", std::ios_base::app);			// DELETE AFTER DEBUG
 	std::cout << "\033[1;46mFR4G-TP is born\033[0m\n" << std::endl;
 
 	body = getarray(body_request);
@@ -109,18 +106,21 @@ void Request::postbody(std::string body_request)
 	{
 		if (!request[j].empty() && request[j].length() > 14 && request[j].compare(0, 14, "Content-Type: ") == 0)
 			_content_type = trim(request[j].substr(14, request[j].length() - 14));
-		if (request[j].empty() && j + 1 < request.size())
-		{
-			for (size_t k = j + 1; k < request.size(); ++k)
-			{
-				if (k != request.size() - 1)
-					_body_content += request[k] + "\n";
-				else 
-					_body_content += request[k];
-			}
-			break;
-		}
+		// if (request[j].empty() && j + 1 < request.size())
+		// {
+		// 	for (size_t k = j + 1; k < request.size(); ++k)
+		// 	{
+		// 		if (k != request.size() - 1)
+		// 			_body_content += request[k] + "\n";
+		// 		else 
+		// 			_body_content += request[k];
+		// 	}
+		// 	break;
+		// }
 	}
+	_body_content = content(body_request, _boundary);
+	outf << "Body Content: \n" << _body_content  << "|" << std::endl;
+	outf.close();
 }
 
 void Request::postheaders(std::vector<std::string> request) 
