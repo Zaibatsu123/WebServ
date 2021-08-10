@@ -70,10 +70,10 @@ t_location *get_location(std::string root, std::map<std::string, t_location *> *
         return (NULL);
     do
     {
-        std::cout << "SEARCHING ROOT:|" << root << "|" << std::endl;
+        // std::cout << "SEARCHING ROOT:|" << root << "|" << std::endl;
         if ((i = locations->find(root)) != locations->end())
         {
-            std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
+            // std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
             return (i->second);
         }
         root = rrepeats_from_end(alter_trim_end(root, "/"));
@@ -81,7 +81,7 @@ t_location *get_location(std::string root, std::map<std::string, t_location *> *
     while (root.size() != 1);
     if ((i = locations->find(root)) != locations->end())
     {
-        std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
+        // std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
         return (i->second);
     }
     return (NULL);
@@ -94,7 +94,7 @@ std::string autoindex(const char *directory, t_client *client)
 	std::stringstream   str;
 	(void)client;
 
-	std::cout << "Directory" << directory << std::endl;
+	// std::cout << "Directory" << directory << std::endl;
 	dir = opendir(directory);
 	std::string prefix = "/";
 	if (client->request->getPath()[client->request->getPath().size() - 1] == '/')
@@ -120,26 +120,26 @@ AResponse* file_or_directory_existing(t_client *client)
 	t_location 			*location = NULL;
 	std::string			path = client->request->getPath();
 
-	std::cout << "AUTOINDEX ENTER" << std::endl;
+	// std::cout << "AUTOINDEX ENTER" << std::endl;
 	if ((location = get_location(path, &(client->server->locations))) == NULL)
 		return new BadResponse(404, "./root");
 	std::string directory = location->root;
 	std::string fullpath = directory + path;
-	std::cout << "directory: " << directory << std::endl;
-	std::cout << "path: " << path << std::endl;
-	std::cout << "full: " << fullpath << std::endl;
+	// std::cout << "directory: " << directory << std::endl;
+	// std::cout << "path: " << path << std::endl;
+	// std::cout << "full: " << fullpath << std::endl;
     if (opendir(fullpath.c_str()) != NULL)
     {
-        std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
+        // std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
         file.open(fullpath + "/" + location->index);
         if (file.is_open())
         {
-            std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
+            // std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
             return new GoodResponse(fullpath, location->index);
         }
         if (location->autoindex == 1)
         {
-            std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
+            // std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
             std::string str = autoindex(fullpath.c_str(), client);
 			return new BadResponse(404, location->root);
 //            return new AutoIndexResponse(str);
@@ -150,7 +150,7 @@ AResponse* file_or_directory_existing(t_client *client)
     file.open(fullpath);
     if (file.is_open())
     {
-        std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
+        // std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
         return new GoodResponse("./root", client->request->getPath());
     }
     return new BadResponse(404, "./root");

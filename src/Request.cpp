@@ -71,6 +71,7 @@ void Request::postbody(std::string body_request)
 	std::vector<std::string> body;
 	std::vector<std::string> request;
 
+	std::cout << "BODYPARSSIZE:|" << body_request.size() << std::endl;
 	body = getarray(body_request);
 	request = splitvector(body, _boundary);
 	if (request.size() == 0)
