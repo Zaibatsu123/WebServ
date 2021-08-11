@@ -38,22 +38,8 @@ AResponse* methodPost(s_client* client){
 		std::cout << "--> POST: Error: client sent invalid chunked body" << std::endl;
 		return new BadResponse(405, location->root);
 	}
-<<<<<<< HEAD
-	// if (client->request->getTransferCode() == "chunked"){
-	// 	std::ofstream file(location->root + client->request->getPath());
-	// 	if (!file.is_open())
-	// 		return new BadResponse(500, location->root);
-	// 	file << client->request->getBodyCnt();
-	// 	file.close();
-	// 	AResponse* res = new GoodResponse(location->root, "");
-	// 	res->setStatus(201);
-	// 	return res;
-	// }
-	int status = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
-=======
 
 	int status = upload(client->request->getFilename(), client);
->>>>>>> request_parser
 
 	if (status){
 		std::cout << "--> Error: Cannot create file <--" << std::endl;
