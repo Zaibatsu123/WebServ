@@ -1,7 +1,0 @@
------WebKitFormBoundaryLADlwgkR4sCYhnyg
-Content-Disposition: form-data; name="myfile"; filename="4row_board.png"
-Content-Type: image/png
-
-‰PNG
-
-
