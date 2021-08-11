@@ -34,12 +34,13 @@ AResponse* methodPost(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
 	std::cout << "LOCATION:|" << location->root << "|" << "PATH:|" << client->request->getPath() << "|"<< std::endl;
+	std::cout << "FilENAME:|" << client->request->getPath() << "|"<< std::endl;
 	if (client->request->getBodyCnt().length() == 0){
 		std::cout << "--> POST: Error: client sent invalid chunked body" << std::endl;
 		return new BadResponse(405, location->root);
 	}
 
-	int status = upload(client->request->getFilename(), client);
+	int status = upload((location->root + client->request->getPath()).c_str(), client);
 
 	if (status){
 		std::cout << "--> Error: Cannot create file <--" << std::endl;
