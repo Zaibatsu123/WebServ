@@ -74,7 +74,6 @@ Request *start(std::string str_req)
 {
 	Request *request = new Request;
 	std::vector<std::string> vect_req;
-//	std::cout  << str_req << str_req.length()<< std::endl;
 	try
 	{
 		vect_req = getarray(str_req);
@@ -94,6 +93,24 @@ Request *start(std::string str_req)
 	return (request);
 }
 
+int count_str(std::string input_str, std::string str)
+{
+	int cnt = 0;
+	size_t foundIndex = 0;
+
+	std::string strFinal = input_str;
+	if (input_str.find(str) == std::string::npos || alnumsymb(input_str))
+		return(cnt);
+	while (foundIndex != std::string::npos)
+	{
+		strFinal = strFinal.substr(foundIndex + 1);
+		if (alnumsymb(strFinal))
+			break;
+		foundIndex = strFinal.find(str);
+		cnt += 1;
+	}
+	return(cnt);
+}
 
 std::vector<std::string> getneedvector(std::vector<std::string> old_vector, size_t begin, size_t end)
 {
@@ -106,14 +123,15 @@ std::vector<std::string> getneedvector(std::vector<std::string> old_vector, size
 std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::string str)
 {
 	std::vector<std::string> new_vector;
+
 	for (size_t i = 0; i < old_vector.size(); ++i)
 	{
-		if (old_vector[i] == str && i + 1 < old_vector.size())
+		if ((old_vector[i].compare(0, str.size(), str) == 0) && i + 1 < old_vector.size())
 		{
 			size_t begin = i + 1;
 			for (size_t j = i + 1; j < old_vector.size(); ++j)
 			{
-				if (old_vector[j] == str)
+				if (old_vector[j].size() >= str.size() && (old_vector[j].compare(0, str.size(), str)) == 0)
 				{
 					size_t end = j;
 					new_vector = getneedvector(old_vector, begin, end);

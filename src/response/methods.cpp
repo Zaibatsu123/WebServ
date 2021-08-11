@@ -33,11 +33,21 @@ AResponse* methodPost(s_client* client){
 	std::cout << "--> POST" << std::endl;
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
+	std::cout << "LOCATION:|" << location->root << "|" << "PATH:|" << client->request->getPath() << "|"<< std::endl;
 	if (client->request->getBodyCnt().length() == 0){
 		std::cout << "--> POST: Error: client sent invalid chunked body" << std::endl;
 		return new BadResponse(405, location->root);
 	}
-
+	// if (client->request->getTransferCode() == "chunked"){
+	// 	std::ofstream file(location->root + client->request->getPath());
+	// 	if (!file.is_open())
+	// 		return new BadResponse(500, location->root);
+	// 	file << client->request->getBodyCnt();
+	// 	file.close();
+	// 	AResponse* res = new GoodResponse(location->root, "");
+	// 	res->setStatus(201);
+	// 	return res;
+	// }
 	int status = upload(client->request->getFilename(), client->request->getBodyCnt().c_str());
 
 	if (status){
@@ -74,7 +84,7 @@ AResponse*	methodPut(s_client* client){
 	std::cout << "PUT FileName" << std::endl;
 	std::cout << location->root + client->request->getPath() << std::endl;
 	std::cout << "PUT Data" << std::endl;
-	std::cout << client->request->getBodyCnt() << std::endl;
+	// std::cout << client->request->getBodyCnt() << std::endl;
 
 //	if (client->request->getBodyCnt().length() == 0){
 //		std::cout << "--> PUT: Error: client sent invalid chunked body" << std::endl;

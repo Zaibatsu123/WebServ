@@ -30,6 +30,8 @@ public:
 	std::string _content_type;
 	std::string _content_length;
 	std::string _boundary;
+	std::string _transfer_code;
+	std::string _accept_code;
 	
 	int			_err;
 
@@ -49,6 +51,8 @@ public:
 	std::string getBody() const;
 	std::string getBodyCnt() const;
 	std::string getFilename() const;
+	std::string getTransferCode() const;
+	std::string getAcceptCode() const;
 
 	void strrequest(std::vector<std::string> request);
 	void getheaders(std::vector<std::string> request);
@@ -56,6 +60,7 @@ public:
 	void postheaders(std::vector<std::string> request);
 	void postbody(std::string body_request);
 	void post_fname_body(std::vector<std::string> request);
+	void body_chunk(std::string body_request);
 
 };
 

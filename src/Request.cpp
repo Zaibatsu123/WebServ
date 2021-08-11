@@ -26,6 +26,8 @@ Request::Request(){
 	_filename = "uploadFilename";
 	_conection = "keep-alive";
 	_err = 0;
+	_transfer_code = "";
+	_accept_code = "";
 }
 
 Request::~Request(){
@@ -43,6 +45,8 @@ std::string Request::getCLength() const    {return _content_length; }
 std::string  Request::getBody() const	{return _body; };
 std::string Request::getBodyCnt() const	{return _body_content; };
 std::string Request::getFilename() const 	{return _filename; };
+std::string Request::getTransferCode() const 	{return _transfer_code; };
+std::string Request::getAcceptCode() const 	{return _accept_code; };
 
 void Request::methodpath(std::string method, std::string path)
 {
@@ -64,6 +68,23 @@ void Request::getheaders(std::vector<std::string> request)
 		_host = trim(str.substr(5, str.length() - 5));
 }
 
+void Request::body_chunk(std::string body_request)
+{
+	std::vector<std::string> body;
+
+	std::cout << "\033[1;46mENTER IN BODY_CHUNK\033[0m\n" << std::endl;
+	body = getarray(body_request);
+	for (size_t j = 0; j < body.size(); ++j)
+	{
+		if (j % 2 == 1)
+		{
+			// if (j != body.size() - 1)
+			// 	_body_content += body[j] + "\n";
+			// else 
+				_body_content += body[j];
+		}
+	}
+}
 
 void Request::postbody(std::string body_request) 
 {
@@ -71,10 +92,16 @@ void Request::postbody(std::string body_request)
 	std::vector<std::string> body;
 	std::vector<std::string> request;
 
-	std::cout << "BODYPARSSIZE:|" << body_request.size() << std::endl;
-	std::cout << body_request << std::endl;
+	// std::cout << "BODYPARSSIZE:|" << body_request.size() << std::endl;
+	// std::cout << body_request << std::endl;
+	// std::cout << "\033[1;46mENTER IN POSTBODY\033[0m\n" << std::endl;
+
 	body = getarray(body_request);
-	request = splitvector(body, _boundary);
+	size_t n = count_str(body_request, _boundary);
+	if (n > 1)
+		request = splitvector(body, _boundary);
+	else 
+		request = body;
 	if (request.size() == 0)
 		return;
 	if (request[0].find("filename=") == std::string::npos )
@@ -102,10 +129,9 @@ void Request::postbody(std::string body_request)
 void Request::postheaders(std::vector<std::string> request) 
 {
 	// std::ofstream outf;                                  // DELETE AFTER DEBUG
-    // outf.open( "hhh.txt", std::ios_base::app);
+    // outf.open( "hhh.txt", std::ios_base::app);			// DELETE AFTER DEBUG
 	
 	std::string str;
-	std::cout << "\033[1;46m1\033[0m" << std::endl;
 	if (request.size() > 1)
 		for (size_t i = 0; i < request.size(); ++i)
 		{
@@ -113,20 +139,25 @@ void Request::postheaders(std::vector<std::string> request)
 			transform(str.begin(), str.end(), str.begin(), ::tolower);
 			if (!str.empty() && str.length() > 16 && str.compare(0, 16, "content-length: ") == 0)
 				_content_length = trim(str.substr(16, str.length() - 16));
-			else if (!str.empty() &&  str.length() > 14 && str.compare(0, 14, "content-type: ") == 0)
+			else if (!str.empty() && str.length() > 14 && str.compare(0, 14, "content-type: ") == 0)
 			{
 				if (request[i].find("boundary=") == std::string::npos)
 					break;
 				int bn = request[i].find("boundary=");
 				_content_type = trim(str.substr(14, str.length() - 14));
-				_boundary = "--" + request[i ].substr(bn + 9, request[i].length() - bn - 9);
+				_boundary = "--" + request[i].substr(bn + 9, request[i].length() - bn - 9);
 			}
+			else if (!str.empty() && str.length() > 17 && str.compare(0, 17, "accept-encoding: ") == 0)
+				_accept_code = trim(str.substr(17, str.length() - 17));
+			else if (!str.empty() && str.length() > 19 && str.compare(0, 19, "transfer-encoding: ") == 0)
+				_transfer_code = trim(str.substr(19, str.length() - 19));
 		}
-	// outf << "BODY CONTENT\n" << _body_content << std::endl;
-	// outf << "FILENAME: " << _filename << std::endl;
-	// outf << "BODY\n" << _body << std::endl;
-	// outf << "CONTENT TYPE: " << _content_type << std::endl;
-	// outf << "BOUNDARY: " << _boundary << std::endl;
+	// DELETE AFTER DEBUG
+	// outf << "HFILENAME|" << _filename << std::endl;
+	// outf << "HContent-type|" << _content_type << std::endl;
+	// outf << "HAccept-Encoding|" << _accept_code << std::endl;
+	// outf << "HTransfer-Encoding|" << _transfer_code << std::endl;
+	// outf << "HBOUNDARY|" << _boundary << std::endl;
 	// outf.close();
 }
 
@@ -175,7 +206,10 @@ void Request::strrequest(std::vector<std::string> request)
 		else if (request[i].compare(0, 4, "HEAD") == 0)
 			this->methodpath("HEAD", trim(request[i].substr(4, request[i].length() - 13)));
 		else if (request[i].compare(0, 3, "PUT") == 0)
+		{
 			this->methodpath("PUT", trim(request[i].substr(3, request[i].length() - 12)));
+			postheaders(request);
+		}
 		else
 		{
 			_err = 501;
