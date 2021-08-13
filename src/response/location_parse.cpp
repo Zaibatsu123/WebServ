@@ -125,16 +125,16 @@ AResponse* file_or_directory_existing(t_client *client)
 		return new BadResponse(404, "./root");
 	std::string directory = location->root;
 	std::string fullpath = directory + path;
-	// std::cout << "directory: " << directory << std::endl;
+	 std::cout << "directory: " << directory << std::endl;
 	// std::cout << "path: " << path << std::endl;
 	// std::cout << "full: " << fullpath << std::endl;
     if (opendir(fullpath.c_str()) != NULL)
     {
-        // std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
+         std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
         file.open(fullpath + "/" + location->index);
         if (file.is_open())
         {
-            // std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
+             std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
             return new GoodResponse(fullpath, location->index);
         }
         if (location->autoindex == 1)

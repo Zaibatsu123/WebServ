@@ -59,9 +59,8 @@ std::string PutResponse::generateHeader(int status) {
 }
 
 std::string PutResponse::generateBody() {
-	std::string			buffer;
-	std::ifstream		file;
-	std::stringstream	str;
+	std::string		buf;
+	std::ifstream	file;
 
 	if (_status != 200){
 		std::cout << "STATUS: " << _status << std::endl;
@@ -71,12 +70,10 @@ std::string PutResponse::generateBody() {
 	else
 		file.open((_root + _fileName).c_str(), std::ifstream::in);
 
-	while (file.good()) {
-		std::getline(file, buffer);
-		str << buffer;
-		if (file.good())
-			str << "\n";
-	}
+	buf.reserve(file.tellg());
+	file.seekg(0, std::ifstream::beg);
+	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
-	return str.str();
+
+	return buf;
 }

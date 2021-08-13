@@ -50,18 +50,17 @@ std::string BadResponse::generateHeader() {
 }
 
 std::string BadResponse::generateBody() {
-	std::string			buffer;
-	std::ifstream		file;
-	std::stringstream	str;
+	std::string		buf;
+	std::ifstream	file;
 
 	file.open(_errorPage[_status], std::ifstream::in);
 
-	while (file.good()) {
-		std::getline(file, buffer);
-		str << buffer;
-		if (file.good())
-			str << "\n";
-	}
+	file.seekg(0, std::ifstream::end);
+	buf.reserve(file.tellg());
+	file.seekg(0, std::ifstream::beg);
+
+	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
-	return str.str();
+
+	return buf;
 }

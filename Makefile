@@ -16,7 +16,6 @@ HEADER			=
 SRC				:=	main.cpp	\
 					\
 					webserver.cpp \
-					requestAcceptor.cpp \
 					Config.cpp \
 					utils.cpp \
 					Request.cpp \

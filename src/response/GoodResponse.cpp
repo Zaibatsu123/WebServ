@@ -50,18 +50,32 @@ std::string GoodResponse::generateHeader() {
 }
 
 std::string GoodResponse::generateBody() {
-	std::string			buffer;
-	std::ifstream		file;
-	std::stringstream	str;
+//	std::string			buffer;
+//	std::ifstream		file;
+//	std::stringstream	str;
+//
+//	file.open((_root + _fileName).c_str(), std::ifstream::in);
+//
+//	while (file.good()) {
+//		std::getline(file, buffer);
+//		str << buffer;
+//		if (file.good())
+//			str << "\n";
+//	}
+//	file.close();
+//	return str.str();
+	std::string		buf;
+	std::ifstream	file;
 
 	file.open((_root + _fileName).c_str(), std::ifstream::in);
+	if (!file.is_open())
+		return "";
+	std::cout << "Filensme " << (_root + _fileName).c_str() << std::endl;
+	std::cout << "SIze " << getFileSize() << std::endl;
+	buf.reserve(getFileSize());
 
-	while (file.good()) {
-		std::getline(file, buffer);
-		str << buffer;
-		if (file.good())
-			str << "\n";
-	}
+	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
-	return str.str();
+
+	return buf;
 }

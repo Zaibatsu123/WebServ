@@ -33,6 +33,7 @@
 #define MSG_NOSIGNAL 0x2000
 
 #define CGI "./root/cgi_tester"
+//#define CGI "./root/myCGI"
 
 #define MiB 1048576
 //#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()

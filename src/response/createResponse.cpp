@@ -52,7 +52,6 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		return sendall(client);
 	}
 
-	// *logs << "            ---->"  << "client check crushed ⛔️ <--" << std::endl;
 	client->request->getMethod();
 	client->request->getErr();
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
@@ -61,7 +60,6 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		client->status = 0;
 		return -1;
 	}
-	// std::cout << "            ---->" << "client check restored ✅ -->" << std::endl;
 
 	if (client->request->getErr() != 0){
 		*logs << "            ---->"   << "Request error" << std::endl;
@@ -96,6 +94,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 	// std::string headerlog = response->generateHeader();
 	// std::string temp2;
 	*logs << response->generateHeader() << std::endl;
+	*logs << response->generateBody() << std::endl;
 	// temp = headerlog.find('\n');
 	// std::cout << "First head:" << headerlog.find('\n') << "ENDHEADERLOG!!" << std::endl;
 	// temp2 = headerlog.substr(0, temp);

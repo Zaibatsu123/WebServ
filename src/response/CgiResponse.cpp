@@ -30,7 +30,8 @@ CgiResponse::~CgiResponse(){
 std::string CgiResponse::generateResponse() {
 	if (getHead())
 		return generateHeader();
-	return generateHeader() + generateBody();
+//	return generateHeader() + generateBody();
+	return generateBody();
 }
 
 std::string CgiResponse::generateHeader() {
@@ -47,20 +48,20 @@ std::string CgiResponse::generateHeader() {
 }
 
 std::string CgiResponse::generateBody() {
-	std::string			buffer;
-	std::ifstream		file;
-	std::stringstream	str;
+	std::string		buf;
+	std::ifstream	file;
 
 	file.open((_root + _fileName).c_str(), std::ifstream::in);
 
-	while (file.good()) {
-		std::getline(file, buffer);
-		str << buffer;
-		if (file.good())
-			str << "\n";
-	}
+	file.seekg(0, std::ifstream::end);
+	buf.reserve(file.tellg());
+	file.seekg(0, std::ifstream::beg);
+
+	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
+
 	std::remove((_root + _fileName).c_str());
 	std::remove("outputMy.txt");
-	return str.str();
+
+	return buf;
 }

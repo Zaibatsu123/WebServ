@@ -65,18 +65,9 @@ int cgiParent(pid_t pid){
 		}
 
 		std::string buf;
-		/*
-		** Skip Cgi-Header
-		*/
-		while (std::getline(inputCGI, buf)){
-			if (buf.length() == 0 ||  buf.at(0) == 13)
-				break;
-		}
-		while (std::getline(inputCGI, buf)){
-			str << buf;
-			if (inputCGI.good())
-				str << "\n";
-		}
+		buf.reserve(inputCGI.tellg());
+		inputCGI.seekg(0, std::ifstream::beg);
+		buf.assign(std::istreambuf_iterator<char>(inputCGI), std::istreambuf_iterator<char>());
 		inputCGI.close();
 	}
 	else if (res == EXIT_FAILURE){

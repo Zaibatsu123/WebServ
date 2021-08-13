@@ -270,54 +270,6 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients, st
 				(*i)->buffer.clear();
 				(*i)->body.clear();
 			}
-//            std::stringstream str;
-//            std::memset(read_buffer, 0, MiB);
-//            result = recv((*i)->socket, read_buffer, MiB, 0);
-//            std::cout << "Bytes read:|" << result << "|" << std::endl;
-//            if (static_cast<int>(result) == -1)
-//            {
-//                perror("Somthing goes wrong, when receiving message");
-//                break;
-//            }
-//            read_buffer[result] = '\0';
-//            str << read_buffer;
-////			recvAcceptor(str.str());
-//            (*i)->buffer += str.str();
-//			size_t pos = (*i)->buffer.find("\15\12\15\12");
-//            if ((*i)->status != 2 &&  pos != std::string::npos)
-//            {
-//				(*i)->head = (*i)->buffer.substr(0, pos);
-//				if ((*i)->buffer.size() > pos + 3)
-//					(*i)->body = (*i)->buffer.substr(pos + 4);
-//				std::cout << "Got full head" << std::endl;
-//                (*i)->request = start((*i)->head);
-//                if (!(*i)->request->_boundary.empty() && ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT")){
-//					std::cout << "----> Request HAVE POST" << std::endl;
-//					std::cout << "----> Boundary: " << std::endl;
-//					std::cout << (*i)->request->_boundary << std::endl;
-//					(*i)->status = 2;
-//                }
-//                else
-//                	(*i)->status = 1;
-//            }
-//            else if ((*i)->status == 2 && (*i)->buffer.find((*i)->request->_boundary + "--") != std::string::npos){
-//				std::cout << "----> Got full BODY" << std::endl;
-//				(*i)->status = 1;
-//				(*i)->body += (*i)->buffer;
-//				(*i)->request->postbody((*i)->body);
-//            }
-//            else if (result <= 0)
-//            {
-//                i = clients->erase(i);
-//                std::cout << "Error occured when receive message from client!" << strerror(errno) << std::endl;
-//            }
-//            else{
-//				(*i)->body += (*i)->buffer;
-				// outf << "Received request________________________" << std::endl;
-				// outf << (*i)->buffer << std::endl; // DELETE AFTER DEBUG
-				// outf << "End request________________________" << std::endl;
-//				(*i)->buffer = "";
-//            }
         }
     }
     outf.close();  // DELETE AFTER DEBUG

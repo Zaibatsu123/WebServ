@@ -31,8 +31,8 @@ AResponse* methodGet(s_client* client){
 
 AResponse* methodPost(s_client* client){
 	std::cout << "--> POST" << std::endl;
+	int status;
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
-
 	std::cout << "LOCATION:|" << location->root << "|" << "PATH:|" << client->request->getPath() << "|"<< std::endl;
 	std::cout << "FilENAME:|" << client->request->getPath() << "|"<< std::endl;
 	if (client->request->getBodyCnt().length() == 0){
@@ -40,12 +40,23 @@ AResponse* methodPost(s_client* client){
 		return new BadResponse(405, location->root);
 	}
 
-	int status = upload((location->root + client->request->getPath()).c_str(), client);
-
+	status = upload(location->root + client->request->getPath(), client);
 	if (status){
 		std::cout << "--> Error: Cannot create file <--" << std::endl;
 		return new BadResponse(status, location->root);
 	}
+
+	if (client->request->getPath().find(".bla") != std::string::npos){
+		std::cout << "----> CGI" << std::endl;
+
+		status = cgi(CGI, location->root + client->request->getPath());
+
+		if (status)
+			return new BadResponse(status, location->root);
+		return new CgiResponse("outputCGI.txt");
+//		return new GoodResponse("", "");
+	}
+
 	return new GoodResponse(location->root, "/uploadSuccess.html");
 }
 
