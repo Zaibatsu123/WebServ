@@ -11,6 +11,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <cstring>
 #include <list>
 #include <sys/socket.h>
@@ -27,11 +28,12 @@ std::vector<std::string> *readFile(char *config_name)
 	std::string                 temp;
 	std::vector<std::string>    *configuration = new std::vector<std::string>;
 
-	std::cout << "Start configuration reading" << std::endl;
+	std::cout << "Start configuration reading..." << std::endl;
 	if (!config_file)
 	{
 		std::cerr << "Configuration file not found!" << std::endl;
-		return (configuration);
+		delete configuration;
+		return (NULL);
 	}
 	while (config_file)
 	{
@@ -106,19 +108,17 @@ Server  *listen(Server *temp, std::string str, int i)
 	try
 	{
 		std::string ip =  trim(str.substr(11, str.find(":") - 11));
-		ts->address = new char[strlen(ip.c_str()) + 1];
-		memcpy(ts->address, ip.c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
-		ts->address[strlen(ip.c_str())] = '\0';
+		ts->address = strdup(ip.c_str());
 		ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << "Configuration file:" << i + 1 << " Incorrect ip or port" << std::endl;
+		delete ts->address;
 		delete ts;
 		return (NULL);
 	}
-	temp->sockets.push_back(*ts);
-	delete ts;
+	temp->sockets.push_back(ts);
 	return(temp);
 }
 
@@ -197,6 +197,7 @@ Server  *upload_file_to(Server *temp, std::string str, int i)
         std::cerr << "Configuration file: " << i + 1 << " " << strerror(errno) << std::endl;
         return (NULL);
     }
+	closedir(dir);
 	return (temp);
 }
 
@@ -263,8 +264,8 @@ void print_serv(std::vector<Server*> *servers)
 	{
 		std::cout << "---------===SERVER===---------" << "num: " << k <<  std::endl;
 		std::cout << "---------===Sockets===---------" << std::endl;
-		for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
+		for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
+			std::cout << "Running on http://" << (*j)->address << ":" << (*j)->port << "/ (Press CTRL+C to quit)" << std::endl;
 		std::cout << "---------===locations===---------size" << (*i)->locations.size() << std::endl;
 		for (std::map<std::string, t_location *>::iterator it = (*i)->locations.begin(); it != (*i)->locations.end(); it++ )
 		{
@@ -284,6 +285,11 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 	std::vector<std::string>    *configuration = readFile(config_name);
 	int cnt = 0, begin = 0, end = 0;
 
+	if (configuration == NULL)
+	{
+		delete servers;
+		return (NULL);
+	}
 	for (size_t i = 0; i < configuration->size(); ++i)
 	{
 		if ((*configuration)[i] == "server")
@@ -323,21 +329,4 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 		print_serv(servers);
 	return (servers);
 }
-
-// int main(void)
-// {
-// 	std::vector<Server*>     *servers;
-// 	char *str = new char[10];
-// 	strcpy(str, "test.conf");
-// 	servers = parsingConfiguration(str);
-// 	for (std::vector<Server>::iterator i = servers->begin(); i != servers->end(); i++)
-// 	{
-// 		for (std::vector<t_socket>::iterator j = (*i).sockets.begin(); j != (*i).sockets.end(); j++)
-// 			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
-// 		for (std::map<std::string, std::string>::iterator it = (*i).locations.begin(); it != (*i).locations.end(); it++ )
-// 			std::cout << "location: " << it->first << " root: " << it->second << std::endl;
-// 	}
-// 	// while(1)
-// 	// 	continue;
-// }
 

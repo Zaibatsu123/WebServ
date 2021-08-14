@@ -117,6 +117,7 @@ std::string autoindex(const char *directory, t_client *client)
 AResponse* file_or_directory_existing(t_client *client)
 {
 	std::ifstream		file;
+    DIR                 *dir = NULL;
 	t_location 			*location = NULL;
 	std::string			path = client->request->getPath();
 
@@ -128,9 +129,10 @@ AResponse* file_or_directory_existing(t_client *client)
 	// std::cout << "directory: " << directory << std::endl;
 	// std::cout << "path: " << path << std::endl;
 	// std::cout << "full: " << fullpath << std::endl;
-    if (opendir(fullpath.c_str()) != NULL)
+    if ((dir = opendir(fullpath.c_str())) != NULL)
     {
         // std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
+        closedir(dir);
         file.open(fullpath + "/" + location->index);
         if (file.is_open())
         {

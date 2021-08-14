@@ -23,6 +23,7 @@ int	main(int argc, char **argv, char **env){
     }
     if ((servers = parsingConfiguration(argv[1])) == NULL)
         return (EXIT_FAILURE);
+    // while(1){}
     webserver.setServer(servers);
     webserver.announceServerSettings();
     if (webserver.startServer() == EXIT_FAILURE)

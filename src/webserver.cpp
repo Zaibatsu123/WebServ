@@ -13,9 +13,9 @@ void WebServer::announceServerSettings(){
 	std::cout << "Use a production WSGI server instead." << COLOR_DEFAULT << std::endl;
     for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
     {
-        for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
+        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
         {
-            std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
+            std::cout << "Running on http://" << (*j)->address << ":" << (*j)->port << "/ (Press CTRL+C to quit)" << std::endl;
         }
     }
 }
@@ -71,11 +71,11 @@ int create_socket(t_socket *server_socket) //создаём сокет, устр
 int WebServer::creatingSocketServers()
 {
     for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
-        for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
+        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
         {
-            if ((j->socket = create_socket(&(*j))) == -1)
+            if (((*j)->socket = create_socket(*j)) == -1)
                 return (EXIT_FAILURE);
-            fcntl((*j).socket, F_SETFL, O_NONBLOCK);
+            fcntl((*j)->socket, F_SETFL, O_NONBLOCK);
         }
     return (EXIT_SUCCESS);
 }
@@ -87,10 +87,10 @@ int WebServer::connectingNewClients()
 
     logs << "    -->|CONNECTING CLIENTS|" << std::endl;
     for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
-        for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-            if (FD_ISSET((*j).socket, &__read_fds))
+        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
+            if (FD_ISSET((*j)->socket, &__read_fds))
             {
-                if ((new_client_socket = accept((*j).socket, NULL, NULL)) == -1)
+                if ((new_client_socket = accept((*j)->socket, NULL, NULL)) == -1)
                 {
                     std::cout << "Error when accept connection to the socket. " << strerror(errno) << std::endl;
                     return (EXIT_FAILURE);
@@ -258,11 +258,11 @@ int WebServer::addingSocketsToSets()
     FD_ZERO(&__read_fds);
     FD_ZERO(&__write_fds);
     for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
-        for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
+        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
         {
-            FD_SET((*j).socket, &__read_fds);
-            if ((*j).socket > max_fd)
-                max_fd = (*j).socket;
+            FD_SET((*j)->socket, &__read_fds);
+            if ((*j)->socket > max_fd)
+                max_fd = (*j)->socket;
         }
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
     {

@@ -1,6 +1,5 @@
 server
     listen 127.0.0.1:9099
-    error_page 500 ./src/main.cpp
     location /
         root ./root/
         index youpi.bad_extension
