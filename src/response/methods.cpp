@@ -27,10 +27,6 @@ AResponse* methodGet(s_client* client){
 
 		return new CgiResponse("outputCGI.txt");
 	}
-	std::cout << "GOOO" << std::endl;
-	char **env = generateEnv(client);
-	if (env)
-		std::cout << "Done" << std::endl;
 	AResponse* resp = file_or_directory_existing(client);
 
 	return resp;
@@ -45,6 +41,8 @@ AResponse* methodPost(s_client* client){
 	std::cout << "FilENAME:|" << client->request->getPath() << "|"<< std::endl;
 
 
+	if (location->max_body_size && location->max_body_size < client->request->getBodyCnt().length())
+		return new BadResponse(413, location->root);
 	if (location->methods != 2 && location->methods != 6)
 		return new BadResponse(405, location->root);
 

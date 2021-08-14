@@ -129,6 +129,7 @@ void init(t_location *lctn)
 	lctn->root = "";
 	lctn->methods = 0;
 	lctn->autoindex = 0;
+	lctn->max_body_size = 0;
 }
 
 int getAllowsMethods(std::string str, int i)

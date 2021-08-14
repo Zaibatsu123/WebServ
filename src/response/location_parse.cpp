@@ -94,12 +94,13 @@ std::string autoindex(const char *directory, t_client *client)
 	std::stringstream   str;
 	(void)client;
 
-	// std::cout << "Directory" << directory << std::endl;
+	 std::cout << "Directory" << directory << std::endl;
 	dir = opendir(directory);
 	std::string prefix = "/";
 	if (client->request->getPath()[client->request->getPath().size() - 1] == '/')
 		prefix = "";
 	str << "<!DOCTYPE html><html><head><title>Вы находитесь в директории: " << directory << "</title></head><body><H1>Autoindex</H1>";
+	std::cout << "check while dir" << std::endl;
 	while(dir)
 	{
 		de = readdir(dir);
@@ -111,6 +112,7 @@ std::string autoindex(const char *directory, t_client *client)
 	}
 	str << "</body></html>";
 	closedir(dir);
+	std::cout << "end of autoindex" << std::endl;
 	return (str.str());
 }
 
@@ -139,19 +141,21 @@ AResponse* file_or_directory_existing(t_client *client)
         }
         if (location->autoindex == 1)
         {
-            // std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
+             std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
             std::string str = autoindex(fullpath.c_str(), client);
 			return new BadResponse(404, location->root);
 //            return new AutoIndexResponse(str);
         }
-
+		std::cout << "success" << std::endl;
         return new BadResponse(404, "./root");
     }
+	std::cout << "another path" << std::endl;
     file.open(fullpath);
     if (file.is_open())
     {
-        // std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
+         std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
         return new GoodResponse("./root", client->request->getPath());
     }
+	std::cout << "bad response" << std::endl;
     return new BadResponse(404, "./root");
 }
