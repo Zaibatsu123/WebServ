@@ -178,10 +178,10 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients, st
 					(*i)->getRequestHead = 1;
 					if ((*i)->buffer.length() > (*i)->head.length() + 3)
 						(*i)->body = (*i)->buffer.substr(pos + 4);
-					if ((*i)->request->_boundary.empty())
+					if ((*i)->request->getBoundary().empty())
 						(*i)->needle = "0\15\12\15\12";
 					else
-						(*i)->needle = (*i)->request->_boundary + "--";
+						(*i)->needle = (*i)->request->getBoundary() + "--";
 				}
 				else{
 					*logs << "            ---> Request have not body" << std::endl;
