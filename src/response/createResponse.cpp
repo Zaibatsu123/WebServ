@@ -53,9 +53,9 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		return sendall(client);
 	}
 
-	client->request->getMethod();
 	client->request->getErr();
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
+
 	if (location == NULL){
 		*logs << "            ---->"  << " ---> Broken location <---" << std::endl;
 		client->status = 0;
@@ -71,12 +71,12 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		*logs << "            ---->"   << "Request error 3" << std::endl;
 	}
 	else{
-		if (client->request->getMethod() == "GET"){
+		if (client->request->getMethod() == "GET")
 			response = methodGet(client);
-		}
 
-		if (client->request->getMethod() == "POST")
+		if (client->request->getMethod() == "POST"){
 			response = methodPost(client);
+		}
 
 		if (client->request->getMethod() == "HEAD"){
 //			response->setHead(1);

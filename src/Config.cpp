@@ -172,7 +172,7 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 			lctn->autoindex = 0;
 		else if ((*configuration)[j].compare(0, 22, "        allow_methods ") == 0)
 			lctn->methods = getAllowsMethods(trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), j);
-		else 
+		else
 			temp = print_error(temp, i, 5);
 	}
 	if (lctn->methods == - 1)

@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sstream>
+#include <string.h>
 #include "../src/Request.hpp"
 #include "../src/Server.hpp"
 #include "../src/response/GoodResponse.hpp"
@@ -73,7 +74,8 @@ int upload(const std::string & uplFileName, s_client* client);
 std::string recvAcceptor(const std::string & buffer);
 
 //cgiHandler.cpp
-int cgi(const std::string & cgiName, const std::string & pathToFile);
+int cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);
+char **generateEnv(s_client* client);
 
 //other
 std::vector<Server*>		*parsingConfiguration(char *config_name);

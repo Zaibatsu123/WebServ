@@ -7,26 +7,34 @@
 
 #include "../../inc/output.hpp"
 
+
+
+
 AResponse* methodGet(s_client* client){
 	std::cout << "--> GET" << std::endl;
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 
+	if (location->methods != 4 && location->methods != 6)
+		return new BadResponse(405, location->root);
+
 	if (client->request->getPath().find(".php") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
 
-		int status = cgi(CGI, location->root + client->request->getPath());
+		int status = cgi(CGI, location->root + client->request->getPath(), client);
 
 		if (status)
 			return new BadResponse(status, location->root);
 
 		return new CgiResponse("outputCGI.txt");
 	}
-
+	std::cout << "GOOO" << std::endl;
+	char **env = generateEnv(client);
+	if (env)
+		std::cout << "Done" << std::endl;
 	AResponse* resp = file_or_directory_existing(client);
 
 	return resp;
 }
-
 
 
 AResponse* methodPost(s_client* client){
@@ -35,10 +43,10 @@ AResponse* methodPost(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->server->locations);
 	std::cout << "LOCATION:|" << location->root << "|" << "PATH:|" << client->request->getPath() << "|"<< std::endl;
 	std::cout << "FilENAME:|" << client->request->getPath() << "|"<< std::endl;
-	if (client->request->getBodyCnt().length() == 0){
-		std::cout << "--> POST: Error: client sent invalid chunked body" << std::endl;
+
+
+	if (location->methods != 2 && location->methods != 6)
 		return new BadResponse(405, location->root);
-	}
 
 	status = upload(location->root + client->request->getPath(), client);
 	if (status){
@@ -49,7 +57,8 @@ AResponse* methodPost(s_client* client){
 	if (client->request->getPath().find(".bla") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
 
-		status = cgi(CGI, location->root + client->request->getPath());
+
+		status = cgi(CGI, location->root + client->request->getPath(), client);
 
 		if (status)
 			return new BadResponse(status, location->root);
@@ -125,3 +134,5 @@ int upload(const std::string & uplFileName, s_client* client) {
 
 	return 0;
 }
+
+

@@ -69,7 +69,7 @@ void Request::getheaders(std::vector<std::string> request)
 		{
 			int pos = request[j].find(":");
 			std::string key = request[j].substr(0, pos);
-			_headers[key] = request[j].substr(pos, request[j].size() - pos - 1);
+			_headers.insert(std::pair<std::string, std::string>(key, request[j].substr(pos + 2, request[j].size() - pos - 2)));
 		}
 	}
 }
@@ -162,6 +162,7 @@ void Request::postheaders(std::vector<std::string> request)
 */
 void Request::strrequest(std::vector<std::string> request)
 {
+	std::cout << "\033[1;42mFR4G-TP\033[0m\n" << std::endl;
 	if (request.size() == 0)
 	{
 		_err = 400;
