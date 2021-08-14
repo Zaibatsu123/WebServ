@@ -42,11 +42,13 @@ std::string Request::getProtocol() const    {return _protocol; }
 std::string Request::getHost() const    {return _host; }
 std::string Request::getCType() const    {return _content_type; }
 std::string Request::getCLength() const    {return _content_length; }
-std::string  Request::getBody() const	{return _body; };
-std::string Request::getBodyCnt() const	{return _body_content; };
-std::string Request::getFilename() const 	{return _filename; };
-std::string Request::getTransferCode() const 	{return _transfer_code; };
-std::string Request::getAcceptCode() const 	{return _accept_code; };
+std::string  Request::getBody() const	{return _body; }
+std::string Request::getBodyCnt() const	{return _body_content; }
+std::string Request::getFilename() const 	{return _filename; }
+std::string Request::getTransferCode() const 	{return _transfer_code; }
+std::string Request::getAcceptCode() const 	{return _accept_code; }
+std::string Request::getBoundary() const {return _boundary;}
+std::map<std::string, std::string> Request::getHeaders_() const {return _headers;}
 
 void Request::methodpath(std::string method, std::string path)
 {
@@ -56,16 +58,20 @@ void Request::methodpath(std::string method, std::string path)
 
 void Request::getheaders(std::vector<std::string> request)
 {
-	std::string str;
-	// if (trim(request[1]).empty())
-	// {
-	// 	_err = 400;
-	// 	return ;
-	// }	
+	std::string str;	
 	str = request[1];
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
 	if (str.compare(0, 5, "host:") == 0)
 		_host = trim(str.substr(5, str.length() - 5));
+	for (size_t j = 1; j < request.size(); ++j)
+	{
+		if (request[j].find(":") != std::string::npos)
+		{
+			int pos = request[j].find(":");
+			std::string key = request[j].substr(0, pos);
+			_headers[key] = request[j].substr(pos, request[j].size() - pos - 1);
+		}
+	}
 }
 
 void Request::body_chunk(std::string body_request)
@@ -110,17 +116,6 @@ void Request::postbody(std::string body_request)
 	{
 		if (!request[j].empty() && request[j].length() > 14 && request[j].compare(0, 14, "Content-Type: ") == 0)
 			_content_type = trim(request[j].substr(14, request[j].length() - 14));
-		// if (request[j].empty() && j + 1 < request.size())
-		// {
-		// 	for (size_t k = j + 1; k < request.size(); ++k)
-		// 	{
-		// 		if (k != request.size() - 1)
-		// 			_body_content += request[k] + "\n";
-		// 		else 
-		// 			_body_content += request[k];
-		// 	}
-		// 	break;
-		// }
 	}
 	_body_content = content(body_request, _boundary);
 	outf << "Body Content: \n" << _body_content  << "|" << std::endl;
