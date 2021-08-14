@@ -242,3 +242,6 @@ ssize_t response(s_client *client, std::ofstream *logs){
 //	}
 //	return result;
 //}
+
+// Process 36413: 303 nodes malloced for 377896 KB
+// Process 36413: 62 leaks for 386934688 total leaked bytes.
