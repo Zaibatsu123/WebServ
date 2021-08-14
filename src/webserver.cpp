@@ -197,9 +197,9 @@ int check_incoming_requests(fd_set *read_fds, std::list<t_client *> *clients, st
 				}
 				*logs << "            ---> Got full head" << std::endl;
 				(*i)->head += (*i)->buffer.substr(0, pos); // TODO: substr direct to start()
-				*logs << "================== Response HEAD =====================" << std::endl;
+				*logs << "================== Request HEAD =====================" << std::endl;
 				*logs << (*i)->head << std::endl;
-				*logs << "================== Response HEAD =====================" << std::endl << std::endl;
+				*logs << "================== Request HEAD =====================" << std::endl << std::endl;
 				(*i)->request = start((*i)->head);
 				if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT"){
 					*logs << "            ---> Request have body" << std::endl;

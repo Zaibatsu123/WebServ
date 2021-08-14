@@ -70,8 +70,7 @@ std::string PutResponse::generateBody() {
 	else
 		file.open((_root + _fileName).c_str(), std::ifstream::in);
 
-	buf.reserve(file.tellg());
-	file.seekg(0, std::ifstream::beg);
+	buf.reserve(_calculateFileSize());
 	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
 

@@ -12,20 +12,29 @@
 #define CGI_INPUT_FILE "outputMy.txt"
 #define CGI_OUTPUT_FILE "outputCGI.txt"
 
+void addEnv(char **env, char *newValue){
+	int i = 0;
+	while (*(env + i))
+		i++;
+	*(env + i) = newValue;
+}
+
 char** generateCgiEnv(){
 	char **env;
 
 	try
 	{
-		env = new char* [sizeof(char*) * 4];
+		env = new char* [sizeof(char*) * 5]();
 	}
 	catch (std::exception & e){
 		return 0;
 	}
-	env[0] = (char *)"REQUEST_METHOD=get";
-	env[1] = (char *)"SERVER_PROTOCOL=HTTP/1.1";
-	env[2] = (char *)"PATH_INFO=./root/cgi_tester";
-	env[3] = 0;
+	addEnv(env, (char *)"REQUEST_METHOD=POST");
+	addEnv(env, (char *)"SERVER_PROTOCOL=HTTP/1.1");
+	addEnv(env, (char *)"PATH_INFO=/Users/wjarr/Desktop/webserv/root/cgi_tester");
+//		addEnv(env, (char *)"HTTP_X_SECRET_HEADER_FOR_TEST=1");
+
+	env[3] = NULL;
 	return env;
 }
 

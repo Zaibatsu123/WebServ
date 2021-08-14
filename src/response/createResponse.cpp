@@ -45,6 +45,7 @@ ssize_t sendall(s_client* client){
 
 ssize_t response(s_client *client, std::ofstream *logs){
 	*logs << "======================> Response part <====================== " << std::endl;
+
 	AResponse* response;
 	ssize_t result;
 

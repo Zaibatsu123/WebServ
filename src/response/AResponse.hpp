@@ -36,7 +36,7 @@ protected:
 	std::string 			_body;
 	std::list<std::string>	_allowedMethods;
 
-	size_t		_calculateFileSize() const;
+	std::streamsize		_calculateFileSize() const;
 	std::string	_indicateFileType() const;
 
 public:
