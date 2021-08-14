@@ -122,7 +122,8 @@ ssize_t response(s_client *client, std::ofstream *logs){
 	result = sendall(client);
 
 	delete response;
-//	delete client->request;
+	delete client->request;
+	client->request = NULL;
 	*logs << "======================> Response END <====================== " << std::endl;
 	return result;
 }

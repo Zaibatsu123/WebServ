@@ -23,7 +23,7 @@ Request::Request(){
 	_body = "";
 	_protocol = "";
 	_body_content = "";
-	_filename = "uploadFilename";
+	_filename = "";
 	_conection = "keep-alive";
 	_err = 0;
 	_transfer_code = "";

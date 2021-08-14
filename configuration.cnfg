@@ -5,4 +5,5 @@ server
         root ./root/
         index youpi.bad_extension
         auto_index on
+        max_body_size 100 B
     upload_file_to ./root/
