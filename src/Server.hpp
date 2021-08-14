@@ -19,6 +19,7 @@ typedef struct  s_location
 	std::string	index;
 	int			autoindex;
 	int			methods;
+	long long int						max_body_size;	
 }				t_location;
 
 class   Server
@@ -28,7 +29,7 @@ class   Server
 		std::string                         server_name;
 		std::map<std::string, t_location*>	locations;             
 		std::map<int, std::string>          error_pages;
-		long long int						max_body_size;
+		// long long int						max_body_size;
 		std::string                         upload_file_to;
 	public:
 		Server();

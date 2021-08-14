@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <vector>
+#include "Request.hpp"
 #include "../inc/output.hpp"
 #include  "Server.hpp"
 #include <dirent.h>
@@ -152,6 +153,33 @@ int getAllowsMethods(std::string str, int i)
 	return (-1);
 }
 
+// Server  *max_body_size(Server *temp, std::string str, int i)
+long long int max_body_size(Server *temp, std::string str, int i)
+{
+	size_t n = std::count(str.begin(), str.end(), ' ');
+	std::string size = str.substr(str.length() - 1, 1);
+	long long int size_num = 0;
+	int b = 1;
+	if (n > 1 || (size != "M" && size != "K" && size != "G" && size != "B"))
+		temp = print_error(temp, i, 4);
+	if (size == "K")
+		b = 1024;
+	else if (size == "M")
+		b = 1024 * 1024;
+	else if (size == "G") 
+		b = 1024 * 1024 * 1024;
+	try
+	{
+		if (temp != NULL && std::stoll(str.substr(0, str.length() - 2)) > 0)
+			size_num = std::stoll(str.substr(0, str.length() - 2)) * b;
+	}
+	catch(const std::exception& e)
+	{
+		temp = print_error(temp, i, 4);
+	}
+	return (size_num);
+}
+
 Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 {
 	t_location *lctn = new t_location;
@@ -172,17 +200,20 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 			lctn->autoindex = 0;
 		else if ((*configuration)[j].compare(0, 22, "        allow_methods ") == 0)
 			lctn->methods = getAllowsMethods(trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), j);
-		else
+		else if ((*configuration)[j].compare(0, 22, "        max_body_size ") == 0)
+			lctn->max_body_size = max_body_size(temp, trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), i);
+		else 
 			temp = print_error(temp, i, 5);
 	}
+	std::cout << "SIZE|" << lctn->max_body_size << std::endl;
 	if (lctn->methods == - 1)
 	{
 		delete lctn;		
 		return (NULL);
 	}
+	std::string ll = "/" + (loc.substr(14, loc.length() - 15));
 	if (temp != NULL)
 	{
-		std::string ll = "/" + (loc.substr(14, loc.length() - 15));
 		temp->locations[ll] = lctn;
 	}
 	return (temp);
@@ -197,31 +228,10 @@ Server  *upload_file_to(Server *temp, std::string str, int i)
         std::cerr << "Configuration file: " << i + 1 << " " << strerror(errno) << std::endl;
         return (NULL);
     }
+	closedir(dir);
 	return (temp);
 }
 
-Server  *max_body_size(Server *temp, std::string str, int i)
-{
-	size_t n = std::count(str.begin(), str.end(), ' ');
-	std::string size = str.substr(str.length() - 1, 1);
-	int kb = 1;
-	if (n > 1 || (size != "M" && size != "K" && size != "G"))
-		temp = print_error(temp, i, 4);
-	if (size == "M")
-		kb = 1024;
-	else if (size == "G") 
-		kb = 1024 * 1024;
-	try
-	{
-		if (temp != NULL && std::stoll(str.substr(0, str.length() - 2)) > 0)
-			temp->max_body_size = std::stoll(str.substr(0, str.length() - 2)) * kb;
-	}
-	catch(const std::exception& e)
-	{
-		temp = print_error(temp, i, 4);
-	}
-	return (temp);
-}
 
 std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::string> *configuration, int begin, int end)
 {
@@ -240,8 +250,8 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 			temp = error_pages(temp, str, i);
 		else if (str.compare(0, 19, "    upload_file_to ") == 0)
 			temp = upload_file_to(temp, str, i);
-		else if (str.compare(0, 18, "    max_body_size ") == 0)
-			temp = max_body_size(temp, trim(str.substr(18, str.length() - 18)), i);
+		// else if (str.compare(0, 18, "    max_body_size ") == 0)
+		// 	temp = max_body_size(temp, trim(str.substr(18, str.length() - 18)), i);
 		else if (str == "server" || str.compare(0, 8, "        ") == 0)
 			continue;
 		else
