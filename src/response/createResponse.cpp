@@ -122,7 +122,8 @@ ssize_t response(s_client *client, std::ofstream *logs){
 	result = sendall(client);
 
 	delete response;
-//	delete client->request;
+	delete client->request;
+	client->request = NULL;
 	*logs << "======================> Response END <====================== " << std::endl;
 	return result;
 }
@@ -241,3 +242,6 @@ ssize_t response(s_client *client, std::ofstream *logs){
 //	}
 //	return result;
 //}
+
+// Process 36413: 303 nodes malloced for 377896 KB
+// Process 36413: 62 leaks for 386934688 total leaked bytes.

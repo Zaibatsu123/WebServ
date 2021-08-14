@@ -1,8 +1,9 @@
 server
     listen 127.0.0.1:9099
-    error_page 500 ./root/errorPages/503.html
+    error_page 500 ./src/main.cpp
     location /
         root ./root/
         index youpi.bad_extension
         auto_index on
+        allow_methods GET
     upload_file_to ./root/
