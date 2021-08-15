@@ -87,9 +87,11 @@ ssize_t sendall(s_client* client){
 			client->responseBuffer.clear();
 			client->responseNotSend = false;
 			client->status = 0;
-//			if (client->request->getHeaders_()["Connection"] == "close")
-//				close(client->socket);
-			return 0;
+			std::map<std::string , std::string > tmp = client->request->getHeaders_();
+
+			if (tmp["Connection"] == "close")
+				return 0;
+			return result;
 		}
 		try{
 			client->responseBuffer = client->responseBuffer.substr(result);

@@ -47,16 +47,18 @@
 typedef struct  s_client
 {
     Server      *server;
-    int         socket;
-    int         status;
-    int         getRequestHead;
-    std::string buffer;
-	std::string head;
-	std::string body;
-	std::string needle;
-	Request     *request;
-	std::string responseBuffer;
-	bool 		responseNotSend;
+
+    int         	socket;
+    int         	status;
+    int         	getRequestHead;
+    std::string 	buffer;
+	std::string 	head;
+	std::string 	body;
+	std::string 	needle;
+	Request     	*request;
+	std::string 	responseBuffer;
+	bool 			responseNotSend;
+	struct timeval 	time;
 }               t_client;
 
 //createResponse.cpp

@@ -7,11 +7,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-
+#include <errno.h>
+#include <sys/time.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 class WebServer
 {
     private:
+        int                     request_count;
         std::vector<Server*>    *__servers;
         std::list<t_client *>   __clients;
         fd_set                  __read_fds;
@@ -19,17 +24,22 @@ class WebServer
         int                     __max_fd;
         std::ofstream           logs;
 
-        int     connectingNewClients();
-        int     creatingSocketServers();
-        int     addingSocketsToSets();
-        int     checkIncomingRequests();
-        int     checkOutcomingResponces();
+        t_client    *initClient(int new_client_socket, Server *server);
+        int         connectingNewClients();
+        int         creatingSocketServers();
+        int         addingSocketsToSets();
+        int         checkIncomingRequests();
+        int         checkOutcomingResponces();
+        void        proccessRequestHead(std::list<t_client *>::iterator i);
+        void        proccessRequestBody(std::list<t_client *>::iterator i);
+        void        deleteOldClients();
 
     public:
+        WebServer();
         void    setServer(std::vector<Server*>  *servers);
         int     startServer();
         void    announceServerSettings();
-        
+        std::list<t_client *>::iterator clientDelete(std::list<t_client *>::iterator i);
 };
 
 int rebind(int listen_socket);
