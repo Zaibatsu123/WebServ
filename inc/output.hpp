@@ -31,7 +31,13 @@
 
 #include <dirent.h>
 
-#define MSG_NOSIGNAL 0x2000
+#ifdef __linux__
+# include <algorithm>
+#endif
+
+#ifndef __linux__
+# define MSG_NOSIGNAL 0x2000
+#endif
 
 #define CGI "./root/cgi_tester"
 //#define CGI "./root/myCGI"

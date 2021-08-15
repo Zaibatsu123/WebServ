@@ -22,6 +22,9 @@ void cgiChild(const std::string & cgiName, const std::string & pathToFile, s_cli
 	int in = open(pathToFile.c_str(), O_RDONLY, S_IRUSR | S_IWUSR);
 	int out = open(CGI_OUTPUT_FILE, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
 
+    char *argv[2];
+    argv[0] = (char*)cgiName.c_str();
+    argv[1] = NULL;
 	if(in == -1 || out == -1)
 		exit(2);
 	if (dup2(in, 0) == -1 || dup2(out, 1) == -1)
