@@ -23,9 +23,6 @@ ssize_t sendall(s_client* client){
 				<< "Send Result:\t" << result
 				<< std::endl;
 
-		//TODO: delete sleep for delay after send
-		usleep(1000);
-
 		if (result == static_cast<ssize_t>(client->responseBuffer.length())){
 			std::cout << "All data was send. Clear buffer." << std::endl;
 			client->responseBuffer.clear();
