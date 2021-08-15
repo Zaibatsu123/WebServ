@@ -263,8 +263,10 @@ int WebServer::checkOutcomingResponces()
         if (FD_ISSET((*i)->socket, &__write_fds) && (*i)->status == 1)
         {
             result = response(*i, &logs);
-            if (result == -1)
+            if (result <= 0)
             {
+                close((*i)->socket);
+                i = clientDelete(i);
                 std::cerr << "send failed: " << strerror(errno) << std::endl;
                 exit_status = EXIT_FAILURE;
             }
