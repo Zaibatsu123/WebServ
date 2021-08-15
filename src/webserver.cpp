@@ -165,7 +165,7 @@ int WebServer::checkIncomingRequests()
 					continue;
 				}
 				logs << "            ---> Got full head" << std::endl;
-				(*i)->head += (*i)->buffer.substr(0, pos); // TODO: substr direct to start()
+				(*i)->head += (*i)->buffer.substr(0, pos + 2); // TODO: substr direct to start()
 				logs << "================== Response HEAD =====================" << std::endl;
 				logs << (*i)->head << std::endl;
 				logs << "================== Response HEAD =====================" << std::endl << std::endl;

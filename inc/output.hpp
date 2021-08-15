@@ -60,8 +60,8 @@ typedef struct  s_client
 }               t_client;
 
 //createResponse.cpp
-ssize_t						response(t_client *client, std::ofstream *logs);
-ssize_t						sendall(int socket, std::string & buffer, int flags);
+ssize_t	response(t_client *client, std::ofstream *logs);
+ssize_t	sendall(s_client* client);
 
 //methods.cpp
 AResponse*	methodGet(s_client* client);
@@ -69,9 +69,6 @@ AResponse*	methodPost(s_client* client);
 AResponse*	methodDelete(s_client* client);
 AResponse*	methodPut(s_client* client);
 int upload(const std::string & uplFileName, s_client* client);
-
-//requestAcceptor
-std::string recvAcceptor(const std::string & buffer);
 
 //cgiHandler.cpp
 int cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);
