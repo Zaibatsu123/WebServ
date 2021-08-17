@@ -150,22 +150,18 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 {
     logs << "            ---> Read Head" << std::endl;
     size_t pos = (*i)->buffer.find("\15\12\15\12");
-    if (pos == std::string::npos){
-        (*i)->head += (*i)->buffer;
+    if (pos == std::string::npos)
         return ;
-    }
     logs << "            ---> Got full head" << std::endl;
     request_count += 1;
-    (*i)->head += (*i)->buffer.substr(0, pos + 2); // TODO: substr direct to start()
-    logs << "================== Response HEAD =====================" << std::endl;
-    logs << (*i)->head << std::endl;
-    logs << "================== Response HEAD =====================" << std::endl << std::endl;
+    (*i)->head = (*i)->buffer.substr(0, pos + 3); // TODO: substr direct to start()
+    logs << "================== Request HEAD =====================" << std::endl;
+    logs << (*i)->head;
+    logs << "================== Request HEAD =====================" << std::endl << std::endl;
     (*i)->request = start((*i)->head);
     if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT"){
         logs << "            ---> Request have body" << std::endl;
         (*i)->getRequestHead = 1;
-        if ((*i)->buffer.length() > (*i)->head.length() + 3)
-            (*i)->body = (*i)->buffer.substr(pos + 4);
         if ((*i)->request->getBoundary().empty())
             (*i)->needle = "0\15\12\15\12";
         else
@@ -177,37 +173,36 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
         (*i)->status = 1;
     }
     std::cout << "BODY_SIZE:|" << (*i)->body.size() << "|" << std::endl;
-    (*i)->buffer.clear();
+	if ((*i)->buffer.size() > pos + 3)
+		(*i)->buffer = (*i)->buffer.substr(pos + 4);
+	else
+		(*i)->buffer.clear();
     (*i)->head.clear();
 }
 
 void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 {
     logs << "            ---> Read Body" << std::endl;
-    (*i)->body += (*i)->buffer;
-    size_t pos = (*i)->body.find((*i)->needle);
-    std::cout << "Content lengt:" << (*i)->request->getCLength() << "BODY SIZE: " << strlen((*i)->body.c_str()) << std::endl;
-    if (pos == std::string::npos){
-        (*i)->buffer.clear();
+    size_t pos = (*i)->buffer.find((*i)->needle);
+    std::cout << "Content length:" << (*i)->request->getCLength() << "BODY SIZE: " << strlen((*i)->body.c_str()) << std::endl;
+    if (pos == std::string::npos)
         return ;
-    }
     logs << "Got full body" << std::endl;
     (*i)->getRequestHead = 0;
     (*i)->status = 1;
-    (*i)->body = (*i)->body.substr(0, pos + (*i)->needle.length());
-    logs << std::endl << "========================== Response BODY ==============================2" << std::endl;
-    logs << (*i)->body << std::endl;
+    (*i)->body = (*i)->buffer.substr(0, pos + (*i)->needle.length());
+    logs << "========================== Request BODY ==============================2" << std::endl;
+    logs << (*i)->body;
+    logs << "========================== Request BODY ==============================" << std::endl << std::endl;
     logs << "STATUS:|" << (*i)->request->getTransferCode() << "|" << std::endl;
     logs << "METHOD:|" << (*i)->request->getMethod() << "|" << std::endl;
-    logs << "========================== Response BODY ==============================" << std::endl << std::endl;
     std::cout << "!!!" << (*i)->body.size() << std::endl;
     if ((*i)->request->getTransferCode() == "chunked")
         (*i)->request->body_chunk((*i)->body);
     else
         (*i)->request->postbody((*i)->body);
-    if ((*i)->buffer.size() > pos + 5)
-        (*i)->head = (*i)->body.substr(pos + (*i)->needle.length() + 1);
-    (*i)->buffer.clear();
+    if ((*i)->buffer.size() > pos + (*i)->needle.length())
+        (*i)->buffer = (*i)->buffer.substr(pos + (*i)->needle.length() + 1);
     (*i)->body.clear();
 }
 
@@ -324,8 +319,8 @@ void WebServer::deleteOldClients()
 int WebServer::startServer(){
     logs.open("logs", std::ios::trunc);
     struct timeval now_time;
-    now_time.tv_sec = 5;
-    now_time.tv_usec = 0;
+    now_time.tv_sec = 0;
+    now_time.tv_usec = 100000;
     if (this->creatingSocketServers() == EXIT_FAILURE)
         return (EXIT_FAILURE);
 	while (true)
@@ -336,7 +331,7 @@ int WebServer::startServer(){
         logs << "-> Waiting for select..." << std::endl;
         if (select(__max_fd + 1, &__read_fds, &__write_fds, NULL, &now_time) == -1)
             std::cerr << "Select error: " << strerror(errno) << std::endl;
-        std::cout << "After select:" << std::endl;
+//        std::cout << "*time out*" << std::endl;
         if (connectingNewClients() == EXIT_FAILURE)
             std::cerr << "Something wrong when new client accepting!" << std::endl;
         if (checkIncomingRequests() == EXIT_FAILURE)

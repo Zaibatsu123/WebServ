@@ -50,13 +50,13 @@ ssize_t response(s_client *client, std::ofstream *logs){
 			response = methodPut(client);
 	}
 
-	*logs << response->generateHeader() << std::endl;
-	*logs << response->generateBody() << std::endl;
+	*logs << response->generateHeader();
+	*logs << response->generateBody();
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
 
-	client->buffer.clear();
+//	client->buffer.clear();
 	result = sendall(client);
 
 	delete response;
@@ -87,10 +87,13 @@ ssize_t sendall(s_client* client){
 			client->responseBuffer.clear();
 			client->responseNotSend = false;
 			client->status = 0;
-			std::map<std::string , std::string > tmp = client->request->getHeaders_();
 
-			if (tmp["Connection"] == "close")
-				return 0;
+//			std::map<std::string , std::string > tmp = client->request->getHeaders_();
+//			if (tmp["Connection"] == "close")
+//				return 0;
+
+//			if (client->request->getHeaders_()["Connection"] == "close")
+//				return 0;
 			return result;
 		}
 		try{
