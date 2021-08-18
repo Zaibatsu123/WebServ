@@ -43,25 +43,37 @@ std::string GoodResponse::generateHeader() {
 //		str	<< "Transfer-Encoding: chunked" << "\r\n";
 	str	<< "Content-Type: " << _indicateFileType() << "\r\n"
 		<< "Content-Length: " << _calculateFileSize() << "\r\n"
-		<< "Accept-Encoding: identity" << "\r\n"
+//		<< "Accept-Encoding: identity" << "\r\n"
 		<< "Connection: keep-alive" << "\r\n"
 		<< "\r\n";
 	return str.str();
 }
 
 std::string GoodResponse::generateBody() {
-	std::string			buffer;
-	std::ifstream		file;
-	std::stringstream	str;
+//	std::string			buffer;
+//	std::ifstream		file;
+//	std::stringstream	str;
+//
+//	file.open((_root + _fileName).c_str(), std::ifstream::in);
+//
+//	while (file.good()) {
+//		std::getline(file, buffer);
+//		str << buffer;
+//		if (file.good())
+//			str << "\n";
+//	}
+//	file.close();
+//	return str.str();
+	std::string		buf;
+	std::ifstream	file;
 
 	file.open((_root + _fileName).c_str(), std::ifstream::in);
+	if (!file.is_open())
+		return "";
 
-	while (file.good()) {
-		std::getline(file, buffer);
-		str << buffer;
-		if (file.good())
-			str << "\n";
-	}
+	buf.reserve(_calculateFileSize());
+	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
-	return str.str();
+
+	return buf;
 }

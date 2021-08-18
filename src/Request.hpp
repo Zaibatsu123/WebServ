@@ -10,13 +10,14 @@
 #define REQUEST_HPP
 
 #include <iostream>
+#include <list>
 #include <map>
 #include <vector>
 #include <fstream>
 #include <sstream>
 
 class Request{
-public:
+private:
 	std::string _method;
 	std::string _path;
 	std::string _protocol;
@@ -31,6 +32,7 @@ public:
 	std::string _boundary;
 	std::string _transfer_code;
 	std::string _accept_code;
+	std::map<std::string, std::string> _headers;
 	
 	int			_err;
 
@@ -48,10 +50,12 @@ public:
 	std::string getCType() const;
 	std::string getCLength() const;
 	std::string getBody() const;
+	std::string getBoundary() const;
 	std::string getBodyCnt() const;
 	std::string getFilename() const;
 	std::string getTransferCode() const;
 	std::string getAcceptCode() const;
+	std::map<std::string, std::string> getHeaders_() const;
 
 	void strrequest(std::vector<std::string> request);
 	void getheaders(std::vector<std::string> request);

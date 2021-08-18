@@ -122,7 +122,7 @@ std::string AResponse::_indicateFileType() const{
 	return "text/html";
 }
 
-size_t AResponse::_calculateFileSize() const{
+std::streamsize AResponse::_calculateFileSize() const{
 	std::ifstream	srcFile;
 
 	if (_status != 200)
@@ -134,11 +134,18 @@ size_t AResponse::_calculateFileSize() const{
 		return 0;
 	}
 
-	srcFile.seekg (0, srcFile.end);
-	size_t size = srcFile.tellg();
-	srcFile.seekg (0, srcFile.beg);
+//	srcFile.ignore( std::numeric_limits<std::streamsize>::max() );
+//	std::streamsize size = srcFile.gcount();
+//	srcFile.clear();   //  Since ignore will have set eof.
+//	srcFile.seekg( 0, std::ios_base::beg );
 
+	srcFile.seekg (0, srcFile.end);
+	std::streamsize size = srcFile.tellg();
+	srcFile.seekg (0, srcFile.beg);
 	srcFile.close();
+
+	if (static_cast<int>(size) == -1)
+		return 0;
 	return size;
 }
 

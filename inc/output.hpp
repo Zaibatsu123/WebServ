@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sstream>
+#include <string.h>
 #include "../src/Request.hpp"
 #include "../src/Server.hpp"
 #include "../src/response/GoodResponse.hpp"
@@ -30,9 +31,16 @@
 
 #include <dirent.h>
 
-#define MSG_NOSIGNAL 0x2000
+#ifdef __linux__
+# include <algorithm>
+#endif
+
+#ifndef __linux__
+# define MSG_NOSIGNAL 0x2000
+#endif
 
 #define CGI "./root/cgi_tester"
+//#define CGI "./root/myCGI"
 
 #define MiB 1048576
 //#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
@@ -45,34 +53,34 @@
 typedef struct  s_client
 {
     Server      *server;
-    int         socket;
-    int         status;
-    int         getRequestHead;
-    std::string buffer;
-	std::string head;
-	std::string body;
-	std::string needle;
-	Request     *request;
-	std::string responseBuffer;
-	bool 		responseNotSend;
+
+    int         	socket;
+    int         	status;
+    int         	getRequestHead;
+    std::string 	buffer;
+	std::string 	head;
+	std::string 	body;
+	std::string 	needle;
+	Request     	*request;
+	std::string 	responseBuffer;
+	bool 			responseNotSend;
+	struct timeval 	time;
 }               t_client;
 
 //createResponse.cpp
-ssize_t						response(t_client *client, std::ofstream *logs);
-ssize_t						sendall(int socket, std::string & buffer, int flags);
+ssize_t	response(t_client *client, std::ofstream *logs);
+ssize_t	sendall(s_client* client);
 
 //methods.cpp
 AResponse*	methodGet(s_client* client);
 AResponse*	methodPost(s_client* client);
 AResponse*	methodDelete(s_client* client);
 AResponse*	methodPut(s_client* client);
-int			upload(const std::string & uplFileName, const char *data);
-
-//requestAcceptor
-std::string recvAcceptor(const std::string & buffer);
+int upload(const std::string & uplFileName, s_client* client);
 
 //cgiHandler.cpp
-int cgi(const std::string & cgiName, const std::string & pathToFile);
+int cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);
+char **generateEnv(s_client* client);
 
 //other
 std::vector<Server*>		*parsingConfiguration(char *config_name);
@@ -91,6 +99,7 @@ std::string rslash_from_end(std::string string);
 std::string rduplicate_slashes(std::string string);
 std::vector<std::string> getarray(std::string req);
 int count_str(std::string input_str, std::string str);
+std::string content(std::string string, std::string boundary);
 
 std::string alter_trim_end(std::string old_string, std::string elems);
 std::string rrepeats_from_end(std::string string);

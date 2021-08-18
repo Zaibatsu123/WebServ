@@ -5,8 +5,9 @@
 ##              7/07/21              ##
 ##                                   ##
 
+
 NAME			= webserv
-FLAGS			= -Wall -Wextra -Werror
+FLAGS			= #-Wall -Wextra -Werror
 CC				= clang++
 VPATH			= src
 OBJPATH			= obj/
@@ -16,7 +17,6 @@ HEADER			=
 SRC				:=	main.cpp	\
 					\
 					webserver.cpp \
-					requestAcceptor.cpp \
 					Config.cpp \
 					utils.cpp \
 					Request.cpp \

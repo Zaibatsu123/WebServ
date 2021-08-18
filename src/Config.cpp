@@ -11,6 +11,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <cstring>
 #include <list>
 #include <sys/socket.h>
@@ -28,11 +29,12 @@ std::vector<std::string> *readFile(char *config_name)
 	std::string                 temp;
 	std::vector<std::string>    *configuration = new std::vector<std::string>;
 
-	std::cout << "Start configuration reading" << std::endl;
+	std::cout << "Start configuration reading..." << std::endl;
 	if (!config_file)
 	{
 		std::cerr << "Configuration file not found!" << std::endl;
-		return (configuration);
+		delete configuration;
+		return (NULL);
 	}
 	while (config_file)
 	{
@@ -107,19 +109,17 @@ Server  *listen(Server *temp, std::string str, int i)
 	try
 	{
 		std::string ip =  trim(str.substr(11, str.find(":") - 11));
-		ts->address = new char[strlen(ip.c_str()) + 1];
-		memcpy(ts->address, ip.c_str(), strlen(str.substr(12, str.find(":") - 11).c_str()) + 1);
-		ts->address[strlen(ip.c_str())] = '\0';
+		ts->address = strdup(ip.c_str());
 		ts->port = std::stoi(str.substr(str.find(":") + 1, str.length() - str.find(":")));
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << "Configuration file:" << i + 1 << " Incorrect ip or port" << std::endl;
+		delete ts->address;
 		delete ts;
 		return (NULL);
 	}
-	temp->sockets.push_back(*ts);
-	delete ts;
+	temp->sockets.push_back(ts);
 	return(temp);
 }
 
@@ -129,6 +129,7 @@ void init(t_location *lctn)
 	lctn->root = "";
 	lctn->methods = 0;
 	lctn->autoindex = 0;
+	lctn->max_body_size = 0;
 }
 
 int getAllowsMethods(std::string str, int i)
@@ -153,6 +154,33 @@ int getAllowsMethods(std::string str, int i)
 	return (-1);
 }
 
+// Server  *max_body_size(Server *temp, std::string str, int i)
+long long int max_body_size(Server *temp, std::string str, int i)
+{
+	size_t n = std::count(str.begin(), str.end(), ' ');
+	std::string size = str.substr(str.length() - 1, 1);
+	long long int size_num = 0;
+	int b = 1;
+	if (n > 1 || (size != "M" && size != "K" && size != "G" && size != "B"))
+		temp = print_error(temp, i, 4);
+	if (size == "K")
+		b = 1024;
+	else if (size == "M")
+		b = 1024 * 1024;
+	else if (size == "G")
+		b = 1024 * 1024 * 1024;
+	try
+	{
+		if (temp != NULL && std::stoll(str.substr(0, str.length() - 2)) > 0)
+			size_num = std::stoll(str.substr(0, str.length() - 2)) * b;
+	}
+	catch(const std::exception& e)
+	{
+		temp = print_error(temp, i, 4);
+	}
+	return (size_num);
+}
+
 Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 {
 	t_location *lctn = new t_location;
@@ -173,9 +201,12 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 			lctn->autoindex = 0;
 		else if ((*configuration)[j].compare(0, 22, "        allow_methods ") == 0)
 			lctn->methods = getAllowsMethods(trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), j);
-		else 
+		else if ((*configuration)[j].compare(0, 22, "        max_body_size ") == 0)
+			lctn->max_body_size = max_body_size(temp, trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), i);
+		else
 			temp = print_error(temp, i, 5);
 	}
+	std::cout << "SIZE|" << lctn->max_body_size << std::endl;
 	if (lctn->methods == - 1)
 	{
 		delete lctn;		
@@ -198,31 +229,10 @@ Server  *upload_file_to(Server *temp, std::string str, int i)
         std::cerr << "Configuration file: " << i + 1 << " " << strerror(errno) << std::endl;
         return (NULL);
     }
+	closedir(dir);
 	return (temp);
 }
 
-Server  *max_body_size(Server *temp, std::string str, int i)
-{
-	size_t n = std::count(str.begin(), str.end(), ' ');
-	std::string size = str.substr(str.length() - 1, 1);
-	int kb = 1;
-	if (n > 1 || (size != "M" && size != "K" && size != "G"))
-		temp = print_error(temp, i, 4);
-	if (size == "M")
-		kb = 1024;
-	else if (size == "G") 
-		kb = 1024 * 1024;
-	try
-	{
-		if (temp != NULL && std::stoll(str.substr(0, str.length() - 2)) > 0)
-			temp->max_body_size = std::stoll(str.substr(0, str.length() - 2)) * kb;
-	}
-	catch(const std::exception& e)
-	{
-		temp = print_error(temp, i, 4);
-	}
-	return (temp);
-}
 
 std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::string> *configuration, int begin, int end)
 {
@@ -241,8 +251,8 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 			temp = error_pages(temp, str, i);
 		else if (str.compare(0, 19, "    upload_file_to ") == 0)
 			temp = upload_file_to(temp, str, i);
-		else if (str.compare(0, 18, "    max_body_size ") == 0)
-			temp = max_body_size(temp, trim(str.substr(18, str.length() - 18)), i);
+		// else if (str.compare(0, 18, "    max_body_size ") == 0)
+		// 	temp = max_body_size(temp, trim(str.substr(18, str.length() - 18)), i);
 		else if (str == "server" || str.compare(0, 8, "        ") == 0)
 			continue;
 		else
@@ -257,27 +267,27 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 	return (servers);
 }
 
-void print_serv(std::vector<Server*> *servers)
-{
-	int k = 1;
-	for (std::vector<Server *>::iterator i = servers->begin(); i != servers->end(); i++)
-	{
-		std::cout << "---------===SERVER===---------" << "num: " << k <<  std::endl;
-		std::cout << "---------===Sockets===---------" << std::endl;
-		for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
-		std::cout << "---------===locations===---------size" << (*i)->locations.size() << std::endl;
-		for (std::map<std::string, t_location *>::iterator it = (*i)->locations.begin(); it != (*i)->locations.end(); it++ )
-		{
-			std::cout << "location: " << (*it).first  << std::endl;
-			std::cout << "second: " << (*i)->locations[(*it).first]->index  << std::endl;
-			std::cout << "autoindex: " << (*it).second->autoindex << " root: " << (*it).second->root << std::endl;
-			std::cout << "index: " << (*it).second->index << " methods: " << (*it).second->methods << std::endl;
-			std::cout << "---------======---------" << std::endl;
-		}
-		k++;
-	}
-}
+// void print_serv(std::vector<Server*> *servers)
+// {
+// 	int k = 1;
+// 	for (std::vector<Server *>::iterator i = servers->begin(); i != servers->end(); i++)
+// 	{
+// 		std::cout << "---------===SERVER===---------" << "num: " << k <<  std::endl;
+// 		std::cout << "---------===Sockets===---------" << std::endl;
+// 		for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
+// 			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
+// 		std::cout << "---------===locations===---------size" << (*i)->locations.size() << std::endl;
+// 		for (std::map<std::string, t_location *>::iterator it = (*i)->locations.begin(); it != (*i)->locations.end(); it++ )
+// 		{
+// 			std::cout << "location: " << (*it).first  << std::endl;
+// 			std::cout << "second: " << (*i)->locations[(*it).first]->index  << std::endl;
+// 			std::cout << "autoindex: " << (*it).second->autoindex << " root: " << (*it).second->root << std::endl;
+// 			std::cout << "index: " << (*it).second->index << " methods: " << (*it).second->methods << std::endl;
+// 			std::cout << "---------======---------" << std::endl;
+// 		}
+// 		k++;
+// 	}
+// }
 
 std::vector<Server*> *parsingConfiguration(char *config_name)
 {
@@ -285,6 +295,11 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 	std::vector<std::string>    *configuration = readFile(config_name);
 	int cnt = 0, begin = 0, end = 0;
 
+	if (configuration == NULL)
+	{
+		delete servers;
+		return (NULL);
+	}
 	for (size_t i = 0; i < configuration->size(); ++i)
 	{
 		if ((*configuration)[i] == "server")
@@ -320,25 +335,8 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 					}
 			}
 	delete configuration;
-	if (servers != NULL)
-		print_serv(servers);
+	// if (servers != NULL)
+	// 	print_serv(servers);
 	return (servers);
 }
-
-// int main(void)
-// {
-// 	std::vector<Server*>     *servers;
-// 	char *str = new char[10];
-// 	strcpy(str, "test.conf");
-// 	servers = parsingConfiguration(str);
-// 	for (std::vector<Server>::iterator i = servers->begin(); i != servers->end(); i++)
-// 	{
-// 		for (std::vector<t_socket>::iterator j = (*i).sockets.begin(); j != (*i).sockets.end(); j++)
-// 			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
-// 		for (std::map<std::string, std::string>::iterator it = (*i).locations.begin(); it != (*i).locations.end(); it++ )
-// 			std::cout << "location: " << it->first << " root: " << it->second << std::endl;
-// 	}
-// 	// while(1)
-// 	// 	continue;
-// }
 

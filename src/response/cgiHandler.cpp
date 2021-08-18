@@ -12,26 +12,9 @@
 #define CGI_INPUT_FILE "outputMy.txt"
 #define CGI_OUTPUT_FILE "outputCGI.txt"
 
-char** generateCgiEnv(){
-	char **env;
+void cgiChild(const std::string & cgiName, const std::string & pathToFile, s_client* client) {
 
-	try
-	{
-		env = new char* [sizeof(char*) * 4];
-	}
-	catch (std::exception & e){
-		return 0;
-	}
-	env[0] = (char *)"REQUEST_METHOD=get";
-	env[1] = (char *)"SERVER_PROTOCOL=HTTP/1.1";
-	env[2] = (char *)"PATH_INFO=./root/cgi_tester";
-	env[3] = 0;
-	return env;
-}
-
-void cgiChild(const std::string & cgiName, const std::string & pathToFile) {
-
-	char **env = generateCgiEnv();
+	char** env = generateEnv(client);
 	if (env == NULL){
 		exit(2);
 	}
@@ -39,6 +22,9 @@ void cgiChild(const std::string & cgiName, const std::string & pathToFile) {
 	int in = open(pathToFile.c_str(), O_RDONLY, S_IRUSR | S_IWUSR);
 	int out = open(CGI_OUTPUT_FILE, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
 
+    char *argv[2];
+    argv[0] = (char*)cgiName.c_str();
+    argv[1] = NULL;
 	if(in == -1 || out == -1)
 		exit(2);
 	if (dup2(in, 0) == -1 || dup2(out, 1) == -1)
@@ -65,18 +51,9 @@ int cgiParent(pid_t pid){
 		}
 
 		std::string buf;
-		/*
-		** Skip Cgi-Header
-		*/
-		while (std::getline(inputCGI, buf)){
-			if (buf.length() == 0 ||  buf.at(0) == 13)
-				break;
-		}
-		while (std::getline(inputCGI, buf)){
-			str << buf;
-			if (inputCGI.good())
-				str << "\n";
-		}
+		buf.reserve(inputCGI.tellg());
+		inputCGI.seekg(0, std::ifstream::beg);
+		buf.assign(std::istreambuf_iterator<char>(inputCGI), std::istreambuf_iterator<char>());
 		inputCGI.close();
 	}
 	else if (res == EXIT_FAILURE){
@@ -90,9 +67,7 @@ int cgiParent(pid_t pid){
 	return 0;
 }
 
-
-
-int cgi(const std::string & cgiName, const std::string & pathToFile){
+int cgi(const std::string & cgiName, const std::string & pathToFile, s_client *client){
 
 	std::ofstream outMy(CGI_INPUT_FILE,std::ofstream::out);
 
@@ -107,7 +82,54 @@ int cgi(const std::string & cgiName, const std::string & pathToFile){
 		return 500;
 	}
 	else if (pid == CHILD){
-		cgiChild(cgiName, pathToFile);
+		std::cout << "child" << std::endl;
+		cgiChild(cgiName, pathToFile, client);
 	}
+	std::cout << "parent" << std::endl;
 	return cgiParent(pid);
+}
+
+
+void	addToEnv(char **env, const std::string & newEnvValue){
+	while(*env)
+		env++;
+	*env = strdup(newEnvValue.c_str());
+}
+
+int toUnderscore(int c){
+	if (c == '-')
+		return '_';
+	return c;
+}
+
+std::string generateNewEnv(const std::string & key, const std::string & value){
+	std::string buf(key);
+	transform(buf.begin(), buf.end(), buf.begin(), ::toupper);
+	transform(buf.begin(), buf.end(), buf.begin(), ::toUnderscore);
+	buf = "HTTP_" + buf + "=" + value;
+	return buf;
+}
+
+char **generateEnv(s_client* client){
+	char **env;
+	std::map<std::string , std::string> mymap = client->request->getHeaders_();
+
+	try{
+		env = new char*[mymap.size() + 4]();
+	}
+	catch (std::exception & e){
+		std::cout << e.what() << std::endl;
+		return NULL;
+	}
+
+	addToEnv(env, "REQUEST_METHOD=" + client->request->getMethod());
+	addToEnv(env, "SERVER_PROTOCOL=" + client->request->getProtocol());
+	addToEnv(env, "PATH_INFO=" + client->request->getPath());
+
+	std::map<std::string, std::string>::iterator it;
+	for (it = mymap.begin(); it != mymap.end(); it++){
+		addToEnv(env, generateNewEnv(it->first, it->second));
+	}
+
+	return env;
 }

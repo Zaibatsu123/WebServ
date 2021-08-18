@@ -38,30 +38,26 @@ std::string BadResponse::generateHeader() {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
-		<< _code[_status] << std::endl
-		<< "Server: Equal-Rights/0.1.23" << std::endl
-		<< "Content-Type: " << _indicateFileType() << std::endl
-		<< "Content-Length: " << _calculateFileSize() << std::endl
+		<< _code[_status] << "\r\n"
+		<< "Server: Equal-Rights/0.1.23" << "\r\n"
+		<< "Content-Type: " << _indicateFileType() << "\r\n"
+		<< "Content-Length: " << _calculateFileSize() << "\r\n"
 //		TODO: need alive or close?
-//		<< "Connection: keep-alive" << std::endl
-		<< "Connection: close" << std::endl
-		<< std::endl;
+//		<< "Connection: keep-alive" << "\r\n"
+		<< "Connection: close" << "\r\n"
+		<< "\r\n";
 	return str.str();
 }
 
 std::string BadResponse::generateBody() {
-	std::string			buffer;
-	std::ifstream		file;
-	std::stringstream	str;
+	std::string		buf;
+	std::ifstream	file;
 
 	file.open(_errorPage[_status], std::ifstream::in);
 
-	while (file.good()) {
-		std::getline(file, buffer);
-		str << buffer;
-		if (file.good())
-			str << "\n";
-	}
+	buf.reserve(_calculateFileSize());
+	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
-	return str.str();
+
+	return buf;
 }

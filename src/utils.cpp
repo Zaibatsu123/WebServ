@@ -58,7 +58,7 @@ std::vector<std::string> getarray(std::string req)
 	std::string str;
 	for (size_t i = 0; i < n; i++)
 	{
-		if (req.find("\n", index2 + 1) == std::string::npos)
+		if (req.find("\n", index2 + 1) == std::string::npos && req.find("\n", index2 + 1) == std::string::npos)
 			break ; 
 		index2 = req.find("\n", index2 + 1);
 		if (index1 > int(req.size()) || index2 - index1 > int(req.size()))
@@ -142,6 +142,18 @@ std::vector<std::string> splitvector(std::vector<std::string> old_vector, std::s
 		}
 	}
 	return (new_vector);
+}
+
+std::string content(std::string string, std::string boundary)
+{
+	std::string content;
+	size_t pos1 = string.find("\15\12\15\12") + 4;
+	size_t pos2 = string.find(boundary, pos1);
+	if (pos1 == std::string::npos || pos2 == std::string::npos)
+		return("");
+	content = string.substr(pos1, pos2 - pos1 - 2);
+	std::cout << "|" << content << "|" << std::endl;
+	return(content);
 }
 
 std::string rslash_from_end(std::string string)
