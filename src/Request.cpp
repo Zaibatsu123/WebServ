@@ -28,13 +28,16 @@ Request::Request(){
 	_err = 0;
 	_transfer_code = "";
 	_accept_code = "";
+	_server = NULL;
 }
 
 Request::~Request(){
 }
 
+void Request::setServer(Server *server) {_server = server;}
+Server *Request::getServer() 			{return _server;}
 void Request::setErr(int err)			{ _err = err;}
-int Request::getErr() const			{return _err; }
+int Request::getErr() const				{return _err; }
 
 std::string Request::getMethod() const    {return _method; }
 std::string Request::getPath() const    {return _path; }

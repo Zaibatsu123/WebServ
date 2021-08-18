@@ -17,7 +17,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 	}
 
 	client->request->getErr();
-	t_location *location = get_location(client->request->getPath(), &client->server->locations);
+	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
 
 	if (location == NULL){
 		*logs << "            ---->"  << " ---> Broken location <---" << std::endl;

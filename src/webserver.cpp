@@ -6,6 +6,7 @@ WebServer::WebServer()
 {
     request_count = 0;
     __max_fd    =   0;
+    __delay_client_disconnect_sec = 10;
 }
 
 void    WebServer::setServer(std::vector<Server*> *servers){
@@ -74,19 +75,48 @@ int create_socket(t_socket *server_socket) //создаём сокет, устр
 	return (created_socket);
 }
 
+int WebServer::return_same_socket(t_socket *socket)
+{
+    for (std::list<t_socket *>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++)
+        if (socket->port == (*i)->socket && !strcmp(socket->address, (*i)->address))
+            return ((*i)->socket);
+    return (0);
+}
+
+void WebServer::bindServersToSockets()
+{
+    for (std::list<t_socket *>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++){
+        for (std::vector<Server*>::iterator j = __servers->begin(); j != __servers->end(); j++){
+            for (std::list<t_socket *>::iterator k = __binded_sockets.begin(); k != __binded_sockets.end(); k++){
+                if ((*i)->socket == (*k)->socket){
+                    (*i)->servers.push_back(*j);
+                }
+            }
+        }
+    }
+}
+
 int WebServer::creatingSocketServers()
 {
-    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
-        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-        {
-            if (((*j)->socket = create_socket(*j)) == -1)
-                return (EXIT_FAILURE);
-            fcntl((*j)->socket, F_SETFL, O_NONBLOCK);
+    int same_socket = 0;
+    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++){
+        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++){
+            same_socket = this->return_same_socket(*j);
+            if (!same_socket) {
+                if (((*j)->socket = create_socket(*j)) == -1){
+                    return (EXIT_FAILURE);
+                }
+                fcntl((*j)->socket, F_SETFL, O_NONBLOCK);
+                __binded_sockets.push_back(*j);
+            }
+            else
+                (*j)->socket = same_socket;
         }
+    }
     return (EXIT_SUCCESS);
 }
 
-t_client    *WebServer::initClient(int new_client_socket, Server *server)
+t_client    *WebServer::initClient(int new_client_socket, t_socket *parent)
 {
     t_client    *new_client = NULL;
     new_client = new t_client;
@@ -95,9 +125,9 @@ t_client    *WebServer::initClient(int new_client_socket, Server *server)
     new_client->getRequestHead = 0;
     new_client->responseNotSend = false;
     new_client->request = NULL;
-    new_client->server = server;
     new_client->time.tv_sec = -1;
     new_client->time.tv_usec = -1;
+    new_client->parent = parent;
     fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
     logs << "        ---> Connected new client with socket number:|" << new_client->socket << "|" << std::endl;
     return (new_client);
@@ -108,17 +138,15 @@ int WebServer::connectingNewClients()
     int         new_client_socket = -1;
 
     logs << "    -->|CONNECTING CLIENTS|" << std::endl;
-    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
-        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-            if (FD_ISSET((*j)->socket, &__read_fds))
-            {
-                if ((new_client_socket = accept((*j)->socket, NULL, NULL)) == -1)
-                {
-                    std::cout << "Error when accept connection to the socket. " << strerror(errno) << std::endl;
-                    return (EXIT_FAILURE);
-                }
-                __clients.push_back(initClient(new_client_socket, *i));
+    for (std::list<t_socket*>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++) {
+        if (FD_ISSET((*i)->socket, &__read_fds)) {
+            if ((new_client_socket = accept((*i)->socket, NULL, NULL)) == -1) {
+                std::cout << "Error when accept connection to the socket. " << strerror(errno) << std::endl;
+                return (EXIT_FAILURE);
             }
+            __clients.push_back(initClient(new_client_socket, *i));
+        }
+    }
     return (EXIT_SUCCESS);
 }
 
@@ -144,6 +172,29 @@ std::string readRequest(s_client* client, ssize_t *status){
         buffer.push_back(read_buffer[a++]);
     std::cout << "A:|" << a << "|" << std::endl;
 	return buffer;
+}
+
+int WebServer::checkServerName(std::string host, Server* server){
+    for (std::vector<std::string>::iterator i = server->server_name.begin(); i != server->server_name.end(); i++){
+        if (host == *i){
+            return (1);
+        }
+    }
+    return (0);
+}
+
+Server  *WebServer::findDefaultServer(t_client *client)
+{
+    int def = 0;
+    if (client->request->getHost().size() == 0)
+        return (client->parent->servers[def]);
+    for (std::vector<Server*>::iterator i = client->parent->servers.begin(); i != client->parent->servers.end(); i++){
+        if (checkServerName(client->request->getHost(), *i)){
+            return (client->parent->servers[def]);
+        }
+        def++;
+    }
+    return (client->parent->servers[def]);
 }
 
 void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
@@ -177,6 +228,7 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 		(*i)->buffer = (*i)->buffer.substr(pos + 4);
 	else
 		(*i)->buffer.clear();
+    (*i)->request->setServer(findDefaultServer(*i));
     (*i)->head.clear();
 }
 
@@ -271,7 +323,6 @@ int WebServer::checkOutcomingResponces()
             logs << "            ----> Response sended for socket:|" << (*i)->socket << "|" << std::endl;
         }
     }
-    // close()
     return (exit_status);
 }
 
@@ -280,15 +331,15 @@ int WebServer::addingSocketsToSets()
     int max_fd = -1;
     FD_ZERO(&__read_fds);
     FD_ZERO(&__write_fds);
-    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
+    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++){
         for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
         {
             FD_SET((*j)->socket, &__read_fds);
             if ((*j)->socket > max_fd)
                 max_fd = (*j)->socket;
         }
-    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
-    {
+    }
+    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++){
         logs << "    --> Adding to read/write sets fd socket with number:|" << (*i)->socket << "|" << std::endl;
         FD_SET((*i)->socket, &__read_fds);
         if ((*i)->status == 1)
@@ -307,7 +358,7 @@ void WebServer::deleteOldClients()
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
     {
         delay = now_time.tv_sec - (*i)->time.tv_sec;
-        if (delay > 10 && (*i)->time.tv_sec != -1)
+        if (delay > __delay_client_disconnect_sec && (*i)->time.tv_sec != -1)
         {
             std::cout << "    --> Delete client with delay = :|" << delay << "|" << std::endl;
             close((*i)->socket);
@@ -321,8 +372,9 @@ int WebServer::startServer(){
     struct timeval now_time;
     now_time.tv_sec = 0;
     now_time.tv_usec = 100000;
-    if (this->creatingSocketServers() == EXIT_FAILURE)
+    if (creatingSocketServers() == EXIT_FAILURE)
         return (EXIT_FAILURE);
+    bindServersToSockets();
 	while (true)
 	{
         logs << "-> Cycle started" << std::endl;
