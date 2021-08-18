@@ -130,6 +130,7 @@ void init(t_location *lctn)
 	lctn->methods = 0;
 	lctn->autoindex = 0;
 	lctn->max_body_size = 0;
+	lctn->redirect = "";
 }
 
 int getAllowsMethods(std::string str, int i)
@@ -203,6 +204,8 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 			lctn->methods = getAllowsMethods(trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), j);
 		else if ((*configuration)[j].compare(0, 22, "        max_body_size ") == 0)
 			lctn->max_body_size = max_body_size(temp, trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), i);
+		else if ((*configuration)[j].compare(0, 15, "        return ") == 0)
+			lctn->redirect = trim((*configuration)[j].substr(15, (*configuration)[j].length() - 15));
 		else
 			temp = print_error(temp, i, 5);
 	}

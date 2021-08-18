@@ -13,7 +13,7 @@
 class BadResponse : public AResponse {
 public:
 	BadResponse();
-	BadResponse(int status, const std::string & root);
+	BadResponse(int status, const std::string &errorPagePath);
 	BadResponse(const BadResponse & rhi);
 	BadResponse & operator=(const BadResponse & rhi);
 	~BadResponse();

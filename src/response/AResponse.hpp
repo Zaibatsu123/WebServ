@@ -18,11 +18,8 @@
 class AResponse{
 protected:
 	static const std::string					_protocol;
-	static const std::string					_errorPageFolder;
-	static std::map<int, std::string>			_errorPage;
 	static std::map<int, std::string>			_code;
 	static std::map<int, std::string>			_createMap();
-	static std::map<int, std::string>			_createErrorPage();
 	static std::map<std::string, std::string>	_fileTypes;
 	static std::map<std::string, std::string>	_createTypesMap();
 
@@ -36,8 +33,8 @@ protected:
 	std::string 			_body;
 	std::list<std::string>	_allowedMethods;
 
-	std::streamsize		_calculateFileSize() const;
-	std::string	_indicateFileType() const;
+	std::streamsize	_calculateFileSize() const;
+	std::string		_indicateFileType() const;
 
 public:
 	AResponse();

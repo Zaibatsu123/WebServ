@@ -27,6 +27,7 @@ SRC_RESPONSE	:=	createResponse.cpp \
                     methods.cpp \
                     GoodResponse.cpp \
                     BadResponse.cpp \
+                    RedirectResponse.cpp \
                     CgiResponse.cpp \
                     AutoIndexResponse.cpp \
                     AResponse.cpp \

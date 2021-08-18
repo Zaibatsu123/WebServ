@@ -9,8 +9,6 @@
 
 const std::string AResponse::_protocol = "HTTP/1.1";
 
-const std::string AResponse::_errorPageFolder = "./root/errorPages/";
-
 std::map<std::string, std::string> AResponse::_fileTypes = _createTypesMap();
 
 std::map<std::string, std::string> AResponse::_createTypesMap() {
@@ -35,13 +33,12 @@ std::map<std::string, std::string> AResponse::_createTypesMap() {
 
 std::map<int, std::string> AResponse::_code = AResponse::_createMap();
 
-std::map<int, std::string> AResponse::_errorPage = AResponse::_createErrorPage();
-
 std::map<int, std::string> AResponse::_createMap() {
 	std::map<int, std::string> m;
 	m.insert(std::pair<int, std::string>(200, "OK"));
 	m.insert(std::pair<int, std::string>(201, "Created"));
 	m.insert(std::pair<int, std::string>(204, "No Content"));
+	m.insert(std::pair<int, std::string>(301, "Moved Permanently"));
 	m.insert(std::pair<int, std::string>(400, "Bad Request"));
 	m.insert(std::pair<int, std::string>(403, "Forbidden"));
 	m.insert(std::pair<int, std::string>(404, "Not Found"));
@@ -52,22 +49,6 @@ std::map<int, std::string> AResponse::_createMap() {
 	m.insert(std::pair<int, std::string>(502, "Bad Gateway"));
 	m.insert(std::pair<int, std::string>(503, "Service Unavailable"));
 	m.insert(std::pair<int, std::string>(505, "HTTP Version Not Supported"));
-	return m;
-}
-
-std::map<int, std::string> AResponse::_createErrorPage() {
-	std::map<int, std::string> m;
-	m.insert(std::pair<int, std::string>(400, _errorPageFolder + "400.html"));
-	m.insert(std::pair<int, std::string>(403, _errorPageFolder + "403.html"));
-	m.insert(std::pair<int, std::string>(404, _errorPageFolder + "404.html"));
-	m.insert(std::pair<int, std::string>(405, _errorPageFolder + "405.html"));
-	m.insert(std::pair<int, std::string>(413, _errorPageFolder + "413.html"));
-	m.insert(std::pair<int, std::string>(500, _errorPageFolder + "500.html"));
-	m.insert(std::pair<int, std::string>(501, _errorPageFolder + "501.html"));
-	m.insert(std::pair<int, std::string>(502, _errorPageFolder + "502.html"));
-	m.insert(std::pair<int, std::string>(503, _errorPageFolder + "503.html"));
-	m.insert(std::pair<int, std::string>(505, _errorPageFolder + "505.html"));
-
 	return m;
 }
 
@@ -87,11 +68,6 @@ AResponse::AResponse(const std::string & root, const std::string & fileName) :
 		_fileName(fileName),
 		_uplRoot(root + "/tmp/"),
 		_uplFileName(""){
-	_allowedMethods.push_back("GET");
-	_allowedMethods.push_back("POST");
-	_allowedMethods.push_back("HEAD");
-	_allowedMethods.push_back("PUT");
-	_allowedMethods.push_back("DELETE");
 }
 
 AResponse::AResponse(const AResponse &rhi){
@@ -126,7 +102,7 @@ std::streamsize AResponse::_calculateFileSize() const{
 	std::ifstream	srcFile;
 
 	if (_status != 200)
-		srcFile.open(_errorPage[_status], std::ifstream::in);
+		srcFile.open(_fileName, std::ifstream::in);
 	else
 		srcFile.open((_root + _fileName).c_str(), std::ifstream::in);
 
