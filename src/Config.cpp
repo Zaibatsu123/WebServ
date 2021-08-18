@@ -236,6 +236,25 @@ Server  *upload_file_to(Server *temp, std::string str, int i)
 	return (temp);
 }
 
+std::vector<std::string> server_names(std::string str)
+{
+	std::vector<std::string> names;
+	std::string buffer = "";
+	str += " ";
+	for (int i = 0; i < str.length(); i++)
+	{
+		if( str[i] != ' ')
+			buffer += str[i];     
+		else
+		{
+			names.push_back(buffer);
+			std::cout << "NAMES|" << buffer << std::endl;
+			buffer = "";
+		}
+	}
+	return (names);
+}
+
 
 std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::string> *configuration, int begin, int end)
 {
@@ -247,20 +266,18 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 		if (str.compare(0, 11, "    listen ") == 0)
 			temp = listen(temp, str, i);
 		else if (str.compare(0, 16, "    server_name ") == 0)
-			temp->server_name = str.substr(16, str.length() - 16);
+			temp->server_name = server_names(trim(str.substr(16, str.length() - 16)));
 		else if (str.compare(0, 14, "    location /") == 0 && str[str.length() - 1] == '/' && (*configuration)[i+1].compare(0, 13, "        root ") == 0)
 			temp = location(temp, configuration, i);
 		else if (str.compare(0, 15, "    error_page ") == 0)
 			temp = error_pages(temp, str, i);
 		else if (str.compare(0, 19, "    upload_file_to ") == 0)
 			temp = upload_file_to(temp, str, i);
-		// else if (str.compare(0, 18, "    max_body_size ") == 0)
-		// 	temp = max_body_size(temp, trim(str.substr(18, str.length() - 18)), i);
 		else if (str == "server" || str.compare(0, 8, "        ") == 0)
 			continue;
 		else
 		{
-			std::cerr << "Configuration file:" << i + 1 << " Unknown directive" << std::endl;
+			std::cerr << "Configuration file:" << i + 1 << " Unknown directive or directive without values" << std::endl;
 			temp = NULL;
 		}
 	}
