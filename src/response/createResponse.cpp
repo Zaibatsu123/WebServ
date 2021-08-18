@@ -24,14 +24,18 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		client->status = 0;
 		return -1;
 	}
-
-	if (client->request->getErr() != 0){
+	else if (client->request->getErr() != 0){
 		*logs << "            ---->"   << "Request error" << std::endl;
 		client->responseBuffer = "la la la";
 		std::string a = location->root;
 		*logs << "            ---->"  << "Request error 2" << std::endl;
-		response = new BadResponse(400, location->root);
+		response = new BadResponse(400, client->server->error_pages[400]);
 		*logs << "            ---->"   << "Request error 3" << std::endl;
+	}
+	else if (location->redirect.length()){
+		*logs << "            ---->" << "Redirected to " << location->redirect << std::endl;
+		std::cout << location->redirect << std::endl;
+		response = new RedirectResponse(301, location->redirect);
 	}
 	else{
 		if (client->request->getMethod() == "GET")
@@ -41,7 +45,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 			response = methodPost(client);
 
 		if (client->request->getMethod() == "HEAD")
-			response = new BadResponse(405, location->root);
+			response = new BadResponse(405, client->server->error_pages[405]);
 
 		if (client->request->getMethod() == "DELETE")
 			response = methodDelete(client);
@@ -49,14 +53,12 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-
 	*logs << response->generateHeader();
 	*logs << response->generateBody();
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
 
-//	client->buffer.clear();
 	result = sendall(client);
 
 	delete response;

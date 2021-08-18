@@ -38,32 +38,15 @@ std::string GoodResponse::generateHeader() {
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << "\r\n"
-		<< "Server: Equal-Rights/0.1.23" << "\r\n";
-//	if (getFileName().find(".jpg") != std::string::npos || getFileName().find(".png") != std::string::npos)
-//		str	<< "Transfer-Encoding: chunked" << "\r\n";
-	str	<< "Content-Type: " << _indicateFileType() << "\r\n"
+		<< "Server: Equal-Rights/0.1.23" << "\r\n"
+		<< "Content-Type: " << _indicateFileType() << "\r\n"
 		<< "Content-Length: " << _calculateFileSize() << "\r\n"
-//		<< "Accept-Encoding: identity" << "\r\n"
-		<< "Connection: keep-alive" << "\r\n"
-		<< "\r\n";
+		<< "Connection: keep-alive" << "\r\n";
+	str	<< "\r\n";
 	return str.str();
 }
 
 std::string GoodResponse::generateBody() {
-//	std::string			buffer;
-//	std::ifstream		file;
-//	std::stringstream	str;
-//
-//	file.open((_root + _fileName).c_str(), std::ifstream::in);
-//
-//	while (file.good()) {
-//		std::getline(file, buffer);
-//		str << buffer;
-//		if (file.good())
-//			str << "\n";
-//	}
-//	file.close();
-//	return str.str();
 	std::string		buf;
 	std::ifstream	file;
 

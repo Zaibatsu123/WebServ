@@ -18,6 +18,7 @@ typedef struct  s_location
 {
 	std::string	root;
 	std::string	index;
+	std::string redirect;
 	int			autoindex;
 	int			methods;
 	long long int						max_body_size;	
