@@ -18,6 +18,7 @@ typedef struct  s_location
 {
 	std::string	root;
 	std::string	index;
+	std::string	redirect;
 	int			autoindex;
 	int			methods;
 	long long int						max_body_size;	
@@ -27,7 +28,7 @@ class   Server
 {
 	public:
 		std::vector<t_socket *>             sockets;
-		std::string                         server_name;
+		std::vector<std::string>			server_name;
 		std::map<std::string, t_location*>	locations;             
 		std::map<int, std::string>          error_pages;
 		std::string                         upload_file_to;
