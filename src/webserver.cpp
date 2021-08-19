@@ -186,15 +186,19 @@ int WebServer::checkServerName(std::string host, Server* server){
 Server  *WebServer::findDefaultServer(t_client *client)
 {
     int def = 0;
-    if (client->request->getHost().size() == 0)
+    if (client->request->getHost().size() == 0){
+        std::cout << "Default server = " << def << std::endl;
         return (client->parent->servers[def]);
+    }
     for (std::vector<Server*>::iterator i = client->parent->servers.begin(); i != client->parent->servers.end(); i++){
         if (checkServerName(client->request->getHost(), *i)){
+            std::cout << "Default server = " << def << std::endl;
             return (client->parent->servers[def]);
         }
         def++;
     }
-    return (client->parent->servers[def]);
+    std::cout << "Default server = " << def << std::endl;
+    return (client->parent->servers[0]);
 }
 
 void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
@@ -228,6 +232,7 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 		(*i)->buffer = (*i)->buffer.substr(pos + 4);
 	else
 		(*i)->buffer.clear();
+    std::cout << "Получаем дефолтный сервер для реквеста" << findDefaultServer(*i) << std::endl;
     (*i)->request->setServer(findDefaultServer(*i));
     (*i)->head.clear();
 }

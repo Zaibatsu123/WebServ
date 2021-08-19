@@ -209,6 +209,7 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 		else
 			temp = print_error(temp, i, 5);
 	}
+	lctn->location = "/" + (loc.substr(14, loc.length() - 15));
 	std::cout << "SIZE|" << lctn->max_body_size << std::endl;
 	if (lctn->methods == - 1)
 	{

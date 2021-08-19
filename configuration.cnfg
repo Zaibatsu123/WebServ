@@ -1,20 +1,28 @@
 server
     listen 127.0.0.1:9099
-    server_name hihi haha hoho
+    server_name localhost
     error_page 500 ./root/errorPages/503.html
     location /
         root ./root/
         index youpi.bad_extension
         auto_index on
         allow_methods GET
-        return http://www.$host$request_uri
     location /directory/
         root ./root/
         index youpi.bad_extension
         auto_index on
         allow_methods GET POST
+server
+    listen 10.21.23.122:9099
+    server_name 10.21.23.122
+    error_page 500 ./root/errorPages/503.html
+    location /
+        root ./root/
+        index youpi.bad_extension
+        auto_index on
+        allow_methods GET
     location /directory/
         root ./root/
-        return http://localhost:9099/
         index youpi.bad_extension
+        auto_index on
         allow_methods GET POST
