@@ -37,14 +37,15 @@ AResponse* methodPost(s_client* client){
 	if (location->methods != 2 && location->methods != 6)
 		return new BadResponse(405, client->request->getServer()->error_pages[405]);
 
-	status = upload(location->root + client->request->getPath(), client);
-	if (status){
-		std::cout << "--> Error: Cannot create file <--" << std::endl;
-		return new BadResponse(status, client->request->getServer()->error_pages[status]);
-	}
-	if (client->request->getPath().find(".bla") != std::string::npos){
+	std::string path = client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length());
+	status = upload(location->root + path, client);
+//	if (status){
+//		std::cout << "--> Error: Cannot create file <--" << std::endl;
+//		return new BadResponse(status, client->request->getServer()->error_pages[status]);
+//	}
+	if (path.find(".bla") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
-		status = cgi(CGI, location->root + client->request->getPath(), client);
+		status = cgi(CGI, location->root + path, client);
 		if (status)
 			return new BadResponse(status, client->request->getServer()->error_pages[status]);
 		return new CgiResponse("outputCGI.txt");

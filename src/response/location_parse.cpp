@@ -70,10 +70,10 @@ t_location *get_location(std::string root, std::map<std::string, t_location *> *
         return (NULL);
     do
     {
-        // std::cout << "SEARCHING ROOT:|" << root << "|" << std::endl;
+         std::cout << "SEARCHING ROOT:|" << root << "|" << std::endl;
         if ((i = locations->find(root)) != locations->end())
         {
-            // std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
+             std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
             return (i->second);
         }
         root = rrepeats_from_end(alter_trim_end(root, "/"));
@@ -81,7 +81,7 @@ t_location *get_location(std::string root, std::map<std::string, t_location *> *
     while (root.size() != 1);
     if ((i = locations->find(root)) != locations->end())
     {
-        // std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
+         std::cout << "ROOT FINDED:|" << root << "|" << std::endl;
         return (i->second);
     }
     return (NULL);
@@ -126,6 +126,11 @@ AResponse* file_or_directory_existing(t_client *client)
 	// std::cout << "AUTOINDEX ENTER" << std::endl;
 	if ((location = get_location(path, &client->request->getServer()->locations)) == NULL)
 		return new BadResponse(404, client->request->getServer()->error_pages[404]);
+	std::cout << "location: " << location->location << std::endl;
+	std::cout << "path: " << path << std::endl;
+	int pos = path.find(location->location);
+	if (pos != std::string::npos && location->location != "/")
+		path = path.substr(pos + location->location.length());
 	std::string directory = location->root;
 	std::string fullpath = directory + path;
 	 std::cout << "directory: " << directory << std::endl;

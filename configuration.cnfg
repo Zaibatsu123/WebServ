@@ -7,7 +7,7 @@ server
     location /directory/
         root ./root/YoupiBanane/
         index youpi.bad_extension
-        allow_methods GET
+        allow_methods GET POST
     location /put_test/
         root ./root/
         index youpi.bad_extension
@@ -16,3 +16,4 @@ server
         root ./root/
         index youpi.bad_extension
         allow_methods GET POST
+        max_body_size 100 B
