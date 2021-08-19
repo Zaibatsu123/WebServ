@@ -53,8 +53,6 @@
 
 typedef struct  s_client
 {
-    Server      *server;
-
     int         	socket;
     int         	status;
     int         	getRequestHead;
@@ -66,6 +64,7 @@ typedef struct  s_client
 	std::string 	responseBuffer;
 	bool 			responseNotSend;
 	struct timeval 	time;
+	t_socket		*parent;
 }               t_client;
 
 //createResponse.cpp

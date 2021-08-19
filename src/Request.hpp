@@ -15,6 +15,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include "Server.hpp"
 
 class Request{
 private:
@@ -33,6 +34,7 @@ private:
 	std::string _transfer_code;
 	std::string _accept_code;
 	std::map<std::string, std::string> _headers;
+	Server		*_server;
 	
 	int			_err;
 
@@ -42,6 +44,8 @@ public:
 	
 	void setErr(int err);
 	int getErr() const;
+	void setServer(Server *server);
+	Server *getServer();
 
 	std::string getMethod() const;
 	std::string getPath() const;

@@ -124,13 +124,10 @@ AResponse* file_or_directory_existing(t_client *client)
 	std::string			path = client->request->getPath();
 
 	// std::cout << "AUTOINDEX ENTER" << std::endl;
-	if ((location = get_location(path, &(client->server->locations))) == NULL){
-		return new BadResponse(404, client->server->error_pages[404]);
-	}
+	if ((location = get_location(path, &client->request->getServer()->locations)) == NULL)
+		return new BadResponse(404, client->request->getServer()->error_pages[404]);
 	std::string directory = location->root;
-	int pos = 
-	path = path.substr();
-	std::string fullpath = directory;// + path;
+	std::string fullpath = directory + path;
 	 std::cout << "directory: " << directory << std::endl;
 	 std::cout << "path: " << path << std::endl;
 	 std::cout << "full: " << fullpath << std::endl;
@@ -149,11 +146,11 @@ AResponse* file_or_directory_existing(t_client *client)
         {
             std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
             std::string str = autoindex(fullpath.c_str(), client);
-			return new BadResponse(404, client->server->error_pages[404]);
+			return new BadResponse(404, client->request->getServer()->error_pages[404]);
 //            return new AutoIndexResponse(str);
         }
 		std::cout << "success" << std::endl;
-        return new BadResponse(404, client->server->error_pages[404]);
+        return new BadResponse(404, client->request->getServer()->error_pages[404]);
     }
 	std::cout << "another path" << std::endl;
     file.open(fullpath);
@@ -163,6 +160,5 @@ AResponse* file_or_directory_existing(t_client *client)
         return new GoodResponse("./root", client->request->getPath());
     }
 	std::cout << "bad response" << std::endl;
-	std::cout << "kekekekekekeke" << std::endl;
-    return new BadResponse(404, client->server->error_pages[404]);
+    return new BadResponse(404, client->request->getServer()->error_pages[404]);
 }

@@ -8,17 +8,18 @@
 #include "../../inc/output.hpp"
 
 ssize_t response(s_client *client, std::ofstream *logs){
+	std::cout << "Enter in responce"  << std::endl;
 	*logs << "======================> Response part <====================== " << std::endl;
 	AResponse* response;
 	ssize_t result;
 
 	if (client->responseNotSend){
+		std::cout << "Sendall !" << std::endl;
 		return sendall(client);
 	}
 
 	client->request->getErr();
-	t_location *location = get_location(client->request->getPath(), &client->server->locations);
-
+	t_location *location = get_location(client->request->getPath(), &(client->request->getServer()->locations));
 	if (location == NULL){
 		*logs << "            ---->"  << " ---> Broken location <---" << std::endl;
 		client->status = 0;
@@ -29,7 +30,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		client->responseBuffer = "la la la";
 		std::string a = location->root;
 		*logs << "            ---->"  << "Request error 2" << std::endl;
-		response = new BadResponse(400, client->server->error_pages[400]);
+		response = new BadResponse(400, client->request->getServer()->error_pages[400]);
 		*logs << "            ---->"   << "Request error 3" << std::endl;
 	}
 	else if (location->redirect.length()){
@@ -45,7 +46,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 			response = methodPost(client);
 
 		if (client->request->getMethod() == "HEAD")
-			response = new BadResponse(405, client->server->error_pages[405]);
+			response = new BadResponse(405, client->request->getServer()->error_pages[405]);
 
 		if (client->request->getMethod() == "DELETE")
 			response = methodDelete(client);

@@ -28,13 +28,16 @@ Request::Request(){
 	_err = 0;
 	_transfer_code = "";
 	_accept_code = "";
+	_server = NULL;
 }
 
 Request::~Request(){
 }
 
+void Request::setServer(Server *server) {_server = server;}
+Server *Request::getServer() 			{return _server;}
 void Request::setErr(int err)			{ _err = err;}
-int Request::getErr() const			{return _err; }
+int Request::getErr() const				{return _err; }
 
 std::string Request::getMethod() const    {return _method; }
 std::string Request::getPath() const    {return _path; }
@@ -62,7 +65,12 @@ void Request::getheaders(std::vector<std::string> request)
 	str = request[1];
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
 	if (str.compare(0, 5, "host:") == 0)
-		_host = trim(str.substr(5, str.length() - 5));
+		_host = trim(request[1].substr(5, request[1].length() - 5));
+	else 
+	{
+		_err = 400;
+		return ;
+	}
 	for (size_t j = 1; j < request.size(); ++j)
 	{
 		if (request[j].find(":") != std::string::npos)

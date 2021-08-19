@@ -16,23 +16,28 @@
 class WebServer
 {
     private:
-        int                     request_count;
         std::vector<Server*>    *__servers;
+        std::list<t_socket *>   __binded_sockets;
         std::list<t_client *>   __clients;
         fd_set                  __read_fds;
         fd_set                  __write_fds;
         int                     __max_fd;
+        size_t                  __delay_client_disconnect_sec;
+        int                     request_count;
         std::ofstream           logs;
 
-        t_client    *initClient(int new_client_socket, Server *server);
+        t_client    *initClient(int new_client_socket, t_socket *parent);
         int         connectingNewClients();
         int         creatingSocketServers();
         int         addingSocketsToSets();
         int         checkIncomingRequests();
         int         checkOutcomingResponces();
+        int         return_same_socket(t_socket *socket);
         void        proccessRequestHead(std::list<t_client *>::iterator i);
         void        proccessRequestBody(std::list<t_client *>::iterator i);
         void        deleteOldClients();
+        void        bindServersToSockets();
+        int         checkServerName(std::string host, Server* server);
 
     public:
         WebServer();
@@ -40,6 +45,7 @@ class WebServer
         int     startServer();
         void    announceServerSettings();
         std::list<t_client *>::iterator clientDelete(std::list<t_client *>::iterator i);
+        Server  *findDefaultServer(t_client *client);
 };
 
 int rebind(int listen_socket);
