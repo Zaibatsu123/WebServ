@@ -242,7 +242,7 @@ std::vector<std::string> server_names(std::string str)
 	std::vector<std::string> names;
 	std::string buffer = "";
 	str += " ";
-	for (int i = 0; i < str.length(); i++)
+	for (int i = 0; i < (int)str.length(); i++)
 	{
 		if( str[i] != ' ')
 			buffer += str[i];     

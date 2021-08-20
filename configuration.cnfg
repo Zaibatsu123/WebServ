@@ -1,5 +1,6 @@
 server
     listen 127.0.0.1:9099
+    upload_file_to ./root/put_test/
     location /
         root ./root/
         index index.html
