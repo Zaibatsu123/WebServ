@@ -7,7 +7,7 @@
 
 
 NAME			= webserv
-FLAGS			= #-Wall -Wextra -Werror
+FLAGS			= -Wall -Wextra -Werror
 CC				= clang++
 VPATH			= src
 OBJPATH			= obj/

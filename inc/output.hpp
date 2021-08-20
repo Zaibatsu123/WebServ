@@ -36,7 +36,7 @@
 # include <algorithm>
 #endif
 
-#ifndef __linux__
+#ifdef __APPLE__
 # define MSG_NOSIGNAL 0x2000
 #endif
 
@@ -76,7 +76,7 @@ AResponse*	methodGet(s_client* client);
 AResponse*	methodPost(s_client* client);
 AResponse*	methodDelete(s_client* client);
 AResponse*	methodPut(s_client* client);
-int upload(const std::string & uplFileName, s_client* client);
+int upload(s_client* client);
 
 //cgiHandler.cpp
 int cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);

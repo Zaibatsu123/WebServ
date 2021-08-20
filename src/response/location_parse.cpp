@@ -128,7 +128,7 @@ AResponse* file_or_directory_existing(t_client *client)
 		return new BadResponse(404, client->request->getServer()->error_pages[404]);
 	std::cout << "location: " << location->location << std::endl;
 	std::cout << "path: " << path << std::endl;
-	int pos = path.find(location->location);
+	size_t pos = path.find(location->location);
 	if (pos != std::string::npos && location->location != "/")
 		path = path.substr(pos + location->location.length());
 	std::string directory = location->root;

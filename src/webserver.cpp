@@ -228,6 +228,7 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
         (*i)->status = 1;
     }
     std::cout << "BODY_SIZE:|" << (*i)->body.size() << "|" << std::endl;
+    std::cout << (*i)->buffer.size() << std::endl;
 	if ((*i)->buffer.size() > pos + 3)
 		(*i)->buffer = (*i)->buffer.substr(pos + 4);
 	else
@@ -275,8 +276,8 @@ int WebServer::checkIncomingRequests()
 {
     std::string buffer;
     ssize_t     result = 0;
-    std::ofstream outf;                                  // DELETE AFTER DEBUG
-    outf.open( "output_request.txt", std::ios_base::app);    // DELETE AFTER DEBUG
+//    std::ofstream outf;                                  // DELETE AFTER DEBUG
+//    outf.open( "output_request.txt", std::ios_base::app);    // DELETE AFTER DEBUG
 
     logs << "    -->|RECEIVING REQUESTS|" << std::endl;
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
@@ -299,7 +300,7 @@ int WebServer::checkIncomingRequests()
                 proccessRequestBody(i);
         }
     }
-    outf.close();  // DELETE AFTER DEBUG
+//    outf.close();  // DELETE AFTER DEBUG
     return (EXIT_SUCCESS);
 }
 
@@ -363,7 +364,7 @@ void WebServer::deleteOldClients()
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
     {
         delay = now_time.tv_sec - (*i)->time.tv_sec;
-        if (delay > __delay_client_disconnect_sec && (*i)->time.tv_sec != -1)
+        if (delay > (int)__delay_client_disconnect_sec && (*i)->time.tv_sec != -1)
         {
             std::cout << "    --> Delete client with delay = :|" << delay << "|" << std::endl;
             close((*i)->socket);
