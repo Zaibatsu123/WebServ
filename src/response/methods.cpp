@@ -7,6 +7,22 @@
 
 #include "../../inc/output.hpp"
 
+std::string getUploadFileName(s_client* client){
+	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
+	std::string filename;
+
+	std::cout << "Path: " << client->request->getPath() << std::endl;
+	std::cout << "location: " << location->location << std::endl;
+	if (client->request->getPath().find(location->location) == std::string::npos || client->request->getPath() == location->location)
+		return "";
+
+	if (client->request->getTransferCode() == "chunked")
+		filename = client->request->getServer()->upload_file_to + client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length() + 1);
+	else
+		filename = client->request->getServer()->upload_file_to + client->request->getFilename();
+	return filename;
+}
+
 AResponse* methodGet(s_client* client){
 	std::cout << "--> GET" << std::endl;
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
@@ -27,7 +43,7 @@ AResponse* methodGet(s_client* client){
 
 AResponse* methodPost(s_client* client){
 	std::cout << "--> POST" << std::endl;
-	int status;
+	int status = 0;
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
 	std::cout << "LOCATION:|" << location->root << "|" << "PATH:|" << client->request->getPath() << "|"<< std::endl;
 	std::cout << "FilENAME:|" << client->request->getPath() << "|"<< std::endl;
@@ -37,15 +53,16 @@ AResponse* methodPost(s_client* client){
 	if (location->methods != 2 && location->methods != 6)
 		return new BadResponse(405, client->request->getServer()->error_pages[405]);
 
-	std::string path = client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length());
-	status = upload(client);
+	std::string filename = getUploadFileName(client);
+	if (!filename.empty())
+		status = upload(filename, client);
 	if (status){
 		std::cout << "--> Error: Cannot create file <--" << std::endl;
 		return new BadResponse(status, client->request->getServer()->error_pages[status]);
 	}
-	if (path.find(".bla") != std::string::npos){
+	if (filename.find(".bla") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
-		status = cgi(CGI, location->root + path, client);
+		status = cgi(CGI, filename, client);
 		if (status)
 			return new BadResponse(status, client->request->getServer()->error_pages[status]);
 		return new CgiResponse("outputCGI.txt");
@@ -71,7 +88,13 @@ AResponse*	methodPut(s_client* client){
 	std::cout << "---> PUT" << std::endl;
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
 
-	int status = upload(client);
+	std::string filename;
+	if (client->request->getTransferCode() == "chunked")
+		filename = client->request->getServer()->upload_file_to + client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length() + 1);
+	else
+		filename = client->request->getServer()->upload_file_to + client->request->getFilename();
+
+	int status = upload(filename, client);
 	if (status)
 		return new BadResponse(status, client->request->getServer()->error_pages[status]);
 
@@ -81,17 +104,7 @@ AResponse*	methodPut(s_client* client){
 }
 
 
-int upload(s_client* client) {
-	if (client->request->getBodyCnt().empty())
-		return 0;
-	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
-
-	std::string filename;
-	if (client->request->getTransferCode() == "chunked")
-		filename = location->root + client->request->getPath();
-	else
-		filename = client->request->getServer()->upload_file_to + client->request->getFilename();
-
+int upload(const std::string & filename, s_client* client) {
 	std::cout << "upload to :" << filename << std::endl;
 	std::ofstream dstFile;
 	dstFile.open((filename).c_str(), std::ofstream::out);

@@ -76,7 +76,7 @@ AResponse*	methodGet(s_client* client);
 AResponse*	methodPost(s_client* client);
 AResponse*	methodDelete(s_client* client);
 AResponse*	methodPut(s_client* client);
-int upload(s_client* client);
+int upload(const std::string & filename, s_client* client);
 
 //cgiHandler.cpp
 int cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);
