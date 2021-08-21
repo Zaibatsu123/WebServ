@@ -34,12 +34,14 @@ AResponse* methodPost(s_client* client){
 	if (location->methods != 2 && location->methods != 6)
 		return new BadResponse(405, client->request->getServer()->error_pages[405]);
 
+	std::string filename = getUploadFileName(client);
+
 	if (upload(client) == EXIT_FAILURE)
 		return new BadResponse(500, client->request->getServer()->error_pages[500]);
 
-	if (client->request->getPath().find(".bla") != std::string::npos){
+	if (filename.find(".bla") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
-		int status = cgi(CGI, client->request->getPath(), client);
+		int status = cgi(CGI, filename, client);
 		if (status)
 			return new BadResponse(status, client->request->getServer()->error_pages[status]);
 		return new CgiResponse(CGI_OUTPUT);

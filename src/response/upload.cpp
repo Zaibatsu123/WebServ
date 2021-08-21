@@ -19,8 +19,11 @@ std::string getUploadFileName(s_client* client){
 		return client->request->getServer()->upload_file_to + client->request->getFilename();
 	}
 
-	if (client->request->getTransferCode() == "chunked")
+	if (client->request->getTransferCode() == "chunked"){
+		if (client->request->getPath() == location->location)
+			return "";
 		return client->request->getServer()->upload_file_to + client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length() + 1);
+	}
 	return "";
 }
 
@@ -31,9 +34,11 @@ int upload(s_client* client) {
 
 	std::cout << "upload to :" << filename << std::endl;
 	std::ofstream dstFile;
-	dstFile.open((filename).c_str(), std::ofstream::out);
-	if (!dstFile.is_open())
+	dstFile.open(filename, std::ofstream::out);
+	if (!dstFile.is_open()){
+		std::cout << "cant open file" << std::endl;
 		return 1;
+	}
 	dstFile << std::string(client->request->getBodyCnt());
 	dstFile.close();
 	return 0;
