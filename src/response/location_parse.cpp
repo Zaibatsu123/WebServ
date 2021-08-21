@@ -145,7 +145,7 @@ AResponse* file_or_directory_existing(t_client *client)
         if (file.is_open())
         {
             std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
-            return new GoodResponse(fullpath, location->index);
+            return new GoodResponse(location->root + location->index);
         }
         if (location->autoindex == 1)
         {
@@ -162,7 +162,7 @@ AResponse* file_or_directory_existing(t_client *client)
     if (file.is_open())
     {
          std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
-        return new GoodResponse("./root", client->request->getPath());
+        return new GoodResponse("./root" + client->request->getPath());
     }
 	std::cout << "bad response" << std::endl;
     return new BadResponse(404, client->request->getServer()->error_pages[404]);

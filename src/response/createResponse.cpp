@@ -54,7 +54,6 @@ ssize_t response(s_client *client, std::ofstream *logs){
 			response = methodPut(client);
 	}
 	*logs << response->generateHeader();
-	*logs << response->generateBody();
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;

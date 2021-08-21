@@ -101,14 +101,10 @@ std::string AResponse::_indicateFileType() const{
 std::streamsize AResponse::_calculateFileSize() const{
 	std::ifstream	srcFile;
 
-	if (_status != 200)
-		srcFile.open(_fileName, std::ifstream::in);
-	else
-		srcFile.open((_root + _fileName).c_str(), std::ifstream::in);
+	srcFile.open(_fileName, std::ifstream::in);
 
-	if (!srcFile.is_open()){
+	if (!srcFile.is_open())
 		return 0;
-	}
 
 	srcFile.seekg (0, srcFile.end);
 	std::streamsize size = srcFile.tellg();

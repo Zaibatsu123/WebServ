@@ -10,7 +10,7 @@
 GoodResponse::GoodResponse() : AResponse() {
 }
 
-GoodResponse::GoodResponse(const std::string &root, const std::string &fileName) : AResponse(root,fileName){
+GoodResponse::GoodResponse(const std::string &fileName) : AResponse("", fileName){
 }
 
 GoodResponse::GoodResponse(const GoodResponse &rhi){
@@ -33,14 +33,15 @@ std::string GoodResponse::generateResponse() {
 
 std::string GoodResponse::generateHeader() {
 	std::stringstream str;
+	_fileSize = _calculateFileSize();
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << "\r\n"
 		<< "Server: Equal-Rights/0.1.23" << "\r\n"
 		<< "Content-Type: " << _indicateFileType() << "\r\n"
-		<< "Content-Length: " << _calculateFileSize() << "\r\n"
-		<< "Connection: keep-alive" << "\r\n";
-	str	<< "\r\n";
+		<< "Content-Length: " << _fileSize << "\r\n"
+		<< "Connection: keep-alive" << "\r\n"
+		<< "\r\n";
 	return str.str();
 }
 
@@ -48,11 +49,11 @@ std::string GoodResponse::generateBody() {
 	std::string		buf;
 	std::ifstream	file;
 
-	file.open((_root + _fileName).c_str(), std::ifstream::in);
+	file.open(_fileName, std::ifstream::in);
 	if (!file.is_open())
 		return "";
 
-	buf.reserve(_calculateFileSize());
+	buf.reserve(_fileSize);
 	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
 

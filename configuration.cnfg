@@ -2,9 +2,9 @@ server
     listen 127.0.0.1:9099
     upload_file_to ./root/put_test/
     location /
-        root ./root/
+        root ./root/StartPage/
         index index.html
-        allow_methods GET
+        allow_methods GET POST
     location /directory/
         root ./root/YoupiBanane/
         index youpi.bad_extension

@@ -9,8 +9,6 @@
 
 #define CHILD 0
 #define FAILURE -1
-#define CGI_INPUT_FILE "outputMy.txt"
-#define CGI_OUTPUT_FILE "outputCGI.txt"
 
 void cgiChild(const std::string & cgiName, const std::string & pathToFile, s_client* client) {
 
@@ -20,7 +18,7 @@ void cgiChild(const std::string & cgiName, const std::string & pathToFile, s_cli
 	}
 
 	int in = open(pathToFile.c_str(), O_RDONLY, S_IRUSR | S_IWUSR);
-	int out = open(CGI_OUTPUT_FILE, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+	int out = open(CGI_OUTPUT, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
 
     char *argv[2];
     argv[0] = (char*)cgiName.c_str();
@@ -43,7 +41,7 @@ int cgiParent(pid_t pid){
 		res = WEXITSTATUS(res);
 
 	if (res == EXIT_SUCCESS){
-		std::ifstream inputCGI(CGI_OUTPUT_FILE, std::ifstream::in);
+		std::ifstream inputCGI(CGI_OUTPUT, std::ifstream::in);
 
 		if (!inputCGI.is_open()){
 			std::cout << "cannot write to outputMY" << std::endl;
@@ -68,14 +66,6 @@ int cgiParent(pid_t pid){
 }
 
 int cgi(const std::string & cgiName, const std::string & pathToFile, s_client *client){
-
-	std::ofstream outMy(CGI_INPUT_FILE,std::ofstream::out);
-
-	if (!outMy.is_open()){
-		std::cout << "cannot write to outputMY" << std::endl;
-		return 500;
-	}
-
 	pid_t pid = fork();
 	if (pid == FAILURE){
 		std::cout << "fork error" << std::endl;

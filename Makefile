@@ -25,6 +25,7 @@ SRC				:=	main.cpp	\
 SRC_RESPONSE	:=	createResponse.cpp \
                     cgiHandler.cpp \
                     methods.cpp \
+                    upload.cpp \
                     GoodResponse.cpp \
                     BadResponse.cpp \
                     RedirectResponse.cpp \

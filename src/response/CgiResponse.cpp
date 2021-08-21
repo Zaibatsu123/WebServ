@@ -33,13 +33,13 @@ std::string CgiResponse::generateResponse() {
 
 std::string CgiResponse::generateHeader() {
 	std::stringstream str;
+	_fileSize = _calculateFileSize() - 58;
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << "\r\n"
 		<< "Server: Equal-Rights/0.1.23" << "\r\n"
 		<< "Content-Type: text/html" << "\r\n"
-		<< "Content-Length: " << _calculateFileSize() - 58 << "\r\n"
-		<< "X-Secret-Header-For-Test: 1" << "\r\n"
+		<< "Content-Length: " << _fileSize << "\r\n"
 		<< "Connection: keep-alive" << "\r\n"
 		<< "\r\n";
 	return str.str();
@@ -49,14 +49,13 @@ std::string CgiResponse::generateBody() {
 	std::string		buf;
 	std::ifstream	file;
 
-	file.open((_root + _fileName).c_str(), std::ifstream::in);
-	buf.reserve(_calculateFileSize() - 58);
+	file.open(CGI_OUTPUT, std::ifstream::in);
+	buf.reserve(_fileSize);
 	file.seekg(58);
 	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
 
-//	std::remove((_root + _fileName).c_str());
-//	std::remove("outputMy.txt");
+	std::remove(CGI_OUTPUT);
 
 	return buf;
 }
