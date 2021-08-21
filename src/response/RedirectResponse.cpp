@@ -36,12 +36,12 @@ std::string RedirectResponse::generateResponse() {
 std::string RedirectResponse::generateHeader() {
 	std::stringstream str;
 	str << _protocol << " "
-	<< _status << " "
-	<< _code[_status] << "\r\n"
-	<< "Server: Equal-Rights/0.1.23" << "\r\n"
-	<< "Location: " << _redirect << "\r\n"
-	<< "Connection: keep-alive" << "\r\n"
-	<< "\r\n";
+		<< _status << " "
+		<< _code[_status] << "\r\n"
+		<< "Server: Equal-Rights/0.1.23" << "\r\n"
+		<< "Location: " << _redirect << "\r\n"
+		<< "Connection: keep-alive" << "\r\n"
+		<< "\r\n";
 	return str.str();
 }
 

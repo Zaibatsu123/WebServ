@@ -110,11 +110,6 @@ std::streamsize AResponse::_calculateFileSize() const{
 		return 0;
 	}
 
-//	srcFile.ignore( std::numeric_limits<std::streamsize>::max() );
-//	std::streamsize size = srcFile.gcount();
-//	srcFile.clear();   //  Since ignore will have set eof.
-//	srcFile.seekg( 0, std::ios_base::beg );
-
 	srcFile.seekg (0, srcFile.end);
 	std::streamsize size = srcFile.tellg();
 	srcFile.seekg (0, srcFile.beg);

@@ -28,10 +28,7 @@ CgiResponse::~CgiResponse(){
 }
 
 std::string CgiResponse::generateResponse() {
-	if (getHead())
-		return generateHeader();
 	return generateHeader() + generateBody();
-//	return generateBody();
 }
 
 std::string CgiResponse::generateHeader() {

@@ -13,10 +13,11 @@
 class GoodResponse : public AResponse {
 public:
 	GoodResponse();
-	GoodResponse(const std::string & root, const std::string & fileName);
 	GoodResponse(const GoodResponse & rhi);
 	GoodResponse & operator=(const GoodResponse & rhi);
 	~GoodResponse();
+
+	GoodResponse(const std::string & root, const std::string & fileName);
 
 	std::string	generateResponse();
 	std::string	generateHeader();

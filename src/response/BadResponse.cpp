@@ -29,8 +29,6 @@ BadResponse::~BadResponse(){
 }
 
 std::string BadResponse::generateResponse() {
-	if (getHead())
-		return generateHeader();
 	return generateHeader() + generateBody();
 }
 
@@ -42,10 +40,8 @@ std::string BadResponse::generateHeader() {
 		<< "Server: Equal-Rights/0.1.23" << "\r\n"
 		<< "Content-Type: " << _indicateFileType() << "\r\n"
 		<< "Content-Length: " << _calculateFileSize() << "\r\n"
-		<< "Connection: close" << "\r\n";
-	if (_status == 301)
-		str << "Location: http://localhost:9099/info.php" << "\r\n";
-	str	<< "\r\n";
+		<< "Connection: close" << "\r\n"
+		<< "\r\n";
 	return str.str();
 }
 

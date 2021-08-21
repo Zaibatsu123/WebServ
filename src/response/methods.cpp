@@ -98,9 +98,7 @@ AResponse*	methodPut(s_client* client){
 	if (status)
 		return new BadResponse(status, client->request->getServer()->error_pages[status]);
 
-	AResponse* res = new GoodResponse(location->root, "");
-	res->setStatus(201);
-	return res;
+	return new PutResponse(201);
 }
 
 

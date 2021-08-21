@@ -8,13 +8,12 @@
 #include "../../inc/output.hpp"
 
 ssize_t response(s_client *client, std::ofstream *logs){
-	std::cout << "Enter in responce"  << std::endl;
 	*logs << "======================> Response part <====================== " << std::endl;
 	AResponse* response;
 	ssize_t result;
 
 	if (client->responseNotSend){
-		std::cout << "Sendall !" << std::endl;
+//		std::cout << "Sendall !" << std::endl;
 		return sendall(client);
 	}
 
@@ -79,14 +78,14 @@ ssize_t sendall(s_client* client){
 			perror("");
 			return result;
 		}
-		std::cout
-		<< "---- Pack: " << "\n"
-		<< "Data Left:\t" << client->responseBuffer.length() << "\n"
-		<< "Send Result:\t" << result
-		<< std::endl;
+//		std::cout
+//		<< "---- Pack: " << "\n"
+//		<< "Data Left:\t" << client->responseBuffer.length() << "\n"
+//		<< "Send Result:\t" << result
+//		<< std::endl;
 
 		if (result == static_cast<ssize_t>(client->responseBuffer.length())){
-			std::cout << "All data was send. Clear buffer." << std::endl;
+//			std::cout << "All data was send. Clear buffer." << std::endl;
 			client->responseBuffer.clear();
 			client->responseNotSend = false;
 			client->status = 0;

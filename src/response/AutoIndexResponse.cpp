@@ -29,8 +29,6 @@ AutoIndexResponse::~AutoIndexResponse(){
 }
 
 std::string AutoIndexResponse::generateResponse() {
-	if (getHead())
-		return generateHeader();
 	return generateHeader() + getBody();
 }
 
@@ -38,12 +36,12 @@ std::string AutoIndexResponse::generateHeader() {
 	std::stringstream str;
 	str << _protocol << " "
 		<< _status << " "
-		<< _code[_status] << std::endl
-		<< "Server: Equal-Rights/0.1.23" << std::endl
-		<< "Content-Type: text/html" << std::endl
-		<< "Content-Length: "<< getBody().size() << std::endl
-		<< "Connection: keep-alive" << std::endl
-		<< std::endl;
+		<< _code[_status] << "\r\n"
+		<< "Server: Equal-Rights/0.1.23" << "\r\n"
+		<< "Content-Type: text/html" << "\r\n"
+		<< "Content-Length: "<< getBody().size() << "\r\n"
+		<< "Connection: keep-alive" << "\r\n"
+		<< "\r\n";
 	return str.str();
 }
 

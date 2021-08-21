@@ -27,6 +27,7 @@
 #include "../src/response/CgiResponse.hpp"
 #include "../src/response/AutoIndexResponse.hpp"
 #include "../src/response/RedirectResponse.hpp"
+#include "../src/response/PutResponse.hpp"
 #include <sys/types.h>
 #include <sys/wait.h>
 

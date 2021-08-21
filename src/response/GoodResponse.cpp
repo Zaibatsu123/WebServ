@@ -28,8 +28,6 @@ GoodResponse::~GoodResponse(){
 }
 
 std::string GoodResponse::generateResponse() {
-	if (getHead())
-		return generateHeader();
 	return generateHeader() + generateBody();
 }
 

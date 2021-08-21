@@ -13,12 +13,13 @@
 class PutResponse : public AResponse {
 public:
 	PutResponse();
-	PutResponse(long long maxContent, const std::string & root, const std::string & fileName);
+	PutResponse(const PutResponse & rhi);
+	PutResponse & operator=(const PutResponse & rhi);
 	~PutResponse();
 
-	std::string	generateResponse(int res);
+	PutResponse(int status);
+
 	std::string	generateResponse();
-	std::string	generateHeader(int status);
 	std::string	generateHeader();
 	std::string	generateBody();
 };
