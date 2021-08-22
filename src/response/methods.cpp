@@ -5,7 +5,7 @@
 //              8/2/21				 //
 //                                   //
 
-#include "../../inc/output.hpp"
+#include "output.hpp"
 
 std::string getUploadFileName(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);

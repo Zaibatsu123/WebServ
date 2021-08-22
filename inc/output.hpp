@@ -20,6 +20,10 @@
 #include <stdio.h>
 #include <sstream>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <dirent.h>
+
 #include "../src/Request.hpp"
 #include "../src/Server.hpp"
 #include "../src/response/GoodResponse.hpp"
@@ -28,10 +32,13 @@
 #include "../src/response/AutoIndexResponse.hpp"
 #include "../src/response/RedirectResponse.hpp"
 #include "../src/response/PutResponse.hpp"
-#include <sys/types.h>
-#include <sys/wait.h>
 
-#include <dirent.h>
+#define CGI "./root/cgi_tester"
+#define MiB 1048576
+#define COLOR_DEFAULT "\e[0m"
+#define COLOR_RED "\e[31m"
+#define COLOR_GREEN "\e[32m"
+#define COLOR_GREY "\e[37m"
 
 #ifdef __linux__
 # include <algorithm>
@@ -40,17 +47,6 @@
 #ifdef __APPLE__
 # define MSG_NOSIGNAL 0x2000
 #endif
-
-#define CGI "./root/cgi_tester"
-//#define CGI "./root/myCGI"
-
-#define MiB 1048576
-//#define SSTR( x ) static_cast< std::ostringstream & >(( std::ostringstream() << std::dec << x ) ).str()
-
-#define COLOR_DEFAULT "\e[0m"
-#define COLOR_RED "\e[31m"
-#define COLOR_GREEN "\e[32m"
-#define COLOR_GREY "\e[37m"
 
 typedef struct  s_client
 {
@@ -77,11 +73,11 @@ AResponse*	methodGet(s_client* client);
 AResponse*	methodPost(s_client* client);
 AResponse*	methodDelete(s_client* client);
 AResponse*	methodPut(s_client* client);
-int upload(const std::string & filename, s_client* client);
+int			upload(const std::string & filename, s_client* client);
 
 //cgiHandler.cpp
-int cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);
-char **generateEnv(s_client* client);
+int		cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);
+char	**generateEnv(s_client* client);
 
 //other
 std::vector<Server*>		*parsingConfiguration(char *config_name);
