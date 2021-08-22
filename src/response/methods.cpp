@@ -42,8 +42,11 @@ AResponse* methodPost(s_client* client){
 	if (filename.find(".bla") != std::string::npos){
 		std::cout << "----> CGI" << std::endl;
 		int status = cgi(CGI, filename, client);
-		if (status)
+		if (status){
+			if (status == 502)
+//				logs << "asdasd";
 			return new BadResponse(status, client->request->getServer()->error_pages[status]);
+		}
 		return new CgiResponse(CGI_OUTPUT);
 	}
 	return new GoodResponse(location->root + "/uploadSuccess.html");

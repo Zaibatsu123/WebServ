@@ -1,4 +1,5 @@
 #include "webserver.hpp"
+extern std::ofstream	g_logs;
 
 Request *start(std::string str_req);
 
@@ -129,7 +130,7 @@ t_client    *WebServer::initClient(int new_client_socket, t_socket *parent)
     new_client->time.tv_usec = -1;
     new_client->parent = parent;
     fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
-    logs << "        ---> Connected new client with socket number:|" << new_client->socket << "|" << std::endl;
+    ::g_logs << "        ---> Connected new client with socket number:|" << new_client->socket << "|" << std::endl;
     return (new_client);
 }
 
@@ -137,7 +138,7 @@ int WebServer::connectingNewClients()
 {
     int         new_client_socket = -1;
 
-    logs << "    -->|CONNECTING CLIENTS|" << std::endl;
+    ::g_logs << "    -->|CONNECTING CLIENTS|" << std::endl;
     for (std::list<t_socket*>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++) {
         if (FD_ISSET((*i)->socket, &__read_fds)) {
             if ((new_client_socket = accept((*i)->socket, NULL, NULL)) == -1) {
@@ -203,19 +204,19 @@ Server  *WebServer::findDefaultServer(t_client *client)
 
 void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 {
-    logs << "            ---> Read Head" << std::endl;
+    ::g_logs << "            ---> Read Head" << std::endl;
     size_t pos = (*i)->buffer.find("\15\12\15\12");
     if (pos == std::string::npos)
         return ;
-    logs << "            ---> Got full head" << std::endl;
+    ::g_logs << "            ---> Got full head" << std::endl;
     request_count += 1;
     (*i)->head = (*i)->buffer.substr(0, pos + 3); // TODO: substr direct to start()
-    logs << "================== Request HEAD =====================" << std::endl;
-    logs << (*i)->head;
-    logs << "================== Request HEAD =====================" << std::endl << std::endl;
+    ::g_logs << "================== Request HEAD =====================" << std::endl;
+    ::g_logs << (*i)->head;
+    ::g_logs << "================== Request HEAD =====================" << std::endl << std::endl;
     (*i)->request = start((*i)->head);
     if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT"){
-        logs << "            ---> Request have body" << std::endl;
+        ::g_logs << "            ---> Request have body" << std::endl;
         (*i)->getRequestHead = 1;
         if ((*i)->request->getBoundary().empty())
             (*i)->needle = "0\15\12\15\12";
@@ -223,7 +224,7 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
             (*i)->needle = (*i)->request->getBoundary() + "--";
     }
     else{
-        logs << "            ---> Request have not body" << std::endl;
+        ::g_logs << "            ---> Request have not body" << std::endl;
         (*i)->getRequestHead = 0;
         (*i)->status = 1;
     }
@@ -240,20 +241,20 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 
 void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 {
-    logs << "            ---> Read Body" << std::endl;
+    ::g_logs << "            ---> Read Body" << std::endl;
     size_t pos = (*i)->buffer.find((*i)->needle);
     std::cout << "Content length:" << (*i)->request->getCLength() << "BODY SIZE: " << strlen((*i)->body.c_str()) << std::endl;
     if (pos == std::string::npos)
         return ;
-    logs << "Got full body" << std::endl;
+    ::g_logs << "Got full body" << std::endl;
     (*i)->getRequestHead = 0;
     (*i)->status = 1;
     (*i)->body = (*i)->buffer.substr(0, pos + (*i)->needle.length());
-    logs << "========================== Request BODY ==============================2" << std::endl;
-    logs << (*i)->body;
-    logs << "========================== Request BODY ==============================" << std::endl << std::endl;
-    logs << "STATUS:|" << (*i)->request->getTransferCode() << "|" << std::endl;
-    logs << "METHOD:|" << (*i)->request->getMethod() << "|" << std::endl;
+    ::g_logs << "========================== Request BODY ==============================2" << std::endl;
+    ::g_logs << (*i)->body;
+    ::g_logs << "========================== Request BODY ==============================" << std::endl << std::endl;
+    ::g_logs << "STATUS:|" << (*i)->request->getTransferCode() << "|" << std::endl;
+    ::g_logs << "METHOD:|" << (*i)->request->getMethod() << "|" << std::endl;
     std::cout << "!!!" << (*i)->body.size() << std::endl;
     if ((*i)->request->getTransferCode() == "chunked")
         (*i)->request->body_chunk((*i)->body);
@@ -279,16 +280,16 @@ int WebServer::checkIncomingRequests()
 //    std::ofstream outf;                                  // DELETE AFTER DEBUG
 //    outf.open( "output_request.txt", std::ios_base::app);    // DELETE AFTER DEBUG
 
-    logs << "    -->|RECEIVING REQUESTS|" << std::endl;
+    ::g_logs << "    -->|RECEIVING REQUESTS|" << std::endl;
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
     {
-        logs << "        ---> |Check for request socket with number:|" << (*i)->socket << "|, status:|" << FD_ISSET((*i)->socket, &__read_fds) << "|" << std::endl;
+        ::g_logs << "        ---> |Check for request socket with number:|" << (*i)->socket << "|, status:|" << FD_ISSET((*i)->socket, &__read_fds) << "|" << std::endl;
         if (FD_ISSET((*i)->socket, &__read_fds))
         {
 			(*i)->buffer += readRequest(*i, &result);
             std::cout << "BUFFER_SIZE:|" << (*i)->buffer.size() << "|" << std::endl;
 			if (result <= 0){
-                logs << "RESULT:" << result << "Error occured when receive message from client!" << strerror(errno) << "Errno:" << errno << std::endl;
+                ::g_logs << "RESULT:" << result << "Error occured when receive message from client!" << strerror(errno) << "Errno:" << errno << std::endl;
                 close((*i)->socket);
                 i = clientDelete(i);
                 continue;
@@ -308,14 +309,14 @@ int WebServer::checkOutcomingResponces()
 {
     ssize_t result = 0;
     int exit_status = EXIT_SUCCESS;
-    logs << "    --> Check outcoming responses" <<std::endl;
+    ::g_logs << "    --> Check outcoming responses" <<std::endl;
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
     {
-        logs << "        ---> Check ready for responce socket number:" << "|" << (*i)->socket << "|" << std::endl;
-		logs << "        ---> Checking FDSet: " << FD_ISSET((*i)->socket, &__write_fds) << " with status: " << (*i)->status << std::endl;
+        ::g_logs << "        ---> Check ready for responce socket number:" << "|" << (*i)->socket << "|" << std::endl;
+		::g_logs << "        ---> Checking FDSet: " << FD_ISSET((*i)->socket, &__write_fds) << " with status: " << (*i)->status << std::endl;
         if (FD_ISSET((*i)->socket, &__write_fds) && (*i)->status == 1)
         {
-            result = response(*i, &logs);
+            result = response(*i);
             if (result <= 0)
             {
                 close((*i)->socket);
@@ -326,7 +327,7 @@ int WebServer::checkOutcomingResponces()
             }
             gettimeofday(&((*i)->time), NULL);
             (*i)->buffer.clear();
-            logs << "            ----> Response sended for socket:|" << (*i)->socket << "|" << std::endl;
+            ::g_logs << "            ----> Response sended for socket:|" << (*i)->socket << "|" << std::endl;
         }
     }
     return (exit_status);
@@ -346,7 +347,7 @@ int WebServer::addingSocketsToSets()
         }
     }
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++){
-        logs << "    --> Adding to read/write sets fd socket with number:|" << (*i)->socket << "|" << std::endl;
+        ::g_logs << "    --> Adding to read/write sets fd socket with number:|" << (*i)->socket << "|" << std::endl;
         FD_SET((*i)->socket, &__read_fds);
         if ((*i)->status == 1)
             FD_SET((*i)->socket, &__write_fds);
@@ -374,7 +375,7 @@ void WebServer::deleteOldClients()
 }
 
 int WebServer::startServer(){
-    logs.open("logs.txt", std::ios::trunc);
+//    ::g_logs.open("::g_logs.txt", std::ios::trunc);
     struct timeval now_time;
     now_time.tv_sec = 0;
     now_time.tv_usec = 100000;
@@ -383,10 +384,10 @@ int WebServer::startServer(){
     bindServersToSockets();
 	while (true)
 	{
-        logs << "-> Cycle started" << std::endl;
+        ::g_logs << "-> Cycle started" << std::endl;
         if ((__max_fd = addingSocketsToSets()) == -1)
             std::cerr << "Something wrong when work with sets!" << std::endl;
-        logs << "-> Waiting for select..." << std::endl;
+        ::g_logs << "-> Waiting for select..." << std::endl;
         if (select(__max_fd + 1, &__read_fds, &__write_fds, NULL, &now_time) == -1)
             std::cerr << "Select error: " << strerror(errno) << std::endl;
 //        std::cout << "*time out*" << std::endl;
@@ -397,8 +398,8 @@ int WebServer::startServer(){
         if (checkOutcomingResponces() == EXIT_FAILURE)
             std::cerr << "Something wrong when responce sending!" << std::endl;
         deleteOldClients();
-        logs << "-> Cycle ended" << std::endl;
-        logs << "-> Count of incoming requests:|" << request_count << "|" << std::endl;
+        ::g_logs << "-> Cycle ended" << std::endl;
+        ::g_logs << "-> Count of incoming requests:|" << request_count << "|" << std::endl;
 	}
     return (EXIT_SUCCESS);
 }

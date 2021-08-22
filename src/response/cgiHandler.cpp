@@ -56,6 +56,7 @@ int cgiParent(pid_t pid){
 	}
 	else if (res == EXIT_FAILURE){
 		std::cout << "execve error" << std::endl;
+		std::remove(CGI_OUTPUT);
 		return 502;
 	}
 	else {

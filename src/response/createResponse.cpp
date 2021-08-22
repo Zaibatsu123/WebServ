@@ -6,34 +6,27 @@
 //                             //
 
 #include "../../inc/output.hpp"
+extern std::ofstream	g_logs;
 
-ssize_t response(s_client *client, std::ofstream *logs){
-	*logs << "======================> Response part <====================== " << std::endl;
+ssize_t response(s_client *client){
+	g_logs << "======================> Response part <====================== " << std::endl;
 	AResponse* response;
 	ssize_t result;
 
-	if (client->responseNotSend){
-//		std::cout << "Sendall !" << std::endl;
+	if (client->responseNotSend)
 		return sendall(client);
-	}
-
 	client->request->getErr();
+
 	t_location *location = get_location(client->request->getPath(), &(client->request->getServer()->locations));
 	if (location == NULL){
-		*logs << "            ---->"  << " ---> Broken location <---" << std::endl;
+		g_logs << "            ---->"  << " ---> Broken location <---" << std::endl;
 		client->status = 0;
 		return -1;
 	}
-	else if (client->request->getErr() != 0){
-		*logs << "            ---->"   << "Request error" << std::endl;
-		client->responseBuffer = "la la la";
-		std::string a = location->root;
-		*logs << "            ---->"  << "Request error 2" << std::endl;
+	else if (client->request->getErr() != 0)
 		response = new BadResponse(400, client->request->getServer()->error_pages[400]);
-		*logs << "            ---->"   << "Request error 3" << std::endl;
-	}
 	else if (location->redirect.length()){
-		*logs << "            ---->" << "Redirected to " << location->redirect << std::endl;
+		g_logs << "            ---->" << "Redirected to " << location->redirect << std::endl;
 		std::cout << location->redirect << std::endl;
 		response = new RedirectResponse(301, location->redirect);
 	}
@@ -53,7 +46,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-	*logs << response->generateHeader();
+	g_logs << response->generateHeader();
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
@@ -63,7 +56,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 	delete response;
 	delete client->request;
 	client->request = NULL;
-	*logs << "======================> Response END <====================== " << std::endl;
+	g_logs << "======================> Response END <====================== " << std::endl;
 	return result;
 }
 
@@ -77,14 +70,8 @@ ssize_t sendall(s_client* client){
 			perror("");
 			return result;
 		}
-//		std::cout
-//		<< "---- Pack: " << "\n"
-//		<< "Data Left:\t" << client->responseBuffer.length() << "\n"
-//		<< "Send Result:\t" << result
-//		<< std::endl;
 
 		if (result == static_cast<ssize_t>(client->responseBuffer.length())){
-//			std::cout << "All data was send. Clear buffer." << std::endl;
 			client->responseBuffer.clear();
 			client->responseNotSend = false;
 			client->status = 0;

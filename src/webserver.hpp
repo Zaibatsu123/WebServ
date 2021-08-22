@@ -3,7 +3,6 @@
 
 #include "Server.hpp"
 #include "../inc/output.hpp"
-#include "response/GoodResponse.hpp"
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -24,7 +23,7 @@ class WebServer
         int                     __max_fd;
         size_t                  __delay_client_disconnect_sec;
         int                     request_count;
-        std::ofstream           logs;
+//        std::ofstream           logs;
 
         t_client    *initClient(int new_client_socket, t_socket *parent);
         int         connectingNewClients();

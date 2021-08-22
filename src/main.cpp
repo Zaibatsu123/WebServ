@@ -6,11 +6,9 @@
 //                                   //
 
 #include "../inc/output.hpp"
-#include "response/GoodResponse.hpp"
-#include <stdlib.h>
+#include "../inc/global.hpp"
 #include "webserver.hpp"
 #include "Server.hpp"
-#include <map>
 
 int	main(int argc, char **argv, char **env){
     std::vector<Server*> *servers = NULL;

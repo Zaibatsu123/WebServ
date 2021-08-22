@@ -13,7 +13,7 @@ VPATH			= src
 OBJPATH			= obj/
 RESPONSEPATH	= src/response/
 INC				= inc
-HEADER			=
+HEADER			= inc/output.hpp inc/global.hpp
 SRC				:=	main.cpp	\
 					\
 					webserver.cpp \

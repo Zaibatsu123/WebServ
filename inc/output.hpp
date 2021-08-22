@@ -66,7 +66,7 @@ typedef struct  s_client
 }               t_client;
 
 //createResponse.cpp
-ssize_t	response(t_client *client, std::ofstream *logs);
+ssize_t	response(t_client *client);
 ssize_t	sendall(s_client* client);
 
 //methods.cpp
