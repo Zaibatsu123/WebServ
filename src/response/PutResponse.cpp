@@ -30,7 +30,7 @@ PutResponse::~PutResponse(){
 }
 
 std::string PutResponse::generateResponse() {
-	return generateHeader() + generateBody();
+	return generateHeader();
 }
 std::string PutResponse::generateHeader() {
 	std::stringstream str;
@@ -38,7 +38,7 @@ std::string PutResponse::generateHeader() {
 		<< _status << " "
 		<< _code[_status] << "\r\n"
 		<< "Server: Equal-Rights/0.1.23" << "\r\n"
-//		<< "Content-Length: 0" << "\r\n"
+		<< "Content-Length: 0" << "\r\n"
 		<< "Connection: keep-alive" << "\r\n"
 		<< "\r\n";
 	return str.str();

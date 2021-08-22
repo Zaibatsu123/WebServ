@@ -34,12 +34,13 @@ std::string BadResponse::generateResponse() {
 
 std::string BadResponse::generateHeader() {
 	std::stringstream str;
+	_fileSize = _calculateFileSize();
 	str << _protocol << " "
 		<< _status << " "
 		<< _code[_status] << "\r\n"
 		<< "Server: Equal-Rights/0.1.23" << "\r\n"
 		<< "Content-Type: " << _indicateFileType() << "\r\n"
-		<< "Content-Length: " << _calculateFileSize() << "\r\n"
+		<< "Content-Length: " << _fileSize << "\r\n"
 		<< "Connection: close" << "\r\n"
 		<< "\r\n";
 	return str.str();
@@ -51,7 +52,7 @@ std::string BadResponse::generateBody() {
 
 	file.open(_fileName, std::ifstream::in);
 
-	buf.reserve(_calculateFileSize());
+	buf.reserve(_fileSize);
 	buf.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close();
 

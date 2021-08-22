@@ -9,6 +9,7 @@
 #define CGIRESPONSE_HPP
 
 #include "AResponse.hpp"
+#include "../../inc/output.hpp"
 
 class CgiResponse : public AResponse {
 public:

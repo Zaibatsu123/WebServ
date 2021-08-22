@@ -374,7 +374,7 @@ void WebServer::deleteOldClients()
 }
 
 int WebServer::startServer(){
-    logs.open("logs", std::ios::trunc);
+    logs.open("logs.txt", std::ios::trunc);
     struct timeval now_time;
     now_time.tv_sec = 0;
     now_time.tv_usec = 100000;

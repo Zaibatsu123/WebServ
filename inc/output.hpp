@@ -33,6 +33,7 @@
 #include "../src/response/RedirectResponse.hpp"
 #include "../src/response/PutResponse.hpp"
 
+#define CGI_OUTPUT "outputCGI.txt"
 #define CGI "./root/cgi_tester"
 #define MiB 1048576
 #define COLOR_DEFAULT "\e[0m"
@@ -73,7 +74,8 @@ AResponse*	methodGet(s_client* client);
 AResponse*	methodPost(s_client* client);
 AResponse*	methodDelete(s_client* client);
 AResponse*	methodPut(s_client* client);
-int			upload(const std::string & filename, s_client* client);
+std::string	getUploadFileName(s_client* client);
+int			upload(s_client* client);
 
 //cgiHandler.cpp
 int		cgi(const std::string & cgiName, const std::string & pathToFile, s_client* client);
