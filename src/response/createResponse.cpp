@@ -8,8 +8,9 @@
 #include "../../inc/output.hpp"
 
 ssize_t response(s_client *client, std::ofstream *logs){
+	(void)logs;
 	std::cout << "Enter in responce"  << std::endl;
-	*logs << "======================> Response part <====================== " << std::endl;
+	// *logs << "======================> Response part <====================== " << std::endl;
 	AResponse* response;
 	ssize_t result;
 
@@ -21,20 +22,20 @@ ssize_t response(s_client *client, std::ofstream *logs){
 	client->request->getErr();
 	t_location *location = get_location(client->request->getPath(), &(client->request->getServer()->locations));
 	if (location == NULL){
-		*logs << "            ---->"  << " ---> Broken location <---" << std::endl;
+		// *logs << "            ---->"  << " ---> Broken location <---" << std::endl;
 		client->status = 0;
 		return -1;
 	}
 	else if (client->request->getErr() != 0){
-		*logs << "            ---->"   << "Request error" << std::endl;
+		// *logs << "            ---->"   << "Request error" << std::endl;
 		client->responseBuffer = "la la la";
 		std::string a = location->root;
-		*logs << "            ---->"  << "Request error 2" << std::endl;
+		// *logs << "            ---->"  << "Request error 2" << std::endl;
 		response = new BadResponse(400, client->request->getServer()->error_pages[400]);
-		*logs << "            ---->"   << "Request error 3" << std::endl;
+		// *logs << "            ---->"   << "Request error 3" << std::endl;
 	}
 	else if (location->redirect.length()){
-		*logs << "            ---->" << "Redirected to " << location->redirect << std::endl;
+		// *logs << "            ---->" << "Redirected to " << location->redirect << std::endl;
 		std::cout << location->redirect << std::endl;
 		response = new RedirectResponse(301, location->redirect);
 	}
@@ -54,8 +55,8 @@ ssize_t response(s_client *client, std::ofstream *logs){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-	*logs << response->generateHeader();
-	*logs << response->generateBody();
+	// *logs << response->generateHeader();
+	// *logs << response->generateBody();
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
@@ -65,7 +66,7 @@ ssize_t response(s_client *client, std::ofstream *logs){
 	delete response;
 	delete client->request;
 	client->request = NULL;
-	*logs << "======================> Response END <====================== " << std::endl;
+	// *logs << "======================> Response END <====================== " << std::endl;
 	return result;
 }
 
@@ -95,8 +96,8 @@ ssize_t sendall(s_client* client){
 //			if (tmp["Connection"] == "close")
 //				return 0;
 
-//			if (client->request->getHeaders_()["Connection"] == "close")
-//				return 0;
+			// if (client->request->getHeaders_()["Connection"] == "close")
+			// 	return 0;
 			return result;
 		}
 		try{
