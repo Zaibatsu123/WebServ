@@ -11,10 +11,6 @@
 #include <vector>
 #include "../inc/output.hpp"
 
-// std::vector<std::string> getarray(std::string req);
-// std::string trim(std::string old_string);
-// std::string trim_end(std::string old_string);
-
 Request::Request(){
 	_method = "";
 	_content_length = "";
@@ -101,11 +97,6 @@ void Request::postbody(std::string body_request)
 	std::vector<std::string> body;
 	std::vector<std::string> request;
 
-	// std::cout << "BODYPARSSIZE:|" << body_request.size() << std::endl;
-	// std::cout << body_request << std::endl;
-	// std::cout << "\033[1;46mENTER IN POSTBODY\033[0m\n" << std::endl;
-	std::ofstream outf;                                  // DELETE AFTER DEBUG
-    outf.open( "hhh.txt", std::ios_base::app);			// DELETE AFTER DEBUG
 	std::cout << "\033[1;46mFR4G-TP is born\033[0m\n" << std::endl;
 
 	body = getarray(body_request);
@@ -126,15 +117,10 @@ void Request::postbody(std::string body_request)
 			_content_type = trim(request[j].substr(14, request[j].length() - 14));
 	}
 	_body_content = content(body_request, _boundary);
-	outf << "Body Content: \n" << _body_content  << "|" << std::endl;
-	outf.close();
 }
 
 void Request::postheaders(std::vector<std::string> request) 
-{
-	// std::ofstream outf;                                  // DELETE AFTER DEBUG
-    // outf.open( "hhh.txt", std::ios_base::app);			// DELETE AFTER DEBUG
-	
+{	
 	std::string str;
 	if (request.size() > 1)
 		for (size_t i = 0; i < request.size(); ++i)
@@ -156,13 +142,6 @@ void Request::postheaders(std::vector<std::string> request)
 			else if (!str.empty() && str.length() > 19 && str.compare(0, 19, "transfer-encoding: ") == 0)
 				_transfer_code = trim(str.substr(19, str.length() - 19));
 		}
-	// DELETE AFTER DEBUG
-	// outf << "HFILENAME|" << _filename << std::endl;
-	// outf << "HContent-type|" << _content_type << std::endl;
-	// outf << "HAccept-Encoding|" << _accept_code << std::endl;
-	// outf << "HTransfer-Encoding|" << _transfer_code << std::endl;
-	// outf << "HBOUNDARY|" << _boundary << std::endl;
-	// outf.close();
 }
 
 /*
