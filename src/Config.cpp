@@ -54,15 +54,15 @@ std::vector<std::string> *readFile(char *config_name)
 Server  *print_error(Server *temp, int i, int flag)
 {
 	if (flag == 1)
-		std::cerr << "Configuration file:" << i + 1 << " Error not found" << std::endl;
+		std::cerr << "Configuration file:" << i + 1 << ". Error not found" << std::endl;
 	else if (flag == 2)
-		std::cerr << "Configuration file:" << i + 1 << " Incorrect path" << std::endl;
+		std::cerr << "Configuration file:" << i + 1 << ". Incorrect path" << std::endl;
 	else if (flag == 3)
-		std::cerr << "Configuration file:" << i + 1 << " Error reading file" << std::endl;
+		std::cerr << "Configuration file:" << i + 1 << ". Error reading file" << std::endl;
 	else if (flag == 4)
-		std::cerr << "Configuration file:" << i + 1 << " Incorrect size" << std::endl;
+		std::cerr << "Configuration file:" << i + 1 << ". Incorrect size" << std::endl;
 	else if (flag == 5)
-		std::cerr << "Configuration file:" << i + 1 << " Unknown directive in location" << std::endl;
+		std::cerr << "Configuration file:" << i + 1 << ". Unknown directive in location" << std::endl;
 	temp = NULL;
 	return (temp);
 }
@@ -155,15 +155,17 @@ int getAllowsMethods(std::string str, int i)
 	return (-1);
 }
 
-// Server  *max_body_size(Server *temp, std::string str, int i)
 long long int max_body_size(Server *temp, std::string str, int i)
 {
 	size_t n = std::count(str.begin(), str.end(), ' ');
 	std::string size = str.substr(str.length() - 1, 1);
 	long long int size_num = 0;
 	int b = 1;
-	if (n > 1 || (size != "M" && size != "K" && size != "G" && size != "B"))
+	if (n > 1 || !(size == "M" || size == "K" || size == "G" || size == "B"))
+	{
 		temp = print_error(temp, i, 4);
+		return (-1);
+	}
 	if (size == "K")
 		b = 1024;
 	else if (size == "M")
@@ -178,6 +180,7 @@ long long int max_body_size(Server *temp, std::string str, int i)
 	catch(const std::exception& e)
 	{
 		temp = print_error(temp, i, 4);
+		return (-1);
 	}
 	return (size_num);
 }
@@ -203,15 +206,14 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 		else if ((*configuration)[j].compare(0, 22, "        allow_methods ") == 0)
 			lctn->methods = getAllowsMethods(trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), j);
 		else if ((*configuration)[j].compare(0, 22, "        max_body_size ") == 0)
-			lctn->max_body_size = max_body_size(temp, trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), i);
+			lctn->max_body_size = max_body_size(temp, trim((*configuration)[j].substr(22, (*configuration)[j].length() - 22)), j);
 		else if ((*configuration)[j].compare(0, 15, "        return ") == 0)
 			lctn->redirect = trim((*configuration)[j].substr(15, (*configuration)[j].length() - 15));
 		else
 			temp = print_error(temp, i, 5);
 	}
 	lctn->location = "/" + (loc.substr(14, loc.length() - 15));
-	std::cout << "SIZE|" << lctn->max_body_size << std::endl;
-	if (lctn->methods == - 1)
+	if (lctn->methods == - 1 || lctn->max_body_size == -1)
 	{
 		delete lctn;		
 		return (NULL);
@@ -230,7 +232,7 @@ Server  *upload_file_to(Server *temp, std::string str, int i)
 	temp->upload_file_to = trim(str.substr(19, str.length() - 19));
 	if ((dir = opendir(temp->upload_file_to.c_str())) == NULL)
     {
-        std::cerr << "Configuration file: " << i + 1 << " " << strerror(errno) << std::endl;
+        std::cerr << "Configuration file:" << i + 1 << ". " << strerror(errno) << std::endl;
         return (NULL);
     }
 	closedir(dir);
@@ -249,7 +251,6 @@ std::vector<std::string> server_names(std::string str)
 		else
 		{
 			names.push_back(buffer);
-			std::cout << "NAMES|" << buffer << std::endl;
 			buffer = "";
 		}
 	}
@@ -278,7 +279,7 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 			continue;
 		else
 		{
-			std::cerr << "Configuration file:" << i + 1 << " Unknown directive or directive without values" << std::endl;
+			std::cerr << "Configuration file:" << i + 1 << ". Unknown directive or directive without values" << std::endl;
 			temp = NULL;
 		}
 	}
