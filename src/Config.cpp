@@ -135,24 +135,42 @@ void init(t_location *lctn)
 
 int getAllowsMethods(std::string str, int i)
 {
-	if (str.compare("GET") == 0)
-		return (4);
-	else if (str.compare("POST") == 0)
-		return (2);
-	else if (str.compare("DELETE") == 0)
-		return (1);
-	else if (str.compare("GET POST") == 0 || str.compare("POST GET") == 0)
-		return (6);
-	else if (str.compare("GET DELETE") == 0 || str.compare("DELETE GET") == 0)
-		return (5);
-	else if (str.compare("POST DELETE") == 0 || str.compare("DELETE POST") == 0)
-		return (3);
-	else if (str.compare("GET POST DELETE") == 0 || str.compare("DELETE POST GET") == 0 || str.compare("POST DELETE GET") == 0)
-		return (7);
-	else if (str.compare("GET DELETE POST") == 0 || str.compare("DELETE GET POST") == 0 || str.compare("POST GET DELETE") == 0)
-		return (7);
-	std::cerr << "Configuration file:" << i + 1 << " Unknown method" << std::endl;
-	return (-1);
+	std::vector<std::string> massive;
+	massive = std_split(str);
+	int put = 0;
+	int p = 0;
+	int d = 0;
+	int g = 0;
+	int num = 0;
+	for (size_t j = 0; j < massive.size(); j++)
+	{
+		if (massive[j].compare("GET") == 0 && g == 0)
+		{
+			num += 4;
+			g = 1;
+		}
+		else if (massive[j].compare("POST") == 0 && p == 0)
+		{
+			num += 2;
+			p = 1;
+		}
+		else if (massive[j].compare("DELETE") == 0 && d == 0)
+		{
+			num += 1;
+			d = 1;
+		}
+		else if (massive[j].compare("PUT") == 0 && put == 0)
+		{
+			num += 1;
+			put = 1;
+		}
+		else 
+		{
+			std::cerr << "Configuration file:" << i + 1 << " Unknown method" << std::endl;
+			return (-1);
+		}
+	}
+	return(num);
 }
 
 long long int max_body_size(Server *temp, std::string str, int i)

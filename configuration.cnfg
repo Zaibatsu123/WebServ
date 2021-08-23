@@ -4,15 +4,15 @@ server
     location /
         root ./root/
         index index.html
-        allow_methods GET
+        allow_methods GET POST
     location /directory/
         root ./root/YoupiBanane/
         index youpi.bad_extension
-        allow_methods GET POST
+        allow_methods GET POST PUT
     location /put_test/
         root ./root/
         index youpi.bad_extension
-        allow_methods GET POST
+        allow_methods GET DELETE POST             
     location /post_body/
         root ./root/
         index youpi.bad_extension
