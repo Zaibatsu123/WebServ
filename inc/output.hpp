@@ -50,6 +50,8 @@
 # define MSG_NOSIGNAL 0x2000
 #endif
 
+
+
 typedef struct  s_client
 {
     int         	socket;

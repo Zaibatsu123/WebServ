@@ -212,9 +212,9 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
     request_count += 1;
     (*i)->head = (*i)->buffer.substr(0, pos + 3); // TODO: substr direct to start()
 //     logs << "================== Request HEAD =====================" << std::endl;
-     logs.addMessage("================== Request HEAD =====================\n");
-     logs.addMessage((*i)->head);
-     logs.addMessage("================== Request END ======================\n");
+//logs.addMessage("**********************> Request HEAD <**********************\n");
+//     logs.addMessage((*i)->head);
+//     logs.addMessage("**********************> Request END <**********************\n");
 //     logs << "================== Request HEAD =====================" << std::endl << std::endl;
     (*i)->request = start((*i)->head);
     if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT"){
@@ -252,9 +252,9 @@ void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
     (*i)->getRequestHead = 0;
     (*i)->status = 1;
     (*i)->body = (*i)->buffer.substr(0, pos + (*i)->needle.length());
-    logs.addMessage("================== Request BODY =====================\n");
-    logs.addMessage((*i)->body);
-    logs.addMessage("================== Request END ======================\n");
+//    logs.addMessage("**********************> Request BODY <**********************\n");
+//    logs.addMessage((*i)->body);
+//    logs.addMessage("**********************> Request END <**********************=\n");
     // logs << "STATUS:|" << (*i)->request->getTransferCode() << "|" << std::endl;
     // logs << "METHOD:|" << (*i)->request->getMethod() << "|" << std::endl;
     std::cout << "!!!" << (*i)->body.size() << std::endl;

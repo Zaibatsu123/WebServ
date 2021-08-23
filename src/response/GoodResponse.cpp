@@ -49,6 +49,7 @@ std::string GoodResponse::generateBody() {
 	std::string		buf;
 	std::ifstream	file;
 
+	std::cout << "FileName: " << _fileName << std::endl;
 	file.open(_fileName, std::ifstream::in);
 	if (!file.is_open())
 		return "";

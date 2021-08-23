@@ -145,14 +145,14 @@ AResponse* file_or_directory_existing(t_client *client)
         if (file.is_open())
         {
             std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
-            return new GoodResponse(fullpath);
+            return new GoodResponse(fullpath + location->index);
         }
         if (location->autoindex == 1)
         {
             std::cout << "Created autoindex for directory:|" << fullpath << "|" << std::endl;
             std::string str = autoindex(fullpath.c_str(), client);
-			return new BadResponse(404, client->request->getServer()->error_pages[404]);
-//            return new AutoIndexResponse(str);
+//			return new BadResponse(404, client->request->getServer()->error_pages[404]);
+            return new AutoIndexResponse(str);
         }
 		std::cout << "success" << std::endl;
         return new BadResponse(404, client->request->getServer()->error_pages[404]);
@@ -162,7 +162,7 @@ AResponse* file_or_directory_existing(t_client *client)
     if (file.is_open())
     {
          std::cout << "File is finded with name:|" << fullpath << "|" << std::endl;
-        return new GoodResponse(fullpath);
+         return new GoodResponse(fullpath);
     }
 	std::cout << "bad response" << std::endl;
     return new BadResponse(404, client->request->getServer()->error_pages[404]);
