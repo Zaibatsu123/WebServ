@@ -2,9 +2,10 @@
 #define GLOBAL_HPP
 
 #include <fstream>
-#include "Logger.hpp"
 
-Logger logs;
+class Logger;
+
+Logger logs("logs.txt");
 //std::ofstream g_logs("logs.txt", std::ios::trunc);
 
 #endif

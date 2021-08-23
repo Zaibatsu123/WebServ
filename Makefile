@@ -20,6 +20,7 @@ SRC				:=	main.cpp	\
 					Config.cpp \
 					utils.cpp \
 					Request.cpp \
+					Logger.cpp \
 					Server.cpp
 
 SRC_RESPONSE	:=	createResponse.cpp \

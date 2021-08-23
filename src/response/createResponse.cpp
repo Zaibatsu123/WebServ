@@ -6,10 +6,10 @@
 //                             //
 
 #include "../../inc/output.hpp"
-extern std::ofstream	g_logs;
+extern Logger logs;
 
 ssize_t response(s_client *client){
-	g_logs << "======================> Response part <====================== " << std::endl;
+	logs.addMessage("======================> Response part <======================\n");
 	AResponse* response;
 	ssize_t result;
 
@@ -19,14 +19,14 @@ ssize_t response(s_client *client){
 
 	t_location *location = get_location(client->request->getPath(), &(client->request->getServer()->locations));
 	if (location == NULL){
-		g_logs << "            ---->"  << " ---> Broken location <---" << std::endl;
+		logs.addMessage("            ----> ---> Broken location <---\n");
 		client->status = 0;
 		return -1;
 	}
 	else if (client->request->getErr() != 0)
 		response = new BadResponse(400, client->request->getServer()->error_pages[400]);
 	else if (location->redirect.length()){
-		g_logs << "            ---->" << "Redirected to " << location->redirect << std::endl;
+//		logs.addMessage("            ---->" << "Redirected to " << location->redirect << std::endl);
 		std::cout << location->redirect << std::endl;
 		response = new RedirectResponse(301, location->redirect);
 	}
@@ -46,7 +46,7 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-	g_logs << response->generateHeader();
+	logs.addMessage(response->generateHeader());
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
@@ -56,7 +56,7 @@ ssize_t response(s_client *client){
 	delete response;
 	delete client->request;
 	client->request = NULL;
-	g_logs << "======================> Response END <====================== " << std::endl;
+	logs.addMessage("======================> Response END <======================\n");
 	return result;
 }
 

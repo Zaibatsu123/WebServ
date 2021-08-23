@@ -32,6 +32,8 @@
 #include "../src/response/AutoIndexResponse.hpp"
 #include "../src/response/RedirectResponse.hpp"
 #include "../src/response/PutResponse.hpp"
+#include "../src/Logger.hpp"
+//#include "global.hpp"
 
 #define CGI_OUTPUT "outputCGI"
 #define CGI "./root/cgi_tester"

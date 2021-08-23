@@ -7,7 +7,14 @@
 
 #include "Logger.hpp"
 
-Logger::Logger(){
+Logger::Logger() :
+	_fileName("logs.txt"),
+	_logs("logs.txt", std::ios::trunc){
+}
+
+Logger::Logger(const std::string &fileName) :
+	_fileName(fileName),
+	_logs(fileName, std::ios::trunc){
 }
 
 Logger::Logger(const Logger &rhi){
@@ -21,4 +28,17 @@ Logger &Logger::operator=(const Logger &rhi){
 }
 
 Logger::~Logger(){
+	_logs.close();
+}
+
+const std::ofstream &Logger::getLogs() const{
+	return _logs;
+}
+
+void Logger::addMessage(const std::string &msg){
+	_logs << msg;
+}
+
+std::ostream& operator<<(std::ostream& os, const Logger & ){
+	return os;
 }
