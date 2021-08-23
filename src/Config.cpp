@@ -161,7 +161,7 @@ int getAllowsMethods(std::string str, int i)
 		}
 		else if (massive[j].compare("PUT") == 0 && put == 0)
 		{
-			num += 1;
+			num += 8;
 			put = 1;
 		}
 		else 

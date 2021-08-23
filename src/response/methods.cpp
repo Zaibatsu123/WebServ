@@ -6,6 +6,7 @@
 //                                   //
 
 #include "../../inc/output.hpp"
+extern Logger logs;
 
 AResponse* methodGet(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
@@ -52,23 +53,19 @@ AResponse*	methodDelete(s_client* client){
 	if ((location->methods & 1) != 1)
 		return new BadResponse(405, client->request->getServer()->error_pages[405]);
 
-	std::ifstream file(location->root + client->request->getPath());
-	if (!file.is_open())
+	if (std::remove((location->root + client->request->getPath()).c_str()) == -1){
+		logs.addMessage("Missing file\n");
 		return new BadResponse(404, client->request->getServer()->error_pages[404]);
-	file.close();
-
-	int res = std::remove((location->root + client->request->getPath()).c_str());
-	if (res == -1)
-		return new BadResponse(500, client->request->getServer()->error_pages[500]);
-
+	}
+	logs.addMessage("Deleted\n");
 	return new GoodResponse(location->root + "/deleted.html");
 }
 
 AResponse*	methodPut(s_client* client){
-//	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
+	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
 
-//	if ((location->methods & 8) >> 3 != 1)
-//		return new BadResponse(405, client->request->getServer()->error_pages[405]);
+	if ((location->methods & 8) >> 3 != 1)
+		return new BadResponse(405, client->request->getServer()->error_pages[405]);
 
 	if (upload(client))
 		return new BadResponse(500, client->request->getServer()->error_pages[500]);

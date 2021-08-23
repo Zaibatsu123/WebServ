@@ -46,7 +46,7 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-//	logs.addMessage(response->generateHeader());
+	logs.addMessage(response->generateHeader());
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
