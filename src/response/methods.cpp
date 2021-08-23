@@ -5,7 +5,7 @@
 //              8/2/21				 //
 //                                   //
 
-#include "output.hpp"
+#include "../../inc/output.hpp"
 
 AResponse* methodGet(s_client* client){
 	std::cout << "--> GET" << std::endl;

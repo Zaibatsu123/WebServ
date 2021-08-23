@@ -33,7 +33,7 @@
 #include "../src/response/RedirectResponse.hpp"
 #include "../src/response/PutResponse.hpp"
 
-#define CGI_OUTPUT "outputCGI.txt"
+#define CGI_OUTPUT "outputCGI"
 #define CGI "./root/cgi_tester"
 #define MiB 1048576
 #define COLOR_DEFAULT "\e[0m"
