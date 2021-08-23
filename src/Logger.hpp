@@ -22,9 +22,8 @@ public:
 	Logger & operator=(const Logger & rhi);
 	~Logger();
 
-	const std::ofstream &getLogs() const;
+	const	std::ofstream &getLogs() const;
 	void	addMessage(const std::string & msg);
-	void	init();
 };
 
 std::ostream& operator<<(std::ostream& os, const Logger & logs);

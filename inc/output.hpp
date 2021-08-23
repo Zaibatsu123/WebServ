@@ -33,10 +33,9 @@
 #include "../src/response/RedirectResponse.hpp"
 #include "../src/response/PutResponse.hpp"
 #include "../src/Logger.hpp"
-//#include "global.hpp"
 
 #define CGI_OUTPUT "outputCGI"
-#define CGI "./root/cgi_tester"
+#define CGI "cgi_tester"
 #define MiB 1048576
 #define COLOR_DEFAULT "\e[0m"
 #define COLOR_RED "\e[31m"

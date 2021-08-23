@@ -54,8 +54,7 @@ ssize_t response(s_client *client){
 	result = sendall(client);
 
 	delete response;
-	delete client->request;
-	client->request = NULL;
+
 	logs.addMessage("======================> Response END <======================\n");
 	return result;
 }
@@ -76,12 +75,17 @@ ssize_t sendall(s_client* client){
 			client->responseNotSend = false;
 			client->status = 0;
 
-//			std::map<std::string , std::string > tmp = client->request->getHeaders_();
-//			if (tmp["Connection"] == "close")
-//				return 0;
+			std::map<std::string, std::string> tmp = client->request->getHeaders_();
+			// todo: lowercase
+			std::map<std::string, std::string>::iterator it = tmp.find("Connection");
+			std::map<std::string, std::string>::iterator ite = tmp.end();
 
-//			if (client->request->getHeaders_()["Connection"] == "close")
-//				return 0;
+			delete client->request;
+			client->request = NULL;
+
+			if (it != ite && it->second == "close")
+				return 0;
+
 			return result;
 		}
 		try{
