@@ -184,3 +184,28 @@ std::string rduplicate_slashes(std::string string)
             clear_str.push_back(temp_string[i]);
     return (clear_str);
 }
+
+std::vector<std::string> std_split(std::string str)
+{
+	std::vector<std::string> massive;
+	std::string buffer = "";
+	str += " ";
+	for (int i = 0; i < (int)str.length();)
+	{
+		if (str[i] != ' ')
+		{
+			buffer += str[i];    
+			i++;
+		} 
+		else
+		{
+			while (str[i] == ' ')
+				i++;
+			massive.push_back(buffer);
+			buffer = "";
+		}
+	}
+	// for (size_t j = 0; j < massive.size(); j++)
+	// 	std::cout << "MAS|" << massive[j] << "|" << std::endl;
+	return (massive);
+}

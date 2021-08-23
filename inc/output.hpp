@@ -102,6 +102,7 @@ std::string rduplicate_slashes(std::string string);
 std::vector<std::string> getarray(std::string req);
 int count_str(std::string input_str, std::string str);
 std::string content(std::string string, std::string boundary);
+std::vector<std::string> std_split(std::string str);
 
 std::string alter_trim_end(std::string old_string, std::string elems);
 std::string rrepeats_from_end(std::string string);
