@@ -378,11 +378,3 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 	// 	print_serv(servers);
 	return (servers);
 }
-
-
-
-
-
-
-GET / HTTP/1.1
-Host: 123

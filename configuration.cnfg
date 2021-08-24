@@ -4,18 +4,19 @@ server
     location /
         root ./root/StartPage/
         index index.html
-        allow_methods GET POST
-        max_body_size 10 B
+        allow_methods GET
+        auto_index off
     location /directory/
         root ./root/YoupiBanane/
+        auto_index off
         index youpi.bad_extension
-        allow_methods GET POST PUT DELETE
+        allow_methods GET POST PUT
     location /put_test/
         root ./root/
-        index youpi.bad_extension
-        allow_methods GET PUT DELETE
+        allow_methods GET PUT
+        auto_index off
     location /post_body/
         root ./root/
-        index youpi.bad_extension
-        allow_methods GET POST DELETE
+        allow_methods GET POST
         max_body_size 100 B
+        auto_index off

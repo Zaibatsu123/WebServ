@@ -253,6 +253,7 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 		(*i)->buffer.clear();
     logs << (*i)->head.c_str();
     (*i)->request->setServer(findDefaultServer(*i));
+	std::cout << (*i)->head << std::endl;
     (*i)->head.clear();
 }
 
@@ -279,13 +280,19 @@ void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 
     (*i)->getRequestHead = 0;
     (*i)->status = 1;
-
-    logs << "REAL BODY " << (*i)->body.c_str();
-    logs << "REAL SIZE " << (int)(*i)->body.size();
-    logs << "EXPECTED SIZE " << std::stoi((*i)->request->getHeaders_()["Content-Length"]);
+//	std::cout << "neeeedle: "<< (*i)->needle << std::endl;
+//    logs << "REAL BODY " << (*i)->body.c_str();
+//    logs << "REAL SIZE " << (int)(*i)->body.size();
+	unsigned long flag = 0;
+	try {
+		flag = std::stoi((*i)->request->getHeaders_()["Content-Length"]);
+	}
+	catch (std::exception & e){
+		flag = 0;
+	}
     if ((*i)->request->getTransferCode() == "chunked")
         (*i)->request->body_chunk((*i)->body);
-    else if (std::stoi((*i)->request->getHeaders_()["Content-Length"]) == (int)(*i)->body.length()){ // Ошибка ????
+    else if (flag == (*i)->body.length()){
         (*i)->request->simplebody((*i)->body);
     }
     else
