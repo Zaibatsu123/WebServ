@@ -114,6 +114,8 @@ char **generateEnv(s_client* client){
 	}
 	std::stringstream str;
 	str << client->request->getBodyCnt().length();
+	std::cout << client->request->getMethod() << std::endl;
+	std::cout << client->request->getProtocol() << std::endl;
 	addToEnv(env, "REQUEST_METHOD=" + client->request->getMethod());
 	addToEnv(env, "SERVER_PROTOCOL=" + client->request->getProtocol());
 	addToEnv(env, "CONTENT_LENGTH=" + str.str());
