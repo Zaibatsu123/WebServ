@@ -9,23 +9,23 @@
 extern Logger logs;
 
 ssize_t response(s_client *client){
-	std::cout << "======================== response" << std::endl;
+	logs << "======================== response"  << "\n";
 	AResponse* response;
 	ssize_t result;
 
 	if (client->responseNotSend)
 		return sendall(client);
 
+	t_location *location = get_location(client->request->getPath(), &(client->request->getServer()->locations));
+
 	if (client->request->getErr())
 		response = new BadResponse(client->request->getErr(), client->request->getServer()->error_pages[client->request->getErr()]);
-
-	t_location *location = get_location(client->request->getPath(), &(client->request->getServer()->locations));
-	if (location == NULL){
+	else if (location == NULL){
 		client->status = 0;
+		logs << "======================== Location NULL" << "\n";
 		return -1;
 	}
-
-	if (location->redirect.length()){
+	else if (location->redirect.length()){
 		std::cout << "redirected to: " << location->redirect << std::endl;
 		response = new RedirectResponse(301, location->redirect);
 	}
@@ -45,8 +45,8 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-	std::cout << "Request method: " << client->request->getMethod() << " URI: " << client->request->getPath() << std::endl;
-	std::cout << "Response code: " << response->getStatus() << std::endl;
+	logs << "Request method: " << client->request->getMethod().c_str() << " URI: " << client->request->getPath().c_str()  << "\n";
+	logs << "Response code: " << response->getStatus()  << "\n";
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
@@ -54,7 +54,7 @@ ssize_t response(s_client *client){
 	result = sendall(client);
 
 	delete response;
-	std::cout << "======================== response end" << std::endl;
+	logs << "======================== response end" << "\n";
 	return result;
 }
 

@@ -154,12 +154,17 @@ int WebServer::connectingNewClients()
 std::string readRequest(s_client* client, ssize_t *status){
 	std::stringstream	str;
 	ssize_t				result = 0;
-	char				read_buffer[MiB];
+	char		read_buffer[MiB];
 	std::string			buffer;
 
 	std::memset(read_buffer, 0, MiB);
 	result = recv(client->socket, read_buffer, MiB, 0);
 	*status = result;
+	if (std::string(read_buffer) == "\xFF\xF4\xFF\xFD\x06"){
+		*status = 0;
+		logs << "Peer close connection" << "\n";
+		return "";
+	}
 	if (static_cast<int>(result) == -1){
 		logs << "Something goes wrong, when receiving message" << "\n";
 		return "";
