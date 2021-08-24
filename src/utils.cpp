@@ -25,6 +25,18 @@ std::string trim(std::string old_string)
 	return (new_string);
 }
 
+std::string trim_begin(std::string old_string)
+{
+	int i = 0;
+	while (old_string[i] == ' ' || old_string[i] == '\t' || old_string[i] == 13)
+		i++;
+	int j = old_string.size() - 1;
+	while (old_string[j] == ' ' || old_string[j] == '\t' || old_string[j] == 13)
+		j--;
+	std::string new_string = old_string.substr(i, j - i + 1);
+	return (new_string);
+}
+
 std::string trim_end(std::string old_string)
 {
 	int j = old_string.size() - 1;
@@ -176,7 +188,7 @@ std::string rduplicate_slashes(std::string string)
     std::string temp_string = rslash_from_end(string);
     if (temp_string.size() <= 1)
         return (temp_string);
-    std::cout << temp_string << std::endl;
+    std::cout << "remove sup slashes" << temp_string << std::endl;
     std::string clear_str = "/";
     char temp = '/';
     for (unsigned int i = 1; i < temp_string.size(); i++)

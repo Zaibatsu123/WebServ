@@ -10,13 +10,11 @@
 Logger::Logger() :
 	_fileName("logs.txt"),
 	_logs("logs.txt", std::ios::trunc){
-		std::cout << "WHOAP!" << std::endl;
 }
 
 Logger::Logger(const std::string &fileName) :
 	_fileName(fileName),
 	_logs(fileName, std::ios::trunc){
-		std::cout << "WHOAP!" << std::endl;
 }
 
 Logger::Logger(const Logger &rhi){
