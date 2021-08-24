@@ -218,7 +218,6 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
             (*i)->needle = (*i)->request->getBoundary() + "--";
         else
             (*i)->needle = "";
-//        ((*i)->request->getHeaders_().find("Content-Length") != (*i)->request->getHeaders_().end())
     }
     else {
         (*i)->getRequestHead = 0;
@@ -237,21 +236,26 @@ void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 {
     size_t pos = (*i)->buffer.find((*i)->needle);
     logs << "Check size:" << (*i)->needle.c_str();
-    if ((*i)->needle.size() != 0){
-    	if (pos == std::string::npos)
-        	return ;
-    	(*i)->body = (*i)->buffer.substr(0, pos + (*i)->needle.length());
+    try{
+		if ((*i)->needle.size() != 0){
+			if (pos == std::string::npos)
+				return ;
+			(*i)->body = (*i)->buffer.substr(0, pos + (*i)->needle.length());
+		}
+		else{
+			unsigned long size = std::stoul((*i)->request->getHeaders_()["Content-Length"]);
+			if ((*i)->buffer.length() < size)
+				return;
+			(*i)->body = (*i)->buffer.substr(0, size);
+		}
     }
-    else{
-    	unsigned long size = std::stoul((*i)->request->getHeaders_()["Content-Length"]);
-    	if ((*i)->buffer.length() < size)
-			return;
-    	(*i)->body = (*i)->buffer.substr(0, size);
+    catch (std::exception & e){
+    	//todo:error
     }
 
-//	std::cout << (*i)->buffer << std::endl;
     (*i)->getRequestHead = 0;
     (*i)->status = 1;
+
     logs << "REAL SIZE " << (int)(*i)->body.length();
     logs << "EXPECTED SIZE " << std::stoi((*i)->request->getHeaders_()["Content-Length"]);
     if ((*i)->request->getTransferCode() == "chunked")
