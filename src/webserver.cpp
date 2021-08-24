@@ -167,11 +167,11 @@ std::string readRequest(s_client* client, ssize_t *status){
 		return "";
 	}
 	read_buffer[result] = '\0';
-    std::cout << "LEN OF READED BYTES STRING:|" << strlen(read_buffer) << "|" << std::endl;
+    // std::cout << "LEN OF READED BYTES STRING:|" << strlen(read_buffer) << "|" << std::endl;
     int a = 0;
     while (a < result)
         buffer.push_back(read_buffer[a++]);
-    std::cout << "A:|" << a << "|" << std::endl;
+    // std::cout << "A:|" << a << "|" << std::endl;
 	return buffer;
 }
 

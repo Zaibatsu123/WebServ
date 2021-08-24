@@ -38,6 +38,7 @@ private:
 	
 	int			_err;
 
+	static std::vector<std::string> methods;
 public:
 	Request();
 	~Request();
@@ -60,6 +61,8 @@ public:
 	std::string getTransferCode() const;
 	std::string getAcceptCode() const;
 	std::map<std::string, std::string> getHeaders_() const;
+
+	static std::vector<std::string> array_methods();
 
 	void strrequest(std::vector<std::string> request);
 	void getheaders(std::vector<std::string> request);

@@ -13,6 +13,7 @@
 
 Request::Request(){
 	_method = "";
+	_host = "";
 	_content_length = "";
 	_content_type = "";
 	_path = "";
@@ -49,22 +50,50 @@ std::string Request::getAcceptCode() const 	{return _accept_code; }
 std::string Request::getBoundary() const {return _boundary;}
 std::map<std::string, std::string> Request::getHeaders_() const {return _headers;}
 
+
+std::vector<std::string> Request::methods = array_methods();
+
+std::vector<std::string> Request::array_methods()
+{
+	std::vector<std::string> m;
+	m.push_back("CONNECT");
+	m.push_back("DELETE");
+	m.push_back("GET");
+	m.push_back("HEAD");
+	m.push_back("OPTIONS");
+	m.push_back("PATCH");
+	m.push_back("POST");
+	m.push_back("PUT");
+	m.push_back("TRACE");
+	return(m);
+}
+
+
 void Request::methodpath(std::string method, std::string path)
 {
 	_path = rduplicate_slashes(path);
 	_method = method;
 }
 
+
 void Request::getheaders(std::vector<std::string> request)
 {
-	std::string str;	
-	str = request[1];
+	std::string str;
+	std::vector<std::string> host = std_split(request[1]);
+	if (host.size() != 2)
+	{
+		_err = 400;
+		std::cout << "\033[1;46mloloo\033[0m\n" << std::endl;
+		return ;
+	}		
+	str = host[0];
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
 	if (str.compare(0, 5, "host:") == 0)
-		_host = trim(request[1].substr(5, request[1].length() - 5));
+		_host = host[1];
 	else 
 	{
 		_err = 400;
+		std::cout << "\033[1;46mELALLAK\033[0m\n" << std::endl;
 		return ;
 	}
 	for (size_t j = 1; j < request.size(); ++j)
@@ -150,7 +179,7 @@ void Request::postheaders(std::vector<std::string> request)
 void Request::strrequest(std::vector<std::string> request)
 {
 	std::cout << "\033[1;42mFR4G-TP\033[0m\n" << std::endl;
-	if (request.size() == 0)
+	if (request.size() <= 1)
 	{
 		_err = 400;
 		return ;
@@ -170,6 +199,7 @@ void Request::strrequest(std::vector<std::string> request)
 		else
 		{
 			_err = 505;
+			std::cout << "RESP|" << _err <<std::endl;
 			return ;
 		}
 		size_t n = std::count(request[i].begin(), request[i].end(), '/');
@@ -178,7 +208,22 @@ void Request::strrequest(std::vector<std::string> request)
 			_err = 400;
 			return ;
 		}
-		if (request[i].compare(0, 3, "GET") == 0)
+		std::stringstream str(request[i]);
+		std::string req;
+		// str << request[i];
+		std::getline(str, req, ' ');
+		std::cout << "req" << request[i]<< "STRRRRRRR|" << req << "|" <<std::endl;
+		size_t k = 0;
+		for (;k < methods.size(); k++)
+			if (req == methods[k])
+				break;
+		if (k == methods.size())
+		{
+			_err = 400;
+			std::cout << "RESP|" << _err <<std::endl;
+			return ;
+		}
+		else if (request[i].compare(0, 3, "GET") == 0)
 			this->methodpath("GET", trim(request[i].substr(3, request[i].length() - 12)));
 		else if (request[i].compare(0, 4, "POST") == 0)
 		{
@@ -197,6 +242,7 @@ void Request::strrequest(std::vector<std::string> request)
 		else
 		{
 			_err = 501;
+			std::cout << "RESP|" << _err <<std::endl;
 			return ;
 		}
 	}
