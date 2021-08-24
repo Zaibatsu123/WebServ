@@ -51,7 +51,7 @@ ssize_t response(s_client *client){
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;
-
+	std::cout << "RESPONSE Status: " << response->getStatus() << std::endl;
 	result = sendall(client);
 
 	delete response;
