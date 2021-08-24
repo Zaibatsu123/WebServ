@@ -22,10 +22,12 @@ public:
 	Logger & operator=(const Logger & rhi);
 	~Logger();
 
-	const	std::ofstream &getLogs() const;
-	void	addMessage(const std::string & msg);
+	std::ofstream &getLogs();
+	void	addMessage(const std::string &msg);
+	void	addMessage(const int &in);
 };
 
-std::ostream& operator<<(std::ostream& os, const Logger & logs);
+Logger &operator<<(Logger &log, int msg);
+Logger &operator<<(Logger &log, const char *msg);
 
 #endif //LOGGER_HPP

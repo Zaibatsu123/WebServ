@@ -13,6 +13,7 @@
 int	main(int argc, char **argv, char **env){
     std::vector<Server*> *servers = NULL;
     WebServer webserver;
+
     if (argc != 2 || !argv || !env || !argv[1])
     {
         std::cout << "Something wrong with parametrs!" << std::endl;

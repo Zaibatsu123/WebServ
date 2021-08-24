@@ -141,12 +141,11 @@ int getAllowsMethods(std::string str, int i)
 	int p = 0;
 	int d = 0;
 	int g = 0;
-	int num = 0;
+	int num = 4;
 	for (size_t j = 0; j < massive.size(); j++)
 	{
 		if (massive[j].compare("GET") == 0 && g == 0)
 		{
-			num += 4;
 			g = 1;
 		}
 		else if (massive[j].compare("POST") == 0 && p == 0)
@@ -214,7 +213,7 @@ Server  *location(Server *temp, std::vector<std::string> *configuration, int i)
 		if (j + 1 != (*configuration).size())
 			k = (*configuration)[j + 1].compare(0, 8, "        ");
 		if ((*configuration)[j].compare(0, 13, "        root ") == 0)
-			lctn->root = trim((*configuration)[j].substr(13, (*configuration)[j].length() - 14));
+			lctn->root = rslash_from_end(trim((*configuration)[j].substr(13, (*configuration)[j].length() - 13)));
 		else if ((*configuration)[j].compare(0, 14, "        index ") == 0)
 			lctn->index = trim((*configuration)[j].substr(14, (*configuration)[j].length() - 14));
 		else if ((*configuration)[j].compare(0, 21, "        auto_index on") == 0)

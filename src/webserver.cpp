@@ -1,34 +1,33 @@
 #include "webserver.hpp"
 extern Logger logs;
 
-Request *start(std::string str_req);
+#define CLIENT_DELAY_BEFORE_DELETING 0 // значение timeout, если в течении данного количества секунд не будет происходить никаких действий, то данный клиентский сокет будет закрыт (если == 0, то функция будет отключена)
+#define DEBUG_MODE 0
 
 WebServer::WebServer()
 {
-    request_count = 0;
-    __max_fd    =   0;
-    __delay_client_disconnect_sec = 10;
+    this->request_count = 0;
+    this->__max_fd    =   0;
+    this->__delay_client_disconnect_sec = CLIENT_DELAY_BEFORE_DELETING;
+    this->__select_delay_time.tv_sec = 0;
+    this->__select_delay_time.tv_usec = 100;
 }
 
-void    WebServer::setServer(std::vector<Server*> *servers){
-    this->__servers = servers;
-}
+void    WebServer::setServer(std::vector<Server*> *servers) {this->__servers = servers;}
 
-void WebServer::announceServerSettings(){
+void    WebServer::announceServerSettings(){
 	std::cout << COLOR_GREY << "Loading complete." << COLOR_DEFAULT << std::endl;
 	std::cout << COLOR_GREEN << "Welcome to Equal Rights WebServer." << COLOR_DEFAULT << std::endl;
 	std::cout << COLOR_RED << "WARNING: This is development server. Do not use it in a production deployment." << COLOR_DEFAULT << std::endl;
 	std::cout << "Use a production WSGI server instead." << COLOR_DEFAULT << std::endl;
-    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++)
-    {
-        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-        {
+    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++){
+        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++){
             std::cout << "Running on http://" << (*j)->address << ":" << (*j)->port << "/ (Press CTRL+C to quit)" << std::endl;
         }
     }
 }
 
-int rebind(int listen_socket) //устраняем залипание сокета после некорректного завершения работы сервака
+int rebind(int listen_socket) //устраняем залипание сокета после некорректного завершения работы сервера
 {
 	int opt = 1;
 
@@ -50,37 +49,40 @@ int bind_socket(t_socket *server_socket, int created_socket)
 	return (EXIT_SUCCESS);
 }
 
-int create_socket(t_socket *server_socket) //создаём сокет, устраняем залипание и прикрепляем к нему имя
+int create_socket(t_socket *server_socket) //создаём серверный сокет, устраняем залипание, биндим его, переводим в неблокирующий режим и оставляем слушать
 {
     int created_socket = 0;
-	if ((created_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
-    {
-		std::cout << "Error when try to create socket!" << std::endl;
+	if ((created_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1){
+		logs << "Error when try to create socket!\n";
         return (-1);
     }
-    if (rebind(created_socket) == EXIT_FAILURE) //разлипание сокета перед его прикреплением
-    {
-        std::cout << "Error when try to rebind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << std::endl;
+    if (rebind(created_socket) == EXIT_FAILURE){ //разлипание сокета перед его прикреплением
+        logs << "Error when try to rebind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
 		return (-1);
     }
-	if (bind_socket(server_socket, created_socket) == EXIT_FAILURE)
-    {
-        std::cout << "Error when try to bind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << std::endl;
+	if (bind_socket(server_socket, created_socket) == EXIT_FAILURE){
+        logs << "Error when try to bind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
 		return (-1);
     }
-    if (listen(created_socket, 1024) == EXIT_FAILURE)
-    {
-        std::cout << "Error when change socket mode to listen" << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << std::endl;
+    if (listen(created_socket, 1024) == EXIT_FAILURE){ // второй параметр - доступная очередь сокетов к нашему серверному, если желающих будет больше, они просто автоматически дисконектятся
+        logs << "Error when change socket mode to listen" << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
+        return (-1);
+    }
+    if (fcntl(created_socket, F_SETFL, O_NONBLOCK == -1)){
+        logs << "Error when try to change socket I/O mode to unblocking!" << "\n";
         return (-1);
     }
 	return (created_socket);
 }
 
-int WebServer::return_same_socket(t_socket *socket)
+int WebServer::return_same_socket(t_socket *socket) 
 {
-    for (std::list<t_socket *>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++)
-        if (socket->port == (*i)->socket && !strcmp(socket->address, (*i)->address))
+    for (std::list<t_socket *>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++) {
+        logs << "first " << socket->port << "second " << (*i)->socket << "\n";
+        logs << "addrfirst " << socket->address << "addrsecond " << (*i)->address << "\n";
+        if (socket->port == (*i)->port && !strcmp(socket->address, (*i)->address))
             return ((*i)->socket);
+    }
     return (0);
 }
 
@@ -107,7 +109,6 @@ int WebServer::creatingSocketServers()
                 if (((*j)->socket = create_socket(*j)) == -1){
                     return (EXIT_FAILURE);
                 }
-                fcntl((*j)->socket, F_SETFL, O_NONBLOCK);
                 __binded_sockets.push_back(*j);
             }
             else
@@ -130,7 +131,6 @@ t_client    *WebServer::initClient(int new_client_socket, t_socket *parent)
     new_client->time.tv_usec = -1;
     new_client->parent = parent;
     fcntl(new_client->socket, F_SETFL, O_NONBLOCK);
-    // logs << "        ---> Connected new client with socket number:|" << new_client->socket << "|" << std::endl;
     return (new_client);
 }
 
@@ -138,13 +138,13 @@ int WebServer::connectingNewClients()
 {
     int         new_client_socket = -1;
 
-    // logs << "    -->|CONNECTING CLIENTS|" << std::endl;
     for (std::list<t_socket*>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++) {
         if (FD_ISSET((*i)->socket, &__read_fds)) {
             if ((new_client_socket = accept((*i)->socket, NULL, NULL)) == -1) {
-                std::cout << "Error when accept connection to the socket. " << strerror(errno) << std::endl;
+                logs << "       <-- error occured, when trying accepting new client:" << strerror(errno) << "\n";;
                 return (EXIT_FAILURE);
             }
+            logs << "       <-- new client succesfuly connected!" << "\n";;
             __clients.push_back(initClient(new_client_socket, *i));
         }
     }
@@ -160,18 +160,14 @@ std::string readRequest(s_client* client, ssize_t *status){
 	std::memset(read_buffer, 0, MiB);
 	result = recv(client->socket, read_buffer, MiB, 0);
 	*status = result;
-	std::cout << "Bytes read:|" << result << "|" << std::endl;
-	if (static_cast<int>(result) == -1)
-	{
-		perror("Something goes wrong, when receiving message");
+	if (static_cast<int>(result) == -1){
+		logs << "Something goes wrong, when receiving message" << "\n";
 		return "";
 	}
 	read_buffer[result] = '\0';
-    std::cout << "LEN OF READED BYTES STRING:|" << strlen(read_buffer) << "|" << std::endl;
     int a = 0;
     while (a < result)
         buffer.push_back(read_buffer[a++]);
-    std::cout << "A:|" << a << "|" << std::endl;
 	return buffer;
 }
 
@@ -188,78 +184,66 @@ Server  *WebServer::findDefaultServer(t_client *client)
 {
     int def = 0;
     if (client->request->getHost().size() == 0){
-        std::cout << "Default server = " << def << std::endl;
         return (client->parent->servers[def]);
     }
-    for (std::vector<Server*>::iterator i = client->parent->servers.begin(); i != client->parent->servers.end(); i++){
+    for (std::vector<Server*>::iterator i = client->parent->servers.begin(); i != client->parent->servers.end(); i++) {
         if (checkServerName(client->request->getHost(), *i)){
-            std::cout << "Default server = " << def << std::endl;
             return (client->parent->servers[def]);
         }
         def++;
     }
-    std::cout << "Default server = " << def << std::endl;
     return (client->parent->servers[0]);
 }
 
 void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 {
-    // logs << "            ---> Read Head" << std::endl;
     size_t pos = (*i)->buffer.find("\15\12\15\12");
     if (pos == std::string::npos)
         return ;
-    // logs << "            ---> Got full head" << std::endl;
+
     request_count += 1;
-    (*i)->head = (*i)->buffer.substr(0, pos + 3); // TODO: substr direct to start()
-//     logs << "================== Request HEAD =====================" << std::endl;
-//logs.addMessage("**********************> Request HEAD <**********************\n");
-//     logs.addMessage((*i)->head);
-//     logs.addMessage("**********************> Request END <**********************\n");
-//     logs << "================== Request HEAD =====================" << std::endl << std::endl;
+
+    (*i)->head = (*i)->buffer.substr(0, pos + 3);
     (*i)->request = start((*i)->head);
-    if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT"){
-        // logs << "            ---> Request have body" << std::endl;
+    if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT") {
         (*i)->getRequestHead = 1;
-        if ((*i)->request->getBoundary().empty())
+        if ((*i)->request->getHeaders_().find("Transfer-Encoding")->second == "chunked")// != (*i)->request->getHeaders_().end())
             (*i)->needle = "0\15\12\15\12";
+        else if ((*i)->request->getHeaders_().find("Content-Length") != (*i)->request->getHeaders_().end())
+            (*i)->needle = "";
         else
             (*i)->needle = (*i)->request->getBoundary() + "--";
     }
-    else{
-        // logs << "            ---> Request have not body" << std::endl;
+    else {
         (*i)->getRequestHead = 0;
         (*i)->status = 1;
     }
-    std::cout << "BODY_SIZE:|" << (*i)->body.size() << "|" << std::endl;
-    std::cout << (*i)->buffer.size() << std::endl;
 	if ((*i)->buffer.size() > pos + 3)
 		(*i)->buffer = (*i)->buffer.substr(pos + 4);
 	else
 		(*i)->buffer.clear();
-    std::cout << "Получаем дефолтный сервер для реквеста" << findDefaultServer(*i) << std::endl;
+    logs << (*i)->head.c_str();
     (*i)->request->setServer(findDefaultServer(*i));
     (*i)->head.clear();
 }
 
 void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 {
-    // logs << "            ---> Read Body" << std::endl;
     size_t pos = (*i)->buffer.find((*i)->needle);
-    std::cout << "Content length:" << (*i)->request->getCLength() << "BODY SIZE: " << strlen((*i)->body.c_str()) << std::endl;
-    if (pos == std::string::npos)
+    logs << "Check size:" << (*i)->needle.c_str();
+    if ((*i)->needle.size() != 0 && pos == std::string::npos)
         return ;
-    // logs << "Got full body" << std::endl;
+
     (*i)->getRequestHead = 0;
     (*i)->status = 1;
     (*i)->body = (*i)->buffer.substr(0, pos + (*i)->needle.length());
-//    logs.addMessage("**********************> Request BODY <**********************\n");
-//    logs.addMessage((*i)->body);
-//    logs.addMessage("**********************> Request END <**********************=\n");
-    // logs << "STATUS:|" << (*i)->request->getTransferCode() << "|" << std::endl;
-    // logs << "METHOD:|" << (*i)->request->getMethod() << "|" << std::endl;
-    std::cout << "!!!" << (*i)->body.size() << std::endl;
+    logs << "REAL SIZE " << (int)(*i)->body.length();
+    logs << "EXPECTED SIZE " << std::stoi((*i)->request->getHeaders_()["Content-Length"]);
     if ((*i)->request->getTransferCode() == "chunked")
         (*i)->request->body_chunk((*i)->body);
+    else if (std::stoi((*i)->request->getHeaders_()["Content-Length"]) == (int)(*i)->body.length()){ // Ошибка ????
+        (*i)->request->postbody((*i)->body);
+    }
     else
         (*i)->request->postbody((*i)->body);
     if ((*i)->buffer.size() > pos + (*i)->needle.length())
@@ -278,23 +262,18 @@ std::list<t_client *>::iterator WebServer::clientDelete(std::list<t_client *>::i
 
 int WebServer::checkIncomingRequests()
 {
-    std::string buffer;
     ssize_t     result = 0;
 
-    // logs << "    -->|RECEIVING REQUESTS|" << std::endl;
-    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); )
-    {
-        // logs << "        ---> |Check for request socket with number:|" << (*i)->socket << "|, status:|" << FD_ISSET((*i)->socket, &__read_fds) << "|" << std::endl;
-        if (FD_ISSET((*i)->socket, &__read_fds))
-        {
+    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); ){
+        if (FD_ISSET((*i)->socket, &__read_fds)){
 			(*i)->buffer += readRequest(*i, &result);
-            std::cout << "BUFFER_SIZE:|" << (*i)->buffer.size() << "|" << std::endl;
 			if (result <= 0){
-                // logs << "RESULT:" << result << "Error occured when receive message from client!" << strerror(errno) << "Errno:" << errno << std::endl;
                 i = clientDelete(i);
                 continue;
             }
+            #if (CLIENT_DELAY_BEFORE_DELETING != 0)
             gettimeofday(&((*i)->time), NULL);
+            #endif
 			if ((*i)->getRequestHead == 0)
                 proccessRequestHead(i);
 			if ((*i)->getRequestHead == 1)
@@ -308,14 +287,10 @@ int WebServer::checkIncomingRequests()
 int WebServer::checkOutcomingResponces()
 {
     ssize_t result = 0;
+
     int exit_status = EXIT_SUCCESS;
-    // logs << "    --> Check outcoming responses" <<std::endl;
-    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); )
-    {
-        // logs << "        ---> Check ready for responce socket number:" << "|" << (*i)->socket << "|" << std::endl;
-		// logs << "        ---> Checking FDSet: " << FD_ISSET((*i)->socket, &__write_fds) << " with status: " << (*i)->status << std::endl;
-        if (FD_ISSET((*i)->socket, &__write_fds) && (*i)->status == 1)
-        {
+    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end();){
+        if (FD_ISSET((*i)->socket, &__write_fds) && (*i)->status == 1){
             result = response(*i);
             if (result <= 0)
             {
@@ -324,9 +299,10 @@ int WebServer::checkOutcomingResponces()
                 exit_status = EXIT_FAILURE;
 				continue;
             }
+            #if (CLIENT_DELAY_BEFORE_DELETING != 0)
             gettimeofday(&((*i)->time), NULL);
+            #endif
             (*i)->buffer.clear();
-            // logs << "            ----> Response sended for socket:|" << (*i)->socket << "|" << std::endl;
         }
         i++;
     }
@@ -339,15 +315,13 @@ int WebServer::addingSocketsToSets()
     FD_ZERO(&__read_fds);
     FD_ZERO(&__write_fds);
     for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++){
-        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-        {
+        for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++){
             FD_SET((*j)->socket, &__read_fds);
             if ((*j)->socket > max_fd)
                 max_fd = (*j)->socket;
         }
     }
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++){
-        // logs << "    --> Adding to read/write sets fd socket with number:|" << (*i)->socket << "|" << std::endl;
         FD_SET((*i)->socket, &__read_fds);
         if ((*i)->status == 1)
             FD_SET((*i)->socket, &__write_fds);
@@ -361,44 +335,39 @@ void WebServer::deleteOldClients()
 {
     struct timeval now_time;
     int delay = 0;
+
     gettimeofday(&now_time, NULL);
-    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); i++)
-    {
+    for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); ){
         delay = now_time.tv_sec - (*i)->time.tv_sec;
-        if (delay > (int)__delay_client_disconnect_sec && (*i)->time.tv_sec != -1)
-        {
-            std::cout << "    --> Delete client with delay = :|" << delay << "|" << std::endl;
-            close((*i)->socket);
+        if (delay > static_cast<int>(__delay_client_disconnect_sec) && (*i)->time.tv_sec != -1){
             i = clientDelete(i);
+            continue;
         }
-    } 
+        i++;
+    }
 }
 
 int WebServer::startServer(){
-    // logs.open("logs", std::ios::trunc);
-    struct timeval now_time;
-    now_time.tv_sec = 0;
-    now_time.tv_usec = 100000;
     if (creatingSocketServers() == EXIT_FAILURE)
         return (EXIT_FAILURE);
+    logs << "<- all server sockets created\n";
     bindServersToSockets();
+    logs << "   --> webserver start working <--\n";
 	while (true)
 	{
-        // logs << "-> Cycle started" << std::endl;
         if ((__max_fd = addingSocketsToSets()) == -1)
-            std::cerr << "Something wrong when work with sets!" << std::endl;
-        // logs << "-> Waiting for select..." << std::endl;
-        if (select(__max_fd + 1, &__read_fds, &__write_fds, NULL, &now_time) == -1)
-            std::cerr << "Select error: " << strerror(errno) << std::endl;
+            logs << "   <-- error when trying add sockets to sets:" << strerror(errno) << "\n";
+        if (select(__max_fd + 1, &__read_fds, &__write_fds, NULL, &this->__select_delay_time) == -1)
+            logs << "   <-- select error:" << strerror(errno) << "\n";
         if (connectingNewClients() == EXIT_FAILURE)
-            std::cerr << "Something wrong when new client accepting!" << std::endl;
+            logs << "   <-- something wrong when new client accepting:" << strerror(errno) << "\n";
         if (checkIncomingRequests() == EXIT_FAILURE)
-            std::cerr << "Something wrong when request receiving!" << std::endl;
+            logs << "   <-- something wrong when request receiving:" << strerror(errno) << "\n";
         if (checkOutcomingResponces() == EXIT_FAILURE)
-            std::cerr << "Something wrong when responce sending!" << std::endl;
-        // deleteOldClients();
-        // logs << "-> Cycle ended" << std::endl;
-        // logs << "-> Count of incoming requests:|" << request_count << "|" << std::endl;
+            logs << "   <-- something wrong when responce sending:" << strerror(errno) << "\n";
+        #if (CLIENT_DELAY_BEFORE_DELETING != 0)
+        deleteOldClients();
+        #endif
 	}
     return (EXIT_SUCCESS);
 }
