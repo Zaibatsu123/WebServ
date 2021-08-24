@@ -47,6 +47,7 @@ ssize_t response(s_client *client){
 	}
 	logs << "Request method: " << client->request->getMethod().c_str() << " URI: " << client->request->getPath().c_str()  << "\n";
 	logs << "Response code: " << response->getStatus()  << "\n";
+	logs << response->generateHeader().c_str() << "\n";
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;

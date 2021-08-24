@@ -27,6 +27,8 @@ AResponse* methodGet(s_client* client){
 AResponse* methodPost(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
 
+	std::cout << "bodysize: " << location->max_body_size << std::endl;
+	std::cout << (int)client->request->getBodyCnt().length() << std::endl;
 	if (location->max_body_size && location->max_body_size < (int)client->request->getBodyCnt().length())
 		return new BadResponse(413, client->request->getServer()->error_pages[413]);
 	if ((location->methods & 2) >> 1 != 1)
