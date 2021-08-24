@@ -93,7 +93,6 @@ void Request::methodpath(std::string method, std::string path)
 void Request::getheaders(std::vector<std::string> request)
 {
 	std::string str;
-<<<<<<< HEAD
 	std::vector<std::string> host = std_split(request[1]);
 	if (host.size() != 2)
 	{
@@ -102,10 +101,6 @@ void Request::getheaders(std::vector<std::string> request)
 		return ;
 	}		
 	str = host[0];
-=======
-	std::cout << request[1] << std::endl;
-	str = request[1];
->>>>>>> final_path
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
 	logs << "       		<---- trying find a host\n";
 	if (str.compare(0, 5, "host:") == 0)
