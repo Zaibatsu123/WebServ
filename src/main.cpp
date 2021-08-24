@@ -10,19 +10,20 @@
 #include "webserver.hpp"
 #include "Server.hpp"
 
+extern Logger logs;
+
 int	main(int argc, char **argv, char **env){
     std::vector<Server*> *servers = NULL;
     WebServer webserver;
 
     if (argc != 2 || !argv || !env || !argv[1])
     {
-        std::cout << "Something wrong with parametrs!" << std::endl;
+        logs << "Something wrong with parametrs!\n";
         return (EXIT_FAILURE);
     }
     if ((servers = parsingConfiguration(argv[1])) == NULL)
         return (EXIT_FAILURE);
     webserver.setServer(servers);
-    webserver.announceServerSettings();
     if (webserver.startServer() == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

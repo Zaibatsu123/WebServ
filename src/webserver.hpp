@@ -32,7 +32,8 @@ class WebServer
         int         addingSocketsToSets();
         int         checkIncomingRequests();
         int         checkOutcomingResponces();
-        int         return_same_socket(t_socket *socket);
+        int         returnSameSocket(t_socket *socket);
+        int         checkSameSocketOnServers();
         void        proccessRequestHead(std::list<t_client *>::iterator i);
         void        proccessRequestBody(std::list<t_client *>::iterator i);
         void        deleteOldClients();

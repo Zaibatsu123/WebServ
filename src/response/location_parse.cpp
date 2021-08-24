@@ -155,7 +155,7 @@ AResponse* file_or_directory_existing(t_client *client)
             return new AutoIndexResponse(str);
         }
 		std::cout << "success" << std::endl;
-        return new BadResponse(404, client->request->getServer()->error_pages[404]);
+        return new BadResponse(403, client->request->getServer()->error_pages[403]);
     }
 	std::cout << "another path" << std::endl;
     file.open(fullpath);
@@ -167,3 +167,9 @@ AResponse* file_or_directory_existing(t_client *client)
 	std::cout << "bad response" << std::endl;
     return new BadResponse(404, client->request->getServer()->error_pages[404]);
 }
+
+
+
+GET / HTTP/1.1
+Host: asdasd
+
