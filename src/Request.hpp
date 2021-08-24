@@ -39,6 +39,8 @@ private:
 	int			_err;
 
 	static std::vector<std::string> methods;
+	static std::vector<std::string> protocols;
+
 public:
 	Request();
 	~Request();
@@ -63,6 +65,7 @@ public:
 	std::map<std::string, std::string> getHeaders_() const;
 
 	static std::vector<std::string> array_methods();
+	static std::vector<std::string> array_protocols();
 
 	void strrequest(std::vector<std::string> request);
 	void getheaders(std::vector<std::string> request);

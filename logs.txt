@@ -1,8 +1,230 @@
 <- all server sockets created
    --> webserver start working <--
        <-- new client succesfuly connected!
+GET / HTTP/1.1
+Host: lgfkhf
+======================== response
+Request method: GET URI: /
+Response code: 200
+HTTP/1.1 200 OK
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 706
+Connection: keep-alive
+
+
+======================== response end
+GET HTTP/1.1
+HOst: gdfhghf
+======================== response
+Request method: GET URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
 Peer close connection
        <-- new client succesfuly connected!
+
+GET / HTTP/1.1
+Host: asdasd
+======================== response
+Request method: GET URI: /
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+   GET / HTTP/1.1
+Host: asdasdsa
+======================== response
+Request method: GET URI: /
+Response code: 200
+HTTP/1.1 200 OK
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 706
+Connection: keep-alive
+
+
+======================== response end
+GET / HTTP/1.1
+    Host:                    asdasdasdasdasda
+======================== response
+Request method: GET URI: /
+Response code: 200
+HTTP/1.1 200 OK
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 706
+Connection: keep-alive
+
+
+======================== response end
 Peer close connection
        <-- new client succesfuly connected!
-Peer close connection
+
+======================== response
+Request method:  URI: 
+Response code: 400
+HTTP/1.1 400 Bad Request
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 379
+Connection: close
+
+
+======================== response end
+GET / HTTP/1.1
+Host: asdasdasd
+======================== response
+Request method: GET URI: /
+Response code: 200
+HTTP/1.1 200 OK
+Server: Equal-Rights/0.1.23
+Content-Type: text/html
+Content-Length: 706
+Connection: keep-alive
+
+
+======================== response end

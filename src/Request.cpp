@@ -68,6 +68,18 @@ std::vector<std::string> Request::array_methods()
 	return(m);
 }
 
+std::vector<std::string> Request::protocols = array_protocols();
+
+std::vector<std::string> Request::array_protocols()
+{
+	std::vector<std::string> m;
+	m.push_back("HTTP/1.1");
+	m.push_back("HTTP/1.0");
+	m.push_back("HTTP/2.0");
+	m.push_back("HTTP/3.0");
+	m.push_back("HTTP/0.9");
+	return(m);
+}
 
 void Request::methodpath(std::string method, std::string path)
 {
@@ -194,14 +206,6 @@ void Request::strrequest(std::vector<std::string> request)
 	}
 	try 
 	{
-		if (trim(request[i]).compare(request[i].length() - 8, 8, "HTTP/1.1") == 0)
-			_protocol = "HTTP/1.1";
-		else
-		{
-			_err = 505;
-			std::cout << "RESP|" << _err <<std::endl;
-			return ;
-		}
 		size_t n = std::count(request[i].begin(), request[i].end(), '/');
 		if (n == 0)
 		{
@@ -210,7 +214,6 @@ void Request::strrequest(std::vector<std::string> request)
 		}
 		std::stringstream str(request[i]);
 		std::string req;
-		// str << request[i];
 		std::getline(str, req, ' ');
 		std::cout << "req" << request[i]<< "STRRRRRRR|" << req << "|" <<std::endl;
 		size_t k = 0;
@@ -242,6 +245,26 @@ void Request::strrequest(std::vector<std::string> request)
 		else
 		{
 			_err = 501;
+			std::cout << "RESP|" << _err <<std::endl;
+			return ;
+		}
+		std::vector<std::string> first = std_split(request[i]);
+		size_t l = 0;
+		if (first.size() >= 3)
+			for (;l < protocols.size(); l++)
+				if (first[2] == protocols[l])
+					break;
+		if (l == protocols.size() or first.size() != 3 )
+		{
+			_err = 400;
+			std::cout << "RESPkk|" << _err <<std::endl;
+			return ;
+		}
+		else if (first[2] == "HTTP/1.1")		
+			_protocol = "HTTP/1.1";
+		else
+		{
+			_err = 505;
 			std::cout << "RESP|" << _err <<std::endl;
 			return ;
 		}
