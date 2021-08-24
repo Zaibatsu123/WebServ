@@ -112,19 +112,14 @@ char **generateEnv(s_client* client){
 		std::cout << e.what() << std::endl;
 		return NULL;
 	}
-	std::stringstream str;
-	str << client->request->getBodyCnt().length();
-	std::cout << client->request->getMethod() << std::endl;
-	std::cout << client->request->getProtocol() << std::endl;
+	
 	addToEnv(env, "REQUEST_METHOD=" + client->request->getMethod());
 	addToEnv(env, "SERVER_PROTOCOL=" + client->request->getProtocol());
-	addToEnv(env, "CONTENT_LENGTH=" + str.str());
-	addToEnv(env, "PATH_INFO=asdasdasd");
+	addToEnv(env, "PATH_INFO=" + client->request->getPath());
 
 	std::map<std::string, std::string>::iterator it;
-	for (it = mymap.begin(); it != mymap.end(); it++){
+	for (it = mymap.begin(); it != mymap.end(); it++)
 		addToEnv(env, generateNewEnv(it->first, it->second));
-	}
 
 	return env;
 }
