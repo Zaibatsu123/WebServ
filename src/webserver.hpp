@@ -11,6 +11,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include "Request.hpp"
 
 class WebServer
 {
@@ -22,8 +23,8 @@ class WebServer
         fd_set                  __write_fds;
         int                     __max_fd;
         size_t                  __delay_client_disconnect_sec;
+        struct timeval          __select_delay_time;
         int                     request_count;
-//        std::ofstream           logs;
 
         t_client    *initClient(int new_client_socket, t_socket *parent);
         int         connectingNewClients();

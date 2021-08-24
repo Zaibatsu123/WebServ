@@ -1,0 +1,28 @@
+first 8080second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8088second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8088second 5
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8000second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8080second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8080second 5
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8088second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8088second 5
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8088second 6
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+<- all server sockets created
+   --> webserver start working <--
+       <-- new client succesfuly connected!
+POST / HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: curl/7.54.0
+Accept: */*
+Content-type: plain/text
+Content-Length: 24
+Check size:REAL SIZE 0EXPECTED SIZE 24

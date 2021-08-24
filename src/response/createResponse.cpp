@@ -46,6 +46,7 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
+	std::cout << response->generateHeader() << std::endl;
 	logs.addMessage(response->generateHeader());
 
 	client->responseBuffer = response->generateResponse();

@@ -10,11 +10,13 @@
 Logger::Logger() :
 	_fileName("logs.txt"),
 	_logs("logs.txt", std::ios::trunc){
+		std::cout << "WHOAP!" << std::endl;
 }
 
 Logger::Logger(const std::string &fileName) :
 	_fileName(fileName),
 	_logs(fileName, std::ios::trunc){
+		std::cout << "WHOAP!" << std::endl;
 }
 
 Logger::Logger(const Logger &rhi){
@@ -31,14 +33,28 @@ Logger::~Logger(){
 	_logs.close();
 }
 
-const std::ofstream &Logger::getLogs() const{
+std::ofstream &Logger::getLogs(){
 	return _logs;
 }
 
 void Logger::addMessage(const std::string &msg){
 	_logs << msg;
+	_logs.flush();
 }
 
-std::ostream& operator<<(std::ostream& os, const Logger & ){
-	return os;
+void Logger::addMessage(const int &in){
+	_logs << in;
+	_logs.flush();
+}
+
+Logger &operator<<(Logger &log, int msg)
+{
+	log.addMessage(msg);
+	return log;
+}
+
+Logger &operator<<(Logger &log, const char *msg)
+{
+	log.addMessage(msg);
+	return log;
 }
