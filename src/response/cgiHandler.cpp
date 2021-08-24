@@ -112,7 +112,7 @@ char **generateEnv(s_client* client){
 		std::cout << e.what() << std::endl;
 		return NULL;
 	}
-	
+
 	addToEnv(env, "REQUEST_METHOD=" + client->request->getMethod());
 	addToEnv(env, "SERVER_PROTOCOL=" + client->request->getProtocol());
 	addToEnv(env, "PATH_INFO=" + client->request->getPath());
