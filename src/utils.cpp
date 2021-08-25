@@ -101,7 +101,6 @@ Request *start(std::string str_req)
 		return (request);
 	}
 	request->strrequest(vect_req);
-	std::cout << "\033[1;46m0\033[0m" << std::endl;
 	return (request);
 }
 
@@ -164,7 +163,6 @@ std::string content(std::string string, std::string boundary)
 	if (pos1 == std::string::npos || pos2 == std::string::npos)
 		return("");
 	content = string.substr(pos1, pos2 - pos1 - 2);
-	std::cout << "|" << content << "|" << std::endl;
 	return(content);
 }
 
@@ -188,13 +186,11 @@ std::string rduplicate_slashes(std::string string)
     std::string temp_string = rslash_from_end(string);
     if (temp_string.size() <= 1)
         return (temp_string);
-    std::cout << "remove sup slashes" << temp_string << std::endl;
 	std::string clear_str(1, temp_string.at(0));
     char temp = '/';
     for (unsigned int i = 1; i < temp_string.size(); i++)
         if (temp_string[i] != temp || temp_string[i-1] != temp )
             clear_str.push_back(temp_string[i]);
-	std::cout << "END OF SUP SLASHES" << std::endl;
     return (clear_str);
 }
 
@@ -218,7 +214,5 @@ std::vector<std::string> std_split(std::string str)
 			buffer = "";
 		}
 	}
-	// for (size_t j = 0; j < massive.size(); j++)
-	// 	std::cout << "MAS|" << massive[j] << "|" << std::endl;
 	return (massive);
 }

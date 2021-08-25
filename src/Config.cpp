@@ -23,6 +23,8 @@
 #include <dirent.h>
 #include <sys/types.h>
 
+extern Logger logs;
+
 std::vector<std::string> *readFile(char *config_name)
 {
 	std::ifstream               config_file(config_name);
@@ -306,28 +308,6 @@ std::vector<Server*>  *pars(std::vector<Server*> *servers, std::vector<std::stri
 	return (servers);
 }
 
-// void print_serv(std::vector<Server*> *servers)
-// {
-// 	int k = 1;
-// 	for (std::vector<Server *>::iterator i = servers->begin(); i != servers->end(); i++)
-// 	{
-// 		std::cout << "---------===SERVER===---------" << "num: " << k <<  std::endl;
-// 		std::cout << "---------===Sockets===---------" << std::endl;
-// 		for (std::vector<t_socket>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++)
-// 			std::cout << "Running on http://" << (*j).address << ":" << (*j).port << "/ (Press CTRL+C to quit)" << std::endl;
-// 		std::cout << "---------===locations===---------size" << (*i)->locations.size() << std::endl;
-// 		for (std::map<std::string, t_location *>::iterator it = (*i)->locations.begin(); it != (*i)->locations.end(); it++ )
-// 		{
-// 			std::cout << "location: " << (*it).first  << std::endl;
-// 			std::cout << "second: " << (*i)->locations[(*it).first]->index  << std::endl;
-// 			std::cout << "autoindex: " << (*it).second->autoindex << " root: " << (*it).second->root << std::endl;
-// 			std::cout << "index: " << (*it).second->index << " methods: " << (*it).second->methods << std::endl;
-// 			std::cout << "---------======---------" << std::endl;
-// 		}
-// 		k++;
-// 	}
-// }
-
 std::vector<Server*> *parsingConfiguration(char *config_name)
 {
 	std::vector<Server*>         *servers = new std::vector<Server*>;
@@ -374,7 +354,5 @@ std::vector<Server*> *parsingConfiguration(char *config_name)
 					}
 			}
 	delete configuration;
-	// if (servers != NULL)
-	// 	print_serv(servers);
 	return (servers);
 }

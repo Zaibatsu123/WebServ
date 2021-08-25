@@ -73,7 +73,7 @@ ssize_t sendall(s_client* client){
 
 			std::map<std::string, std::string> tmp = client->request->getHeaders_();
 			// todo: lowercase
-			std::map<std::string, std::string>::iterator it = tmp.find("Connection");
+			std::map<std::string, std::string>::iterator it = tmp.find("connection");
 			std::map<std::string, std::string>::iterator ite = tmp.end();
 
 			delete client->request;

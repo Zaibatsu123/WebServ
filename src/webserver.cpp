@@ -16,14 +16,18 @@ WebServer::WebServer()
 void    WebServer::setServer(std::vector<Server*> *servers) {this->__servers = servers;}
 
 void    WebServer::announceServerSettings(){
+    unsigned int k = 1;
 	std::cout << COLOR_GREY << "Loading complete." << COLOR_DEFAULT << std::endl;
 	std::cout << COLOR_GREEN << "Welcome to Equal Rights WebServer." << COLOR_DEFAULT << std::endl;
 	std::cout << COLOR_RED << "WARNING: This is development server. Do not use it in a production deployment." << COLOR_DEFAULT << std::endl;
 	std::cout << "Use a production WSGI server instead." << COLOR_DEFAULT << std::endl;
-    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++){
+    for (std::vector<Server*>::iterator i = __servers->begin(); i != __servers->end(); i++, k++){
+        std::cout << "_______________________________________________________" << std::endl;
+        std::cout << "Server №" << k << " running on next host/ports" << std::endl;
         for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++){
             std::cout << "Running on http://" << (*j)->address << ":" << (*j)->port << "/ (Press CTRL+C to quit)" << std::endl;
         }
+        
     }
 }
 
@@ -220,7 +224,6 @@ Server  *WebServer::findDefaultServer(t_client *client)
         }
         def++;
     }
-//    std::cout << "Default server name:" << client->parent->servers[0]->server_name[0] << std::endl;
     return (client->parent->servers[0]);
 }
 
@@ -234,10 +237,9 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 
     (*i)->head = (*i)->buffer.substr(0, pos + 3);
     (*i)->request = start((*i)->head);
-    logs << "       <--- after a parsing head\n";
     if ((*i)->request->getMethod() == "POST" || (*i)->request->getMethod() == "PUT") {
         (*i)->getRequestHead = 1;
-        if ((*i)->request->getHeaders_().find("Transfer-Encoding")->second == "chunked")// != (*i)->request->getHeaders_().end())
+        if ((*i)->request->getHeaders_().find("transfer-encoding")->second == "chunked")// != (*i)->request->getHeaders_().end())
             (*i)->needle = "0\15\12\15\12";
         else if ((*i)->request->getBoundary().length() > 0)
             (*i)->needle = (*i)->request->getBoundary() + "--";
@@ -253,18 +255,14 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 	else
 		(*i)->buffer.clear();
     logs << (*i)->head.c_str();
-	std::cout << "1" << std::endl;
     (*i)->request->setServer(findDefaultServer(*i));
-	std::cout << "2" << std::endl;
-	std::cout << (*i)->head << std::endl;
     (*i)->head.clear();
-    logs << "after clear head\n";
 }
 
 void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 {
     size_t pos = (*i)->buffer.find((*i)->needle);
-    logs << "Check size:" << (*i)->needle.c_str();
+
     try{
 		if ((*i)->needle.size() != 0){
 			if (pos == std::string::npos)
@@ -272,24 +270,22 @@ void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 			(*i)->body = (*i)->buffer.substr(0, pos + (*i)->needle.length());
 		}
 		else{
-			unsigned long size = std::stoul((*i)->request->getHeaders_()["Content-Length"]);
+			unsigned long size = std::stoul((*i)->request->getHeaders_()["content-length"]);
 			if ((*i)->buffer.length() < size)
 				return;
 			(*i)->body = (*i)->buffer.substr(0, size);
 		}
     }
     catch (std::exception & e){
-    	
+    	logs << "Error when request body parsing!";
     }
 
     (*i)->getRequestHead = 0;
     (*i)->status = 1;
-//	std::cout << "neeeedle: "<< (*i)->needle << std::endl;
-//    logs << "REAL BODY " << (*i)->body.c_str();
-//    logs << "REAL SIZE " << (int)(*i)->body.size();
+
 	unsigned long flag = 0;
 	try {
-		flag = std::stoi((*i)->request->getHeaders_()["Content-Length"]);
+		flag = std::stoi((*i)->request->getHeaders_()["content-length"]);
 	}
 	catch (std::exception & e){
 		flag = 0;
@@ -321,7 +317,6 @@ int WebServer::checkIncomingRequests()
 
     for (std::list<t_client *>::iterator i = __clients.begin(); i != __clients.end(); ){
         if (FD_ISSET((*i)->socket, &__read_fds)){
-            logs << "       <--- before reading request\n";
 			(*i)->buffer += readRequest(*i, &result);
 			if (result <= 0){
                 i = clientDelete(i);
@@ -330,16 +325,13 @@ int WebServer::checkIncomingRequests()
             #if (CLIENT_DELAY_BEFORE_DELETING != 0)
             gettimeofday(&((*i)->time), NULL);
             #endif
-            logs << "       <--- before pasing head of request\n";
 			if ((*i)->getRequestHead == 0)
                 proccessRequestHead(i);
-            logs << "       <--- before pasing body of request\n";
 			if ((*i)->getRequestHead == 1)
                 proccessRequestBody(i);
         }
         i++;
     }
-    logs << "   <-- end of check incoming request\n";
     return (EXIT_SUCCESS);
 }
 
@@ -421,18 +413,13 @@ int WebServer::startServer(){
 	{
         if ((__max_fd = addingSocketsToSets()) == -1)
             logs << "   <-- error when trying add sockets to sets:" << strerror(errno) << "\n";
-        logs << "   <-- before select\n";
         if (select(__max_fd + 1, &__read_fds, &__write_fds, NULL, &this->__select_delay_time) == -1)
             logs << "   <-- select error:" << strerror(errno) << "\n";
-        logs << "   <-- before new client connection\n";
         if (connectingNewClients() == EXIT_FAILURE)
             logs << "   <-- something wrong when new client accepting:" << strerror(errno) << "\n";
-        logs << "   <-- before checking incoming request\n";
         if (checkIncomingRequests() == EXIT_FAILURE)
             logs << "   <-- something wrong when request receiving:" << strerror(errno) << "\n";
-        logs << "   <-- before outcoming incoming request\n";
         if (checkOutcomingResponces() == EXIT_FAILURE)
-        logs << "   <-- main cycle end";
             logs << "   <-- something wrong when responce sending:" << strerror(errno) << "\n";
         #if (CLIENT_DELAY_BEFORE_DELETING != 0)
         deleteOldClients();
