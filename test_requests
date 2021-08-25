@@ -1,0 +1,42 @@
+----GET----
+
+GET / HTTP/1.1
+Host: localhost
+
+GET / HTTP/1.1
+
+get / HTTP/1.1
+Host: localhost
+
+GET / HTTP/2.0
+Host: localhost
+
+PATCH / HTTP/1.1
+Host: localhost
+
+---------------- CHECKLIST TESTS -------------------
+GET /test.txt HTTP/1.1
+Host: localhost
+
+POST /test.txt HTTP/1.1
+Host: localhost
+Transfer-Encoding: chunked
+
+5
+abcde
+0
+
+--
+GET /test.txt HTTP/1.1
+Host: localhost
+
+DELETE /test.txt HTTP/1.1
+Host: localhost
+
+GET /test.txt HTTP/1.1
+Host: localhost
+
+UNKNOWN /test.txt HTTP/1.1
+Host: localhost
+
+-----------------------------------------------------------

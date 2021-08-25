@@ -1,1 +1,58 @@
-asd
+first 8000second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8000second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8000second 5
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8001second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8001second 5
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8002second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8002second 5
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 8002second 6
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 7777second 4
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 7777second 5
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 7777second 6
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+first 7777second 7
+addrfirst 127.0.0.1addrsecond 127.0.0.1
+<- all server sockets created
+   --> webserver start working <--
+       <-- new client succesfuly connected!
+POST /test.txt HTTP/1.1
+Host: localhost
+Transfer-Encoding: chunked
+[Wed Aug 25 23:25:31 2021] "POST /test.txt HTTP/1.1" 200
+Peer close connection
+       <-- new client succesfuly connected!
+POST /test.txt HTTP/1.1
+Host: localhost
+Transfer-Encoding: chunked
+[Wed Aug 25 23:25:56 2021] "POST /test.txt HTTP/1.1" 200
+GET / HTTP/1.1
+Host: localhost
+[Wed Aug 25 23:28:02 2021] "GET / HTTP/1.1" 200
+GET / HTTP/1.1
+[Wed Aug 25 23:28:07 2021] "  " 400
+get / HTTP/1.1
+Host: localhost
+[Wed Aug 25 23:28:10 2021] "  " 400
+GET / HTTP/5.9
+Host: localhost
+[Wed Aug 25 23:28:17 2021] "GET / " 400
+GET / HTTP/2.0
+Host: localhost
+[Wed Aug 25 23:28:39 2021] "GET / " 505
+PATCH / HTTP/1.1
+Host: localhost
+[Wed Aug 25 23:29:21 2021] "  " 501
+GET / HTTP/2.0
+Host: localhost
+[Wed Aug 25 23:29:28 2021] "GET / " 505
+Peer close connection
