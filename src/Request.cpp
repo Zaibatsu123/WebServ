@@ -216,7 +216,6 @@ void Request::strrequest(std::vector<std::string> request)
 		std::stringstream str(request[i]);
 		std::string req;
 		std::getline(str, req, ' ');
-		std::cout << "req" << request[i]<< "STRRRRRRR|" << req << "|" <<std::endl;
 		size_t k = 0;
 		for (;k < methods.size(); k++)
 			if (req == methods[k])

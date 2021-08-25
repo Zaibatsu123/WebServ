@@ -1,100 +1,1 @@
-<- all server sockets created
-   --> webserver start working <--
-       <-- new client succesfuly connected!
-GET / HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET / status 200
-POST / HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Transfer-Encoding: chunked
-Content-Type: test/file
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] POST / status 405
-       <-- new client succesfuly connected!
-HEAD / HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-[Wed Aug 25 19:12:11 2021] HEAD / status 405
-       <-- new client succesfuly connected!
-GET /directory HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory status 200
-GET /directory/youpi.bad_extension HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/youpi.bad_extension status 200
-GET /directory/youpi.bla HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/youpi.bla status 200
-GET /directory/oulalala HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/oulalala status 404
-       <-- new client succesfuly connected!
-GET /directory/nop HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/nop status 200
-GET /directory/nop/ HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/nop status 200
-GET /directory/nop/other.pouic HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/nop/other.pouic status 200
-GET /directory/nop/other.pouac HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/nop/other.pouac status 404
-       <-- new client succesfuly connected!
-GET /directory/Yeah HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/Yeah status 404
-       <-- new client succesfuly connected!
-GET /directory/Yeah/not_happy.bad_extension HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] GET /directory/Yeah/not_happy.bad_extension status 200
-PUT /put_test/file_should_exist_after HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Transfer-Encoding: chunked
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:11 2021] PUT /put_test/file_should_exist_after status 201
-PUT /put_test/file_should_exist_after HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Transfer-Encoding: chunked
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:13 2021] PUT /put_test/file_should_exist_after status 201
-POST /directory/youpi.bla HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Transfer-Encoding: chunked
-Content-Type: test/file
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:24 2021] POST /directory/youpi.bla status 200
-POST /directory/youpla.bla HTTP/1.1
-Host: localhost:9099
-User-Agent: Go-http-client/1.1
-Transfer-Encoding: chunked
-Content-Type: test/file
-Accept-Encoding: gzip
-[Wed Aug 25 19:12:41 2021] POST /directory/youpla.bla status 200
+asd

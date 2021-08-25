@@ -41,9 +41,11 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-	logs << "[" << logs.timeStamp().c_str() << "] "
-		 << client->request->getMethod().c_str() << " " << client->request->getPath().c_str()
-		 << " status " << response->getStatus() << "\n";
+	logs << logs.timeStamp().c_str()
+		 << " \"" << client->request->getMethod().c_str()
+		 << " " << client->request->getPath().c_str()
+		 << " " << client->request->getProtocol().c_str()
+		 << "\" " << response->getStatus() << "\n";
 
 	client->responseBuffer = response->generateResponse();
 	client->responseNotSend = true;

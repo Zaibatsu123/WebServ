@@ -9,7 +9,6 @@
 #define OUTPUT_HPP
 
 #include <map>
-#include <errno.h>
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -17,9 +16,7 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <unistd.h>
-#include <stdio.h>
 #include <sstream>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <dirent.h>
@@ -49,8 +46,6 @@
 #ifdef __APPLE__
 # define MSG_NOSIGNAL 0x2000
 #endif
-
-
 
 typedef struct  s_client
 {

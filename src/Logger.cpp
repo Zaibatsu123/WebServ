@@ -6,6 +6,7 @@
 //                                   //
 
 #include "Logger.hpp"
+#include <sstream>
 
 Logger::Logger() :
 	_fileName("logs.txt"),
@@ -38,9 +39,11 @@ std::ofstream &Logger::getLogs(){
 std::string Logger::timeStamp(){
 	time_t time;
 	std::time(&time);
+	std::stringstream str;
 	std::string timeStamp(std::asctime(std::localtime(&time)));
 	timeStamp.pop_back();
-	return timeStamp;
+	str << "[" << timeStamp << "]";
+	return str.str();
 }
 
 void Logger::addMessage(const std::string &msg){

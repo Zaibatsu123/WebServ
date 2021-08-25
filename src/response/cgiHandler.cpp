@@ -27,7 +27,7 @@ void cgiChild(const std::string & cgiName, const std::string & pathToFile, s_cli
 		exit(2);
 	if (dup2(in, 0) == -1 || dup2(out, 1) == -1)
 		exit(2);
-	execve(cgiName.c_str(), 0, env);
+	execve(cgiName.c_str(), argv, env);
 	exit(1);
 }
 
