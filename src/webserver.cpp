@@ -25,10 +25,10 @@ void    WebServer::announceServerSettings(){
         std::cout << "_______________________________________________________" << std::endl;
         std::cout << "Server №" << k << " running on next host/ports" << std::endl;
         for (std::vector<t_socket *>::iterator j = (*i)->sockets.begin(); j != (*i)->sockets.end(); j++){
-            std::cout << "Running on http://" << (*j)->address << ":" << (*j)->port << "/ (Press CTRL+C to quit)" << std::endl;
+            std::cout << "Running on http://" << (*j)->address << ":" << (*j)->port  << std::endl;
         }
-        
     }
+    std::cout << "---------------> (Press CTRL+C to quit) <--------------" << std::endl;
 }
 
 int rebind(int listen_socket) //устраняем залипание сокета после некорректного завершения работы сервера
@@ -57,23 +57,23 @@ int create_socket(t_socket *server_socket) //создаём серверный �
 {
     int created_socket = 0;
 	if ((created_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1){
-		logs << "Error when try to create socket!\n";
+		logs << logs.timeStamp().c_str() << " Error when try to create socket!\n";
         return (-1);
     }
     if (rebind(created_socket) == EXIT_FAILURE){ //разлипание сокета перед его прикреплением
-        logs << "Error when try to rebind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
+        logs << logs.timeStamp().c_str() << " Error when try to rebind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
 		return (-1);
     }
 	if (bind_socket(server_socket, created_socket) == EXIT_FAILURE){
-        logs << "Error when try to bind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
+        logs << logs.timeStamp().c_str() << " Error when try to bind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
 		return (-1);
     }
     if (listen(created_socket, 1024) == EXIT_FAILURE){ // второй параметр - доступная очередь сокетов к нашему серверному, если желающих будет больше, они просто автоматически дисконектятся
-        logs << "Error when change socket mode to listen" << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
+        logs << logs.timeStamp().c_str() << " Error when change socket mode to listen" << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
         return (-1);
     }
     if (fcntl(created_socket, F_SETFL, O_NONBLOCK == -1)){
-        logs << "Error when try to change socket I/O mode to unblocking!" << "\n";
+        logs << logs.timeStamp().c_str() << " Error when try to change socket I/O mode to unblocking!" << "\n";
         return (-1);
     }
 	return (created_socket);
@@ -82,8 +82,6 @@ int create_socket(t_socket *server_socket) //создаём серверный �
 int WebServer::returnSameSocket(t_socket *socket) 
 {
     for (std::list<t_socket *>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++) {
-        logs << "first " << socket->port << "second " << (*i)->socket << "\n";
-        logs << "addrfirst " << socket->address << "addrsecond " << (*i)->address << "\n";
         if (socket->port == (*i)->port && !strcmp(socket->address, (*i)->address))
             return ((*i)->socket);
     }
@@ -168,10 +166,10 @@ int WebServer::connectingNewClients()
     for (std::list<t_socket*>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++) {
         if (FD_ISSET((*i)->socket, &__read_fds)) {
             if ((new_client_socket = accept((*i)->socket, NULL, NULL)) == -1) {
-                logs << "       <-- error occured, when trying accepting new client:" << strerror(errno) << "\n";;
+                logs << logs.timeStamp().c_str() << " Error occured, when trying accepting new client:" << strerror(errno) << "\n";
                 return (EXIT_FAILURE);
             }
-            logs << "       <-- new client succesfuly connected!" << "\n";;
+            logs << logs.timeStamp().c_str() << " New client succesfuly connected." << "\n";
             __clients.push_back(initClient(new_client_socket, *i));
         }
     }
@@ -189,11 +187,11 @@ std::string readRequest(s_client* client, ssize_t *status){
 	*status = result;
 	if (std::string(read_buffer) == "\xFF\xF4\xFF\xFD\x06"){
 		*status = 0;
-		logs << "Peer close connection" << "\n";
+		logs << logs.timeStamp().c_str() << " Peer close connection" << "\n";
 		return "";
 	}
 	if (static_cast<int>(result) == -1){
-		logs << "Something goes wrong, when receiving message" << "\n";
+		logs << logs.timeStamp().c_str() << " Something goes wrong, when receiving message" << "\n";
 		return "";
 	}
 	read_buffer[result] = '\0';
@@ -254,7 +252,6 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 		(*i)->buffer = (*i)->buffer.substr(pos + 4);
 	else
 		(*i)->buffer.clear();
-    logs << (*i)->head.c_str();
     (*i)->request->setServer(findDefaultServer(*i));
     (*i)->head.clear();
 }
@@ -277,7 +274,6 @@ void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)
 		}
     }
     catch (std::exception & e){
-    	logs << "Error when request body parsing!";
     }
 
     (*i)->getRequestHead = 0;
@@ -346,7 +342,6 @@ int WebServer::checkOutcomingResponces()
             if (result <= 0)
             {
                 i = clientDelete(i);
-                std::cerr << "send failed: " << strerror(errno) << std::endl;
                 exit_status = EXIT_FAILURE;
 				continue;
             }
@@ -400,27 +395,27 @@ void WebServer::deleteOldClients()
 
 int WebServer::startServer(){
     if (checkSameSocketOnServers() == EXIT_FAILURE) {
-        logs << "Critical error! Same sockets for one server!\n";
+        logs << logs.timeStamp().c_str() << " Critical error! Same sockets for one server!\n";
         return (EXIT_FAILURE);
     }
     if (creatingSocketServers() == EXIT_FAILURE)
         return (EXIT_FAILURE);
-    logs << "<- all server sockets created\n";
+    logs << logs.timeStamp().c_str() << " All server sockets created\n";
     bindServersToSockets();
-    logs << "   --> webserver start working <--\n";
+    logs << logs.timeStamp().c_str() << " Webserver start working\n";
     this->announceServerSettings();
 	while (true)
 	{
         if ((__max_fd = addingSocketsToSets()) == -1)
-            logs << "   <-- error when trying add sockets to sets:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Error when trying add sockets to sets:" << strerror(errno) << "\n";
         if (select(__max_fd + 1, &__read_fds, &__write_fds, NULL, &this->__select_delay_time) == -1)
-            logs << "   <-- select error:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Select error:" << strerror(errno) << "\n";
         if (connectingNewClients() == EXIT_FAILURE)
-            logs << "   <-- something wrong when new client accepting:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Something wrong when new client accepting:" << strerror(errno) << "\n";
         if (checkIncomingRequests() == EXIT_FAILURE)
-            logs << "   <-- something wrong when request receiving:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Something wrong when request receiving:" << strerror(errno) << "\n";
         if (checkOutcomingResponces() == EXIT_FAILURE)
-            logs << "   <-- something wrong when responce sending:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Something wrong when responce sending:" << strerror(errno) << "\n";
         #if (CLIENT_DELAY_BEFORE_DELETING != 0)
         deleteOldClients();
         #endif
