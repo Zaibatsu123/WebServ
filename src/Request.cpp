@@ -97,30 +97,25 @@ void Request::getheaders(std::vector<std::string> request)
 	if (host.size() != 2)
 	{
 		_err = 400;
-		std::cout << "\033[1;46mloloo\033[0m\n" << std::endl;
 		return ;
 	}		
 	str = host[0];
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
-	logs << "       		<---- trying find a host\n";
 	if (str.compare(0, 5, "host:") == 0)
 		_host = host[1];
 	else 
 	{
-		// logs << "       		<---- error when trying find a host\n";
 		_err = 400;
-		std::cout << "\033[1;46mELALLAK\033[0m\n" << std::endl;
 		return ;
 	}
-	// logs << "       		<---- start cycle to find a host\n";
 	for (size_t j = 1; j < request.size(); ++j)
 	{
 		if (request[j].find(":") != std::string::npos)
 		{
 			int pos = request[j].find(":");
 			std::string key = request[j].substr(0, pos);
+			transform(key.begin(), key.end(), key.begin(), ::tolower);
 			_headers.insert(std::pair<std::string, std::string>(key, request[j].substr(pos + 2, request[j].size() - pos - 2)));
-			// logs << "       		<---- end of searching host\n";
 		}
 	}
 }
@@ -129,7 +124,6 @@ void Request::body_chunk(std::string body_request)
 {
 	std::vector<std::string> body;
 
-	std::cout << "\033[1;46mENTER IN BODY_CHUNK\033[0m\n" << std::endl;
 	body = getarray(body_request);
 	for (size_t j = 0; j < body.size(); ++j)
 	{
@@ -140,8 +134,6 @@ void Request::body_chunk(std::string body_request)
 
 void Request::simplebody(std::string body_request) 
 {
-	std::cout << "\033 Enter in body parser\033[0m\n" << std::endl;
-
 	_body_content = body_request;
 }
 
@@ -149,8 +141,6 @@ void Request::postbody(std::string body_request)
 {
 	std::vector<std::string> body;
 	std::vector<std::string> request;
-
-	std::cout << "\033 Enter in body parser\033[0m\n" << std::endl;
 
 	body = getarray(body_request);
 	size_t n = count_str(body_request, _boundary);
@@ -202,7 +192,6 @@ void Request::postheaders(std::vector<std::string> request)
 */
 void Request::strrequest(std::vector<std::string> request)
 {
-	std::cout << "\033[1;42mParser\033[0m\n" << std::endl;
 	if (request.size() <= 1)
 	{
 		_err = 400;
@@ -216,7 +205,6 @@ void Request::strrequest(std::vector<std::string> request)
 		else 
 			break;
 	}
-	// logs << "			<----- after while in head parsing\n";
 	try 
 	{
 		size_t n = std::count(request[i].begin(), request[i].end(), '/');
@@ -289,7 +277,6 @@ void Request::strrequest(std::vector<std::string> request)
 		_err = 400;
 		return ;
 	}
-	logs << "			<----- before get headers\n";
 	try
 	{
 		getheaders(request);
