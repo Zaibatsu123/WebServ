@@ -22,7 +22,8 @@ std::string getUploadFileName(s_client* client){
 	if (client->request->getTransferCode() == "chunked"){
 		if (client->request->getPath() == location->location)
 			return "";
-		return client->request->getServer()->upload_file_to + client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length() + 1);
+		return location->root + client->request->getPath();
+		// return client->request->getServer()->upload_file_to + client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length() + 1);
 	}
 	return "";
 }

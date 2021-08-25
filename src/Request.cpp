@@ -233,6 +233,7 @@ void Request::strrequest(std::vector<std::string> request)
 		for (;k < methods.size(); k++)
 			if (req == methods[k])
 				break;
+
 		if (k == methods.size())
 		{
 			_err = 400;
@@ -261,6 +262,7 @@ void Request::strrequest(std::vector<std::string> request)
 			std::cout << "RESP|" << _err <<std::endl;
 			return ;
 		}
+
 		std::vector<std::string> first = std_split(request[i]);
 		size_t l = 0;
 		if (first.size() >= 3)
@@ -288,5 +290,12 @@ void Request::strrequest(std::vector<std::string> request)
 		return ;
 	}
 	logs << "			<----- before get headers\n";
-	getheaders(request);
+	try
+	{
+		getheaders(request);
+	}
+	catch(const std::exception& e)
+	{
+		std::cout << "ОЧЕРЕДНОЙ эксепшн" <<std::endl;
+	}
 }

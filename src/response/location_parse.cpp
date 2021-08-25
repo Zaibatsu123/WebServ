@@ -141,11 +141,12 @@ AResponse* file_or_directory_existing(t_client *client)
         // std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
         closedir(dir);
         std::cout << "Finded directory with name:|" << fullpath << "|" << std::endl;
-        file.open(fullpath + "/" + location->index);
-        if (file.is_open())
-        {
-            std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
-            return new GoodResponse(fullpath + location->index);
+        if (location->index.size() != 0) {
+            file.open(fullpath + "/" + location->index);
+            if (file.is_open()) {
+                std::cout << "Index find in directory with name:|" << fullpath + location->index.c_str() << "|" << std::endl;
+                return new GoodResponse(fullpath + "/" + location->index);
+            }
         }
         if (location->autoindex == 1)
         {

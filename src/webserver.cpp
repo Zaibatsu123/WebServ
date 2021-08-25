@@ -90,7 +90,7 @@ void WebServer::bindServersToSockets()
 {
     for (std::list<t_socket *>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++){
         for (std::vector<Server*>::iterator j = __servers->begin(); j != __servers->end(); j++){
-            for (std::list<t_socket *>::iterator k = __binded_sockets.begin(); k != __binded_sockets.end(); k++){
+            for (std::vector<t_socket *>::iterator k = (*j)->sockets.begin(); k != (*j)->sockets.end(); k++){
                 if ((*i)->socket == (*k)->socket){
                     (*i)->servers.push_back(*j);
                 }
@@ -212,7 +212,7 @@ Server  *WebServer::findDefaultServer(t_client *client)
 {
     int def = 0;
     if (client->request->getHost().size() == 0){
-        return (client->parent->servers[def]);
+        return (client->parent->servers[0]);
     }
     for (std::vector<Server*>::iterator i = client->parent->servers.begin(); i != client->parent->servers.end(); i++) {
         if (checkServerName(client->request->getHost(), *i)){
@@ -220,6 +220,7 @@ Server  *WebServer::findDefaultServer(t_client *client)
         }
         def++;
     }
+    std::cout << "Default server name:" << client->parent->servers[0]->server_name[0] << std::endl;
     return (client->parent->servers[0]);
 }
 

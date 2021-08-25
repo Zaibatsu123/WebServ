@@ -194,6 +194,7 @@ std::string rduplicate_slashes(std::string string)
     for (unsigned int i = 1; i < temp_string.size(); i++)
         if (temp_string[i] != temp || temp_string[i-1] != temp )
             clear_str.push_back(temp_string[i]);
+	std::cout << "END OF SUP SLASHES" << std::endl;
     return (clear_str);
 }
 
