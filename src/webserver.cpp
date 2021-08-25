@@ -220,7 +220,7 @@ Server  *WebServer::findDefaultServer(t_client *client)
         }
         def++;
     }
-    std::cout << "Default server name:" << client->parent->servers[0]->server_name[0] << std::endl;
+//    std::cout << "Default server name:" << client->parent->servers[0]->server_name[0] << std::endl;
     return (client->parent->servers[0]);
 }
 
@@ -253,9 +253,12 @@ void WebServer::proccessRequestHead(std::list<t_client *>::iterator i)
 	else
 		(*i)->buffer.clear();
     logs << (*i)->head.c_str();
+	std::cout << "1" << std::endl;
     (*i)->request->setServer(findDefaultServer(*i));
+	std::cout << "2" << std::endl;
 	std::cout << (*i)->head << std::endl;
     (*i)->head.clear();
+    logs << "after clear head\n";
 }
 
 void    WebServer::proccessRequestBody(std::list<t_client *>::iterator i)

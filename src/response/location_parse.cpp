@@ -1,11 +1,4 @@
-#include "../Server.hpp"
 #include "../../inc/output.hpp"
-#include <string>
-#include <iostream>
-#include <fstream>
-#include "GoodResponse.hpp"
-#include <dirent.h>
-
 
 std::string utrim_end(std::string old_string, std::string elems)
 {

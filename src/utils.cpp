@@ -189,7 +189,7 @@ std::string rduplicate_slashes(std::string string)
     if (temp_string.size() <= 1)
         return (temp_string);
     std::cout << "remove sup slashes" << temp_string << std::endl;
-    std::string clear_str = "/";
+	std::string clear_str(1, temp_string.at(0));
     char temp = '/';
     for (unsigned int i = 1; i < temp_string.size(); i++)
         if (temp_string[i] != temp || temp_string[i-1] != temp )
