@@ -61,15 +61,15 @@ int create_socket(t_socket *server_socket) //создаём серверный �
         return (-1);
     }
     if (rebind(created_socket) == EXIT_FAILURE){ //разлипание сокета перед его прикреплением
-        logs << logs.timeStamp().c_str() << " Error when try to rebind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
+        logs << logs.timeStamp().c_str() << " Error when try to rebind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << "\n";
 		return (-1);
     }
 	if (bind_socket(server_socket, created_socket) == EXIT_FAILURE){
-        logs << logs.timeStamp().c_str() << " Error when try to bind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
+        logs << logs.timeStamp().c_str() << " Error when try to bind socket! Socket number = " << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << "\n";
 		return (-1);
     }
     if (listen(created_socket, 1024) == EXIT_FAILURE){ // второй параметр - доступная очередь сокетов к нашему серверному, если желающих будет больше, они просто автоматически дисконектятся
-        logs << logs.timeStamp().c_str() << " Error when change socket mode to listen" << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << ", error: " << strerror(errno) << "\n";
+        logs << logs.timeStamp().c_str() << " Error when change socket mode to listen" << created_socket << ", address = " << server_socket->address << ", port = " << server_socket->port << "\n";
         return (-1);
     }
     if (fcntl(created_socket, F_SETFL, O_NONBLOCK == -1)){
@@ -166,10 +166,10 @@ int WebServer::connectingNewClients()
     for (std::list<t_socket*>::iterator i = __binded_sockets.begin(); i != __binded_sockets.end(); i++) {
         if (FD_ISSET((*i)->socket, &__read_fds)) {
             if ((new_client_socket = accept((*i)->socket, NULL, NULL)) == -1) {
-                logs << logs.timeStamp().c_str() << " Error occured, when trying accepting new client:" << strerror(errno) << "\n";
+                logs << logs.timeStamp().c_str() << " Error occured, when trying accepting new client" << "\n";
                 return (EXIT_FAILURE);
             }
-            logs << logs.timeStamp().c_str() << " New client succesfuly connected." << "\n";
+            logs << logs.timeStamp().c_str() << " New client successfully connected." << "\n";
             __clients.push_back(initClient(new_client_socket, *i));
         }
     }
@@ -407,15 +407,15 @@ int WebServer::startServer(){
 	while (true)
 	{
         if ((__max_fd = addingSocketsToSets()) == -1)
-            logs << logs.timeStamp().c_str() << " Error when trying add sockets to sets:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Error when trying add sockets to sets" << "\n";
         if (select(__max_fd + 1, &__read_fds, &__write_fds, NULL, &this->__select_delay_time) == -1)
-            logs << logs.timeStamp().c_str() << " Select error:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << "\n";
         if (connectingNewClients() == EXIT_FAILURE)
-            logs << logs.timeStamp().c_str() << " Something wrong when new client accepting:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Something wrong when new client accepting" << "\n";
         if (checkIncomingRequests() == EXIT_FAILURE)
-            logs << logs.timeStamp().c_str() << " Something wrong when request receiving:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Something wrong when request receiving" << "\n";
         if (checkOutcomingResponces() == EXIT_FAILURE)
-            logs << logs.timeStamp().c_str() << " Something wrong when responce sending:" << strerror(errno) << "\n";
+            logs << logs.timeStamp().c_str() << " Something wrong when responce sending" << "\n";
         #if (CLIENT_DELAY_BEFORE_DELETING != 0)
         deleteOldClients();
         #endif

@@ -19,9 +19,6 @@ std::string getUploadFileName(s_client* client){
 		if (client->request->getPath() == location->location)
 			return "";
 		if (client->request->getServer()->upload_file_to.empty()) {
-			std::cout << location->root << std::endl;
-			std::cout << client->request->getPath().substr(client->request->getPath().find(location->location)) << std::endl;
-			std::cout << location->location.length() << std::endl;
 			return location->root + client->request->getPath().substr(client->request->getPath().find(location->location));
 		}
 		return client->request->getServer()->upload_file_to + client->request->getPath().substr(client->request->getPath().find(location->location) + location->location.length());

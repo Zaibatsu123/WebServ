@@ -224,7 +224,6 @@ void Request::strrequest(std::vector<std::string> request)
 		if (k == methods.size())
 		{
 			_err = 400;
-			std::cout << "RESP|" << _err <<std::endl;
 			return ;
 		}
 		else if (request[i].compare(0, 3, "GET") == 0)
@@ -246,7 +245,7 @@ void Request::strrequest(std::vector<std::string> request)
 		else
 		{
 			_err = 501;
-			std::cout << "RESP|" << _err <<std::endl;
+
 			return ;
 		}
 
@@ -259,7 +258,6 @@ void Request::strrequest(std::vector<std::string> request)
 		if (l == protocols.size() or first.size() != 3 )
 		{
 			_err = 400;
-			std::cout << "RESPkk|" << _err <<std::endl;
 			return ;
 		}
 		else if (first[2] == "HTTP/1.1")		
@@ -267,7 +265,6 @@ void Request::strrequest(std::vector<std::string> request)
 		else
 		{
 			_err = 505;
-			std::cout << "RESP|" << _err <<std::endl;
 			return ;
 		}
 	}
@@ -282,6 +279,5 @@ void Request::strrequest(std::vector<std::string> request)
 	}
 	catch(const std::exception& e)
 	{
-		std::cout << "ОЧЕРЕДНОЙ эксепшн" <<std::endl;
 	}
 }

@@ -7,3 +7,4 @@ echo 555 > ./root/YoupiBanane/Yeah/not_happy.bad_extension
 mkdir ./root/put_test
 mkdir ./root/StartPage/del_dir/
 rm -rf ./root/put_test/*
+rm ./root/YoupiBanane/youpla.bla

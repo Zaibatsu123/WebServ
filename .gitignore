@@ -4,3 +4,4 @@ webserv
 obj/*
 .vscode
 logs
+logs.txt
