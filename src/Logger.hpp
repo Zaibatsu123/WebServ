@@ -25,9 +25,11 @@ public:
 	std::ofstream &getLogs();
 	void	addMessage(const std::string &msg);
 	void	addMessage(const int &in);
+	std::string timeStamp();
 };
 
 Logger &operator<<(Logger &log, int msg);
 Logger &operator<<(Logger &log, const char *msg);
+Logger &operator<<(Logger &log, std::string *msg);
 
 #endif //LOGGER_HPP

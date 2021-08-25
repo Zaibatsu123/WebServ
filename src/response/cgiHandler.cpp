@@ -36,15 +36,12 @@ int cgiParent(pid_t pid){
 	std::stringstream	str;
 
 	waitpid(pid, &res, 0);
-
 	if (WIFEXITED(res))
 		res = WEXITSTATUS(res);
-
 	if (res == EXIT_SUCCESS){
 		std::ifstream inputCGI(CGI_OUTPUT, std::ifstream::in);
 
 		if (!inputCGI.is_open()){
-			std::cout << "cannot write to outputMY" << std::endl;
 			return 500;
 		}
 
@@ -55,12 +52,10 @@ int cgiParent(pid_t pid){
 		inputCGI.close();
 	}
 	else if (res == EXIT_FAILURE){
-		std::cout << "execve error" << std::endl;
 		std::remove(CGI_OUTPUT);
 		return 502;
 	}
 	else {
-		std::cout << "child error" << std::endl;
 		return 500;
 	}
 	return 0;
@@ -69,14 +64,11 @@ int cgiParent(pid_t pid){
 int cgi(const std::string & cgiName, const std::string & pathToFile, s_client *client){
 	pid_t pid = fork();
 	if (pid == FAILURE){
-		std::cout << "fork error" << std::endl;
 		return 500;
 	}
 	else if (pid == CHILD){
-		std::cout << "child" << std::endl;
 		cgiChild(cgiName, pathToFile, client);
 	}
-	std::cout << "parent" << std::endl;
 	return cgiParent(pid);
 }
 
@@ -109,7 +101,6 @@ char **generateEnv(s_client* client){
 		env = new char*[mymap.size() + 4]();
 	}
 	catch (std::exception & e){
-		std::cout << e.what() << std::endl;
 		return NULL;
 	}
 

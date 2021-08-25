@@ -35,6 +35,14 @@ std::ofstream &Logger::getLogs(){
 	return _logs;
 }
 
+std::string Logger::timeStamp(){
+	time_t time;
+	std::time(&time);
+	std::string timeStamp(std::asctime(std::localtime(&time)));
+	timeStamp.pop_back();
+	return timeStamp;
+}
+
 void Logger::addMessage(const std::string &msg){
 	_logs << msg;
 	_logs.flush();
@@ -54,5 +62,11 @@ Logger &operator<<(Logger &log, int msg)
 Logger &operator<<(Logger &log, const char *msg)
 {
 	log.addMessage(msg);
+	return log;
+}
+
+Logger &operator<<(Logger &log, const std::string *msg)
+{
+	log.addMessage(msg->c_str());
 	return log;
 }

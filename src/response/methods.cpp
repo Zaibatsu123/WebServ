@@ -6,7 +6,6 @@
 //                                   //
 
 #include "../../inc/output.hpp"
-extern Logger logs;
 
 AResponse* methodGet(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
@@ -27,8 +26,6 @@ AResponse* methodGet(s_client* client){
 AResponse* methodPost(s_client* client){
 	t_location *location = get_location(client->request->getPath(), &client->request->getServer()->locations);
 
-	std::cout << "bodysize: " << location->max_body_size << std::endl;
-	std::cout << (int)client->request->getBodyCnt().length() << std::endl;
 	if (location->max_body_size && location->max_body_size < (int)client->request->getBodyCnt().length())
 		return new BadResponse(413, client->request->getServer()->error_pages[413]);
 	if ((location->methods & 2) >> 1 != 1)
@@ -40,7 +37,6 @@ AResponse* methodPost(s_client* client){
 		return new BadResponse(500, client->request->getServer()->error_pages[500]);
 
 	if (filename.find(".bla") != std::string::npos){
-		std::cout << "----> CGI" << std::endl;
 		int status = cgi(CGI, filename, client);
 		if (status)
 			return new BadResponse(status, client->request->getServer()->error_pages[status]);
@@ -56,10 +52,8 @@ AResponse*	methodDelete(s_client* client){
 		return new BadResponse(405, client->request->getServer()->error_pages[405]);
 
 	if (std::remove((location->root + client->request->getPath()).c_str()) == -1){
-		logs.addMessage("Missing file\n");
 		return new BadResponse(404, client->request->getServer()->error_pages[404]);
 	}
-	logs.addMessage("Deleted\n");
 	return new GoodResponse(location->root + "/deleted.html");
 }
 

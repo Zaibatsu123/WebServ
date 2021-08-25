@@ -9,7 +9,6 @@
 extern Logger logs;
 
 ssize_t response(s_client *client){
-//	logs << "           <--- " << "==================== Response =================="  << "\n";
 	AResponse* response;
 	ssize_t result;
 
@@ -24,7 +23,6 @@ ssize_t response(s_client *client){
 		response = new BadResponse(400, client->request->getServer()->error_pages[400]);
 	}
 	else if (location->redirect.length()){
-//		std::cout << "redirected to: " << location->redirect << std::endl;
 		response = new RedirectResponse(301, location->redirect);
 	}
 	else{
@@ -43,7 +41,8 @@ ssize_t response(s_client *client){
 		if (client->request->getMethod() == "PUT")
 			response = methodPut(client);
 	}
-	logs << "           <--- " << client->request->getMethod().c_str() << " " << client->request->getPath().c_str()
+	logs << "[" << logs.timeStamp().c_str() << "] "
+		 << client->request->getMethod().c_str() << " " << client->request->getPath().c_str()
 		 << " status " << response->getStatus() << "\n";
 
 	client->responseBuffer = response->generateResponse();
@@ -51,7 +50,6 @@ ssize_t response(s_client *client){
 	result = sendall(client);
 
 	delete response;
-//	logs << "           <--- " << "======================== response end" << "\n";
 	return result;
 }
 
@@ -72,8 +70,7 @@ ssize_t sendall(s_client* client){
 			client->status = 0;
 
 			std::map<std::string, std::string> tmp = client->request->getHeaders_();
-			// todo: lowercase
-			std::map<std::string, std::string>::iterator it = tmp.find("Connection");
+			std::map<std::string, std::string>::iterator it = tmp.find("connection");
 			std::map<std::string, std::string>::iterator ite = tmp.end();
 
 			delete client->request;
@@ -88,7 +85,6 @@ ssize_t sendall(s_client* client){
 			client->responseBuffer = client->responseBuffer.substr(result);
 		}
 		catch (std::exception & e){
-			std::cout << e.what() << std::endl;
 		}
 	}
 	return result;
